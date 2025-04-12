@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <br>
+    <h1>Notes</h1>
+
+    <!-- Add Note Form -->
+    <form method="POST" action="{{ url_for('notes.add_note') }}">
+        <div class="mb-3">
+            <input type="text" class="form-control" name="title" placeholder="Note Title" required>
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" name="content" placeholder="Note Content" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Note</button>
+    </form>
+
+    <hr>
+
+    <!-- Notes List -->
+    <ul class="list-group">
+        {% for note in notes %}
+        <li class="list-group-item">
+            <h5>{{ note.title }}</h5>
+            <p>{{ note.content }}</p>
+            <small>Created at: {{ note.created_at }}</small>
+            <a href="{{ url_for('notes.delete_note_route', note_id=note.id) }}" class="btn btn-danger btn-sm float-end">Delete</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
