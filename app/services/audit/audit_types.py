@@ -1,0 +1,21 @@
+from enum import Enum
+
+class AuditActionType(Enum):
+    # User Management Actions
+    USER_LOGIN = "USER_LOGIN"
+    USER_LOGOUT = "USER_LOGOUT"
+    USER_REGISTER = "USER_REGISTER"
+    USER_UPDATE = "USER_UPDATE"
+    USER_DELETE = "USER_DELETE"
+    
+    # Content Actions
+    CONTENT_CREATE = "CONTENT_CREATE"
+    CONTENT_READ = "CONTENT_READ"
+    CONTENT_UPDATE = "CONTENT_UPDATE"
+    CONTENT_DELETE = "CONTENT_DELETE"
+    
+    # System Actions
+    SYSTEM_START = "SYSTEM_START"
+    SYSTEM_STOP = "SYSTEM_STOP"
+    SYSTEM_ERROR = "SYSTEM_ERROR"
+    SYSTEM_WARNING = "SYSTEM_WARNING" 
