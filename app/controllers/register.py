@@ -19,19 +19,24 @@ def register():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-
+        role = request.form.get('role')
         # Validate input fields
         if not email or not password:
             flash('All fields are required.')
             return redirect(url_for('register.register'))
-
+        
+        # Validate available role
+        if role != 'student':
+            flash('Role not available at the moment.')
+            return redirect(url_for('register.register'))
+        
         # Check if email is already registered
         if any(user['email'] == email for user in users):
             flash('This email is already registered.')
             return redirect(url_for('register.register'))
 
         # Simulate saving user
-        users.append({'email': email})
+        users.append({'email': email, 'role': role})
         flash('User registered successfully (simulated).')
         session.clear()
 
