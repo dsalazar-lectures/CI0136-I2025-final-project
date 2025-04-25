@@ -1,22 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Log in</h1>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-    {% endwith %}
-    <form method="post">
-    <label for="username">User:</label> <br>
-    <input name="username" type="text"><br><br>
-    <label for="password">Password:</label><br>
-    <input name="password" type="password"><br><br>
-    <input type="submit" value="Log In">
-    </form>
+  <h2>Log in</h2>
 
+  <form method="post" action="{{ url_for('auth.login') }}">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email:</label>
+      <input name="email" type="text" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password:</label>
+      <input name="password" type="password" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Log In</button>
+  </form>
 {% endblock %}

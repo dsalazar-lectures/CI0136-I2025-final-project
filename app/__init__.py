@@ -6,7 +6,6 @@ Modules:
 
 app = Flask(__name__)
 app.secret_key = 'some-secret'
-feature/login-form-validation
 
 from .controllers.home import home as home_blueprint
 from .controllers.register import register_bp as register_blueprint  

@@ -6,39 +6,29 @@ bp = Blueprint("auth", __name__)
 # Hardcoded user list
 users = {
     "admin@example.com": {
-        "password": "admin123",  # must be between 6 and 20 characters
+        "password": "Admin1@",  
         "id": 1,
-        "role": "student"
-    },
-    "user@example.com": {
-        "password": "userpass",
-        "id": 2,
-        "role": "student"
+        "role": "Student"
     }
 }
 
 @bp.route("/login", methods=("GET", "POST"))
 def login():
     if request.method == "POST":
-        username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
         error = None
-
-        # Validations
-        if username not in users:
-            error = "User does not exist."
-        elif len(password) < 6 or len(password) > 20:
-            error = "Password must be between 6 and 20 characters long."
-        elif users[username]["password"] != password:
-            error = "Incorrect password."
+        # User validation 
+        if email not in users or users[email]["password"] != password:
+            error = "Invalid credentials."
 
         if error is None:
-            session["user_id"] = users[username]["id"]
-            session["role"] = users[username]["role"]
-            flash("Login successful.")
+            session["user_id"] = users[email]["id"]
+            session["role"] = users[email]["role"]
+            flash("Login successful.", "success")
             return redirect(url_for("auth.home"))
 
-        flash(error)
+        flash(error, "danger")
         return redirect(url_for("auth.login"))
 
     response = make_response(render_template("login.html"))
