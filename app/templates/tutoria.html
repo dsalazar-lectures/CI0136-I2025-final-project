@@ -15,5 +15,16 @@
     <p><strong>Modalidad:</strong> {{ tutoria.modalidad }}</p>
     <p><strong>Cupo disponible:</strong> {{ tutoria.cupo }}</p>
     <a href="/tutorias">Volver a la lista de tutorías</a>
+    
+    <h2>Estudiantes Inscritos</h2>
+    {% if estudiantes %}
+        <ul>
+        {% for est in estudiantes %}
+            <li>{{ est.nombre }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay estudiantes inscritos.</p>
+    {% endif %}
 </body>
 </html>

@@ -1,5 +1,5 @@
 class Tutoria:
-    def __init__(self, id_tutoria, titulo_tutoria, id_tutor, materia, fecha, hora_inicio, descripcion, modalidad, cupo):
+    def __init__(self, id_tutoria, titulo_tutoria, id_tutor, materia, fecha, hora_inicio, descripcion, modalidad, cupo, estudiantes_inscritos=None):
         self.id = id_tutoria
         self.titulo = titulo_tutoria
         self.tutor = id_tutor
@@ -9,12 +9,21 @@ class Tutoria:
         self.descripcion = descripcion
         self.modalidad = modalidad
         self.cupo = cupo
+        self.estudiantes_inscritos = estudiantes_inscritos if estudiantes_inscritos else []
 
 class RepoTutorias:
     def __init__(self):
+        
+
         self.tutorias = [
-            Tutoria(1, "Tutoria de C++", "Sergio Brenes", "Programación II", "2025-10-01", "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5),
-            Tutoria(2, "Limites", "Alejandro Pacheco", "Cálculo I", "2025-10-05", "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10),
+            Tutoria(1, "Tutoria de C++", "Sergio Brenes", "Programación II", "2025-10-01", 
+                    "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5,
+                     estudiantes_inscritos=[{"id": "e1", "nombre": "Carlos Matamoros"}, 
+                                            {"id": "e2", "nombre": "María López"}]),
+
+            Tutoria(2, "Limites", "Alejandro Pacheco", "Cálculo I", "2025-10-05", 
+                    "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10,
+                    estudiantes_inscritos=[]),
         ]
 
     def get_tutoria_by_id(self, id):
