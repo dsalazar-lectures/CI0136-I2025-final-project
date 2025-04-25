@@ -19,15 +19,4 @@
 
     <button type="submit" id="registerBtn" {% if form_data %}data-enabled="true"{% else %}disabled{% endif %}>Register</button>
   </form>
-
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-  
 {% endblock %}
