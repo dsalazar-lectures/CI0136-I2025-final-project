@@ -1,0 +1,17 @@
+<!-- sendmail.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Correo de Prueba</title>
+</head>
+<body>
+    <h1>Enviar Correo de Prueba</h1>
+
+    <form action="{{ url_for('mail.send_test_email') }}" method="POST">
+        <button type="submit">Enviar Correo de Prueba</button>
+    </form>
+
+</body>
+</html>
