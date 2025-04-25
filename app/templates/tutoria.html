@@ -17,10 +17,10 @@
     <a href="/tutorias">Volver a la lista de tutorías</a>
     
     <h2>Estudiantes Inscritos</h2>
-    {% if estudiantes %}
+    {% if tutoria.estudiantes_inscritos %}
         <ul>
-        {% for est in estudiantes %}
-            <li>{{ est.nombre }}</li>
+        {% for estudiante in tutoria.estudiantes_inscritos %}
+            <li>{{ estudiante.nombre }}</li>
         {% endfor %}
         </ul>
     {% else %}

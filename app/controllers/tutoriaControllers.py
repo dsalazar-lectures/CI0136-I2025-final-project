@@ -13,4 +13,4 @@ def getTutoriaById(id):
     if tutoria is None:
         return render_template('404.html'), 404
     else:
-        return render_template('tutoria.html', tutoria=tutoria, estudiantes=tutoria.estudiantes_inscritos)
+        return render_template('tutoria.html', tutoria=tutoria)
