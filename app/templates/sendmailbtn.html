@@ -7,11 +7,20 @@
     <title>Enviar Correo de Prueba</title>
 </head>
 <body>
-    <h1>Enviar Correo de Prueba</h1>
+  <h1>Enviar Correo de Prueba</h1>
 
-    <form action="{{ url_for('mail.send_test_email') }}" method="POST">
-        <button type="submit">Enviar Correo de Prueba</button>
-    </form>
-
+  <form action="{{ url_for('enviar') }}" method="POST">
+    <input type="email" name="email" placeholder="Tu correo" required>
+    <button type="submit">Enviar Correo</button>
+  </form>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+      {% for msg in messages %}
+        <li>{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% endwith %}
 </body>
 </html>

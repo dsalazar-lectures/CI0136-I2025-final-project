@@ -1,22 +1,21 @@
-from flask import Flask
+from flask import Flask, render_template, request
+from app.models.services import email_service
+from app.models.builders import email_notification_builders
+from app.controllers.email_controller import send_email
 
-from .extensions import mail
-import os
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = "secreto"
 
-app = Flask(__name__)
+    @app.route("/")
+    def index():
+        return render_template("sendmailbtn.html")
 
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL PORT'] = 465
-app.config['MAIL USERNAME'] = os.getenv('DEL_EMAIL')
-app.config['MAIL PASSWORD'] = os.getenv('PASSWORD')
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = True
+    @app.route("/enviar", methods=["POST"])
+    def enviar():
+        to = request.form.get("email")
+        service = email_service.SMTPEmailService()
+        builder = email_notification_builders.loginEmailBuilder()
+        return send_email(builder, to, service)
 
-mail.init_app(app)
-
-from .controllers.home import home as home_blueprint
-from .controllers.mail_sender import mail as mail_sender_blueprint
-
-# Register blueprints
-app.register_blueprint(home_blueprint)
-app.register_blueprint(mail_sender_blueprint)
+    return app

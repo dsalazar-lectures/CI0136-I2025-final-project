@@ -1,16 +1,42 @@
-from flask import Flask
-from flask_mail import Message
-from app.extensions import mail
+# Biblioteca para la clase abstracta
+from abc import ABC, abstractmethod
+
+# Bibliotecas para un manejo seguro de credenciales
 import os
-import dotenv
-dotenv.load_dotenv()
+from dotenv import load_dotenv
 
+# Bibliotecas para crear y enviar un mensaje por email
+import smtplib
+from email.message import EmailMessage
 
-def send_login_notification(recipient_email):
-    msg = Message(
-        subject='Notificación de inicio de sesión',
-        sender=os.getenv('DEL_EMAIL'),
-        recipients=[recipient_email]
-    )
-    msg.body = "Este es un correo de prueba enviado desde Flask."
-    #mail.send(msg)
+# Clase abstracta para el servicio de notificaciones por correo electrnico
+class EmailService(ABC):
+  @abstractmethod
+  def send_email(self, to: str, subject: str, message: str) -> bool:
+    pass
+
+# Clase que envía un correo electrónico
+class SMTPEmailService(EmailService):
+  def __init__(self):
+    # Leemos un .env donde se encuentran credenciales del correo que enviará el email
+    load_dotenv() 
+    self.emailSender = os.getenv("SENDER")  # Obtenemos la dirección de correo electrónico
+    self.passwordSender = os.getenv("PASSWORD")  # Obtenemos la contraseña
+
+  def send_email(self, to, subject, message):
+    # Construcción del email
+    email = EmailMessage()
+    email["From"] = self.emailSender
+    email["To"] = to
+    email["Subject"] = subject
+    email.set_content(message)
+
+    # Envío del email con smtp
+    try:
+      with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(self.emailSender, self.passwordSender)
+        smtp.send_message(email)
+      return True
+    except Exception as e:
+      print(f"Error: {e}")
+      return False
