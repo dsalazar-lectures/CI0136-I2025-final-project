@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from app.models.services import email_service
-from app.models.builders import email_notification_builders
+from app.models.builders import body_factories
 from app.controllers.email_controller import send_email
 
 def create_app():
@@ -14,8 +14,10 @@ def create_app():
   @app.route("/enviar", methods=["POST"])
   def enviar():
     to = request.form.get("email")
+
+    factory = body_factories.EmailBuilderFactory();
     service = email_service.SMTPEmailService()
-    builder = email_notification_builders.loginEmailBuilder()
-    return send_email(builder, to, service)
+
+    return send_email(factory.createBody("login"), to, service)
 
   return app

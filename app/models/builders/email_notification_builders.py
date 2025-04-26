@@ -2,13 +2,13 @@
 from abc import ABC, abstractmethod
 
 # Clase abstracta para las notificaciones de tipo email
-class EmailBuilder(ABC):
+class Builder(ABC):
   @abstractmethod
   def buildBody(self) -> dict:
     pass
 
 # Clase que estructura un correo de tipo login
-class loginEmailBuilder(EmailBuilder):
+class loginEmailBuilder(Builder):
   def buildBody(self):
     return {
         "subject": "Inicio de sesión exitoso",
@@ -16,7 +16,7 @@ class loginEmailBuilder(EmailBuilder):
     }
 
 # Clase que estructura un correo de tipo reminder
-class ReminderEmailBuilder(EmailBuilder):
+class ReminderEmailBuilder(Builder):
   def buildBody(self):
     return {
         "subject": "Recordatorio de tutoría",

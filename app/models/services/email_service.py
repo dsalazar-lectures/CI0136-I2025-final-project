@@ -19,7 +19,7 @@ class EmailService(ABC):
 class SMTPEmailService(EmailService):
   def __init__(self):
     # Leemos un .env donde se encuentran credenciales del correo que enviará el email
-    load_dotenv() 
+    load_dotenv()
     self.emailSender = os.getenv("SENDER")  # Obtenemos la dirección de correo electrónico
     self.passwordSender = os.getenv("PASSWORD")  # Obtenemos la contraseña
 
