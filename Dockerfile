@@ -32,4 +32,4 @@ RUN mkdir -p logs instance
 EXPOSE 5000
 
 # Run the application with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:create_app()"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
