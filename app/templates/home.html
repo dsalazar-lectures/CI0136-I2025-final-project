@@ -1,9 +1,14 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Bienvenido al Sistema de Calificaciones</h1>
 
-{% block content %}
+    <button onclick="openReviewPopup()">Calificar</button>
 
-<br>
-<h1>Hello</h1>
-  
-
-{% endblock %}
+    {% include "review_popup.html" %}
+</body>
+</html>

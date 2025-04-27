@@ -1,0 +1,18 @@
+<div id="reviewModal" style="display:none; border:1px solid black; padding:20px; margin-top:20px;">
+    <h2>Deja tu resena</h2>
+    <form action="/send-review" method="POST">
+        <label>Califica (1-5):</label><br>
+        <input name="rating" type="number" min="1" max="5" required><br><br>
+        <label>Comentario:</label><br>
+        <textarea name="comment" rows="4" cols="50"></textarea><br><br>
+        <input type="hidden" name="tutor_id" value="999999999">  <!-- Tutor de prueba -->
+        <input type="hidden" name="session_id" value="12356789"> <!-- Sesión de prueba -->
+        <button type="submit">Enviar Resena</button>
+    </form>
+</div>
+
+<script>
+    function openReviewPopup() {
+        document.getElementById('reviewModal').style.display = 'block';
+    }
+</script>
