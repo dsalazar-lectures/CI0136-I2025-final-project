@@ -22,8 +22,7 @@
         id="email" 
         name="email" 
         class="form-control {% if errors and errors.get('email') %}is-invalid{% elif form_data.get('email') %}is-valid{% endif %}" 
-        value="{{ form_data.get('email', '') }}"
-        required>
+        value="{{ form_data.get('email', '') }}">
       {% if errors and errors.get('email') %}
         <div class="invalid-feedback">
           {{ errors.get('email') }}
@@ -38,8 +37,7 @@
         id="password" 
         name="password" 
         class="form-control {% if errors and errors.get('password') %}is-invalid{% elif form_data.get('password') %}is-valid{% endif %}" 
-        value="{{ form_data.get('password', '') }}"
-        required>
+        value="{{ form_data.get('password', '') }}">
       {% if errors and errors.get('password') %}
         <div class="invalid-feedback">
           {{ errors.get('password') }}

@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template
 
-home = Blueprint('home', __name__)
+home_bp = Blueprint('home', __name__)
 
-@home.route("/")
-@home.route('/<name>')
-def greeting(name=None):
-    return render_template('home.html', person=name)
+@home_bp.route("/home")
+def home():
+    return render_template("home.html")

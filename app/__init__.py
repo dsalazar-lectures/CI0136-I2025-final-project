@@ -1,19 +1,15 @@
 from flask import Flask
-"""
-This module initializes the Flask application and registers the blueprints for it.
-Modules:
-"""
 
 app = Flask(__name__)
 app.secret_key = 'some-secret'
 
-from .controllers.home import home as home_blueprint
+from .controllers.home import home_bp as home_blueprint
 from .controllers.register import register_bp as register_blueprint  
-from .controllers.auth import bp as auth_bp
+from .controllers.auth import auth_bp as auth_blueprint
 
-# home_blueprint: Blueprint for handling routes related to the home page.
+# home page routes
 app.register_blueprint(home_blueprint)
-# register_blueprint: Blueprint for handling routes related to user registration.
+# registration routes
 app.register_blueprint(register_blueprint)
-# auth_bp: Blueprint for handling routes related to user authentication
-app.register_blueprint(auth_bp)
+# authentication routes
+app.register_blueprint(auth_blueprint)

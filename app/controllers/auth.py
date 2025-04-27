@@ -1,43 +1,38 @@
-from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
-from flask import make_response
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for, make_response
+from ..models.repositories.mock_user_repository import MockUserRepository
 
-bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth", __name__)
+user_repo = MockUserRepository()
 
-# Hardcoded user list
-users = {
-    "admin@example.com": {
-        "password": "Admin1@",  
-        "id": 1,
-        "role": "Student"
-    }
-}
-
-@bp.route("/login", methods=("GET", "POST"))
+@auth_bp.route("/login", methods=("GET", "POST"))
 def login():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
         error = None
-        # User validation 
-        if email not in users or users[email]["password"] != password:
+
+        # save form 
+        session['form_data'] = {
+            'email': email,
+            'password': password,
+        }
+
+        user = user_repo.get_user_by_email(email)
+
+        if user is None or user["password"] != password:
             error = "Invalid credentials."
 
         if error is None:
-            session["user_id"] = users[email]["id"]
-            session["role"] = users[email]["role"]
+            session["user_id"] = user["id"]
+            session["role"] = user["role"]
             flash("Login successful.", "success")
-            return redirect(url_for("auth.home"))
+            return redirect(url_for("home.home"))
 
         flash(error, "danger")
         return redirect(url_for("auth.login"))
 
-    response = make_response(render_template("login.html"))
-    # Prevent browser caching of the login page to avoid displaying old flash messages
-    # when the user presses the "Back" button after logging in or submitting the form.
+    form_data = session.pop('form_data', {})
+    response = make_response(render_template("login.html", form_data=form_data))
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0"
     response.headers["Pragma"] = "no-cache"
     return response
-
-@bp.route("/home")
-def home():
-    return render_template("home.html")

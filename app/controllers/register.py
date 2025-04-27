@@ -1,75 +1,56 @@
 from flask import Blueprint, render_template, request, redirect, flash, session, url_for, make_response
-import re
+from ..utils.utils import validate_email, validate_password
+from ..models.repositories.mock_user_repository import MockUserRepository
 
 register_bp = Blueprint('register', __name__, url_prefix='/register')
-
-# Simulated user list
-users = [
-    {'email': 'admin@example.com'}
-]
+user_repo = MockUserRepository() 
 
 @register_bp.route('/', methods=['GET', 'POST'])
 def register():
-    """
-    Handles user registration.
-
-    Routes:
-    - GET: Renders the registration form.
-    - POST: Processes registration form submission.
-    """
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
         role = request.form.get('role')
 
-        # Flash form data to session
+        # Save form fields
         session['form_data'] = {
             'email': email,
             'password': password,
             'role': role
         }
 
-        # Validate input fields
+        # Validations
         if not email or not password:
             flash('All fields are required.', 'danger')
             return redirect(url_for('register.register'))
 
-        # Validate email format
-        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        if not re.match(email_regex, email):
+        if not validate_email(email):  
             flash('Invalid email.', 'danger')
             return redirect(url_for('register.register'))
 
-        # Validate password complexity
-        password_regex = r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$'
-        if not re.match(password_regex, password):
+        if not validate_password(password): 
             flash('Password must include at least one uppercase letter, one number, and one special character.', 'danger')
             return redirect(url_for('register.register'))
 
-        # Validate password length
         if len(password) < 6:
-            flash('Password must be at least 6 characters long.')
+            flash('Password must be at least 6 characters long.', 'danger')
+            return redirect(url_for('register.register'))
 
-        # Validate available role
         if role != 'Student':
             flash('Role not available at the moment.', 'danger')
             return redirect(url_for('register.register'))
 
-        # Check if email is already registered
-        if any(user['email'] == email for user in users):
+        if user_repo.user_exists(email):  # validate if the user exist
             flash('This email is already registered.', 'danger')
             return redirect(url_for('register.register'))
 
-        # Simulate saving user
-        users.append({'email': email, 'role': role})
-        session.pop('form_data', None)  # Clear form data after successful registration
-        session.clear()
+        # Add user to the repository
+        user_repo.add_user(email, password, role) 
 
-        # Flash success message and redirect
         flash('Registration successful. You can now log in.', 'success')
-        return redirect(url_for("register.register"))
+        return redirect(url_for("register.register")) 
 
-    # Render the registration form with no-cache headers
+    
     form_data = session.pop('form_data', {})
     response = make_response(render_template('register.html', form_data=form_data))
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0"
