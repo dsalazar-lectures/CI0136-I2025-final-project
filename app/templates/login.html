@@ -16,15 +16,16 @@
   <form method="post" action="{{ url_for('auth.login') }}" novalidate>
     <div class="mb-3">
       <label for="email" class="form-label">Email:</label>
-      <input name="email" type="text" class="form-control" value="{{ form_data.get('email', '') }}">
+      <input name="email" id="email" type="text" class="form-control" value="{{ form_data.get('email', '') }}">
     </div>
 
     <div class="mb-3">
       <label for="password" class="form-label">Password:</label>
-      <input name="password" type="password" class="form-control" value="{{ form_data.get('password', '') }}">
+      <input name="password" id="password" type="password" class="form-control" value="{{ form_data.get('password', '') }}">
     </div>
 
-    <button type="submit" class="btn btn-primary">Log In</button>
+    <button type="submit" class="btn btn-primary" id="submitBtn"
+    {% if not form_data %}disabled{% endif %}>Log In</button>
   </form>
 
   <p class="mt-3">
