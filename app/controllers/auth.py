@@ -22,9 +22,10 @@ def login():
             flash(error, "danger")
             return redirect(url_for("auth.login"))
 
+        session.pop('form_data', None)
+        session.clear()
         session["user_id"] = user["id"]
         session["role"] = user["role"]
-        flash("Login successful.", "success")
         return redirect(url_for("home.home"))
 
     form_data = session.pop('form_data', {})
@@ -32,3 +33,10 @@ def login():
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0"
     response.headers["Pragma"] = "no-cache"
     return response
+
+
+@auth_bp.route("/logout", methods=["POST"])
+def logout():
+    """Clear the current session, including the stored user id."""
+    session.clear()
+    return redirect(url_for("auth.login"))
