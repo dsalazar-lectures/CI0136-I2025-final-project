@@ -3,7 +3,7 @@ Home controller module.
 
 This module defines routes and handlers for the home page of the application.
 """
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.services.audit import log_audit, AuditActionType
 from ..utils.auth import login_required
 
