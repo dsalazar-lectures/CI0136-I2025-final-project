@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ tutoria.titulo }}</title>
+    <title>{{ tutoring.title }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/tutoring_style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -11,26 +11,26 @@
 </head>
 <body>
     <div class="container">
-    <h1>{{ tutoria.titulo }}</h1>
+    <h1>{{ tutoring.title }}</h1>
     <div class="divider"></div>
 
     <div class="details">
-    <div class="detail-item"><i class="fa-solid fa-chalkboard-user"></i><span><strong>Tutor:</strong> {{ tutoria.tutor }}</span></div>
-    <div class="detail-item"><i class="fa-solid fa-book"></i><span><strong>Curso:</strong> {{ tutoria.materia }}</span></div>
-    <div class="detail-item"><i class="fa-solid fa-calendar-days"></i><span><strong>Fecha:</strong> {{ tutoria.fecha }}</span></div>
-    <div class="detail-item"><i class="fa-solid fa-clock"></i><span><strong>Hora:</strong> {{ tutoria.hora_inicio }}</span></div>
-    <div class="detail-item"><i class="fa-solid fa-pen-to-square"></i><span><strong>Descripción:</strong> {{ tutoria.descripcion }}</span></div>
-    <div class="detail-item"><i class="fa-solid fa-laptop"></i><span><strong>Modalidad:</strong> {{ tutoria.modalidad }}</span></div>
-    <div class="detail-item"><i class="fa-solid fa-user-group"></i><span><strong>Cupos disponibles:</strong> {{ tutoria.cupo }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-chalkboard-user"></i><span><strong>Tutor:</strong> {{ tutoring.tutor }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-book"></i><span><strong>Curso:</strong> {{ tutoring.subject }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-calendar-days"></i><span><strong>Fecha:</strong> {{ tutoring.date }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-clock"></i><span><strong>Hora:</strong> {{ tutoring.start_time }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-pen-to-square"></i><span><strong>Descripción:</strong> {{ tutoring.description }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-laptop"></i><span><strong>Modalidad:</strong> {{ tutoring.method }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-user-group"></i><span><strong>Cupos disponibles:</strong> {{ tutoring.capacity }}</span></div>
     </div>
 
     <a href="/tutorias" class="button-back">Volver a la lista de tutorías</a>
     
     <div class="students">
     <h2>Estudiantes Inscritos</h2>
-    {% if tutoria.estudiantes_inscritos %}
+    {% if tutoring.student_list %}
         <div class="student-list">
-        {% for estudiante in tutoria.estudiantes_inscritos %}
+        {% for estudiante in tutoring.student_list %}
         <div class="student-card">
             <i class="fa-solid fa-user"></i>
             <span class="student-name">{{ estudiante.nombre }}</span>

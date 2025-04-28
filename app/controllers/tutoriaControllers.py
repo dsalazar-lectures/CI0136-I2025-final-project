@@ -1,16 +1,16 @@
 from flask import Blueprint, render_template
-from ..models.repoTutorias import RepoTutorias
+from ..models.repoTutorias import RepoTutoring
 
-tutoria = Blueprint('tutoria', __name__)
+tutoring = Blueprint('tutoring', __name__)
 
-repo = RepoTutorias()
+repo = RepoTutoring()
 
-@tutoria.route('/tutoria/<id>')
+@tutoring.route('/tutoring/<id>')
 
 def getTutoriaById(id):
-    tutoria = repo.get_tutoria_by_id(id)
+    tutoring = repo.get_tutoria_by_id(id)
 
-    if tutoria is None:
+    if tutoring is None:
         return render_template('404.html'), 404
     else:
-        return render_template('tutoria.html', tutoria=tutoria)
+        return render_template('tutoria.html', tutoring=tutoring)

@@ -1,29 +1,29 @@
-class Tutoria:
-    def __init__(self, id_tutoria, titulo_tutoria, id_tutor, materia, fecha, hora_inicio, descripcion, modalidad, cupo, estudiantes_inscritos=None):
-        self.id = id_tutoria
-        self.titulo = titulo_tutoria
+class Tutoring:
+    def __init__(self, id_tutoring, title_tutoring, id_tutor, subject, date, start_time, description, method, capacity, student_list=None):
+        self.id = id_tutoring
+        self.title = title_tutoring
         self.tutor = id_tutor
-        self.materia = materia
-        self.fecha = fecha
-        self.hora_inicio = hora_inicio
-        self.descripcion = descripcion
-        self.modalidad = modalidad
-        self.cupo = cupo
-        self.estudiantes_inscritos = estudiantes_inscritos if estudiantes_inscritos else []
+        self.subject = subject
+        self.date = date
+        self.start_time = start_time
+        self.description = description
+        self.method = method
+        self.capacity = capacity
+        self.student_list = student_list if student_list else []
 
-class RepoTutorias:
+class RepoTutoring:
     def __init__(self):
         
 
         self.tutorias = [
-            Tutoria(1, "Tutoria de C++", "Sergio Brenes", "Programación II", "2025-10-01", 
+            Tutoring(1, "Tutoria de C++", "Sergio Brenes", "Programación II", "2025-10-01", 
                     "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5,
-                     estudiantes_inscritos=[{"id": "e1", "nombre": "Carlos Matamoros"}, 
+                     student_list=[{"id": "e1", "nombre": "Carlos Matamoros"}, 
                                             {"id": "e2", "nombre": "María López"}]),
 
-            Tutoria(2, "Limites", "Alejandro Pacheco", "Cálculo I", "2025-10-05", 
+            Tutoring(2, "Limites", "Alejandro Pacheco", "Cálculo I", "2025-10-05", 
                     "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10,
-                    estudiantes_inscritos=[]),
+                    student_list=[]),
         ]
 
     def get_tutoria_by_id(self, id):
