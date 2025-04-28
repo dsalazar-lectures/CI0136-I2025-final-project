@@ -30,10 +30,10 @@
     <h2>Estudiantes Inscritos</h2>
     {% if tutoring.student_list %}
         <div class="student-list">
-        {% for estudiante in tutoring.student_list %}
+        {% for student in tutoring.student_list %}
         <div class="student-card">
             <i class="fa-solid fa-user"></i>
-            <span class="student-name">{{ estudiante.nombre }}</span>
+            <span class="student-name">{{ student.name }}</span>
         </div>
         {% endfor %}
         </div>
