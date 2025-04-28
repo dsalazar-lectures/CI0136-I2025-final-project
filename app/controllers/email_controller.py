@@ -6,7 +6,7 @@ from app.models.builders import body_factories
 
 from flask import Blueprint, render_template
 
-mail_bp = Blueprint('mail', __name__)
+mail_bp = Blueprint('email', __name__)
 
 @mail_bp.route("/enviarnotificacion")
 def index():
@@ -30,5 +30,5 @@ def send_email(builder: Builder, to: str, service: EmailService):
   else:
     flash("Error al enviar el correo")
 
-  return redirect(url_for("index"))
+  return redirect("/")
 
