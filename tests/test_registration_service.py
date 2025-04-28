@@ -1,12 +1,17 @@
+"""
+Tests for user registration and login validation services.
+"""
 import pytest
 from app.models.repositories.mock_user_repository import MockUserRepository
 from app.models.services.registration_service import validate_registration_data, validate_login_data
 
 @pytest.fixture
 def mock_repo():
+    """Returns a mock user repository for testing."""
     return MockUserRepository()
 
 def test_validate_registration_data_success(mock_repo):
+    """Tests successful registration validation with valid data."""
     error_message, category = validate_registration_data(
         email="newuser@example.com",
         password="Password1@",
@@ -17,6 +22,7 @@ def test_validate_registration_data_success(mock_repo):
     assert category is None
 
 def test_validate_registration_missing_fields(mock_repo):
+    """Tests registration validation with missing required fields."""
     error_message, category = validate_registration_data(
         email="",
         password="",
@@ -27,6 +33,7 @@ def test_validate_registration_missing_fields(mock_repo):
     assert category == 'danger'
 
 def test_validate_registration_invalid_email(mock_repo):
+    """Tests registration validation with an invalid email format."""
     error_message, category = validate_registration_data(
         email="invalidemail",
         password="Password1@",
@@ -37,6 +44,11 @@ def test_validate_registration_invalid_email(mock_repo):
     assert category == 'danger'
 
 def test_validate_registration_weak_password(mock_repo):
+    """
+    Tests registration validation with a weak password.
+    A weak password is defined as one that does not meet the complexity requirements:
+    one uppercase letter, one number, and one special character.
+    """
     error_message, category = validate_registration_data(
         email="test@example.com",
         password="weak",
@@ -47,6 +59,7 @@ def test_validate_registration_weak_password(mock_repo):
     assert category == 'danger'
 
 def test_validate_login_success(mock_repo):
+    """Tests successful login validation with valid credentials."""
     user, error = validate_login_data(
         email="admin@example.com",
         password="Admin1@",
@@ -56,6 +69,7 @@ def test_validate_login_success(mock_repo):
     assert error is None
 
 def test_validate_login_invalid_credentials(mock_repo):
+    """Tests login validation with invalid credentials."""
     user, error = validate_login_data(
         email="wrong@example.com",
         password="wrongpass",
