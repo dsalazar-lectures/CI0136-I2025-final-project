@@ -1,23 +1,33 @@
-from flask import Flask, render_template, request
-from app.models.services import email_service
-from app.models.builders import body_factories
-from app.controllers.email_controller import send_email
+"""
+Flask application initialization.
+This file creates the Flask app instance and registers all blueprints.
+"""
+from flask import Flask
+from app.middleware.error_logging import error_logging_middleware
 
-def create_app():
-  app = Flask(__name__)
-  app.secret_key = "secreto"
+app = Flask(__name__)
+# Initialize error logging middleware
+error_logging_middleware(app)
+# Secret key for session management and CSRF(Cross Site Request Forgery) protection
+app.secret_key = 'some-secret'
 
-  @app.route("/")
-  def index():
-    return render_template("sendmailbtn.html")
+# Import blueprint modules
+from .controllers.home import home_bp as home_blueprint
+from .controllers.register import register_bp as register_blueprint  
+from .controllers.auth import auth_bp as auth_blueprint
+from .controllers.tutoriaControllers import tutoring as tutoria_blueprint
+from .controllers.comments import comments_bp
+from .controllers.ratings import ratings_bp
+from .controllers.email_controller import mail_bp
 
-  @app.route("/enviar", methods=["POST"])
-  def enviar():
-    to = request.form.get("email")
 
-    factory = body_factories.EmailBuilderFactory();
-    service = email_service.SMTPEmailService()
+   # Register blueprints to enable routing
+app.register_blueprint(home_blueprint)          # Home page routes
+app.register_blueprint(register_blueprint)      # Registration routes
+app.register_blueprint(auth_blueprint)          # Authentication routes
+app.register_blueprint(tutoria_blueprint)      # Tutoring routes
+app.register_blueprint(comments_bp)
+app.register_blueprint(ratings_bp, url_prefix='/comments')
+app.register_blueprint(mail_bp, url_prefix='/email')
 
-    return send_email(factory.createBody("login"), to, service)
-
-  return app
+   
