@@ -1,0 +1,1 @@
+# Future model for users with Firebase 
