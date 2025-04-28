@@ -46,7 +46,7 @@
         const stars = document.querySelectorAll('.rating-stars .fa-star');
         const ratingInput = document.getElementById('selected-rating');
         
-        // Función para actualizar las estrellas
+        // Update stars function
         function updateStars(selectedRating) {
             stars.forEach(star => {
                 const rating = parseInt(star.getAttribute('data-rating'));
