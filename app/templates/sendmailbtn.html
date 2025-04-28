@@ -9,7 +9,7 @@
 <body>
   <h1>Enviar Correo de Prueba</h1>
 
-  <form action="{{ url_for('enviar') }}" method="POST">
+  <form action="{{ url_for('mail.enviar') }}" method="POST">
     <input type="email" name="email" placeholder="Tu correo" required>
     <button type="submit">Enviar Correo</button>
   </form>
