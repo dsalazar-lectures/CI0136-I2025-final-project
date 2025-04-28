@@ -3,8 +3,12 @@ Flask application initialization.
 This file creates the Flask app instance and registers all blueprints.
 """
 from flask import Flask
-# Create Flask application instance
+from app.middleware.error_logging import error_logging_middleware
+
+
 app = Flask(__name__)
+# Initialize error logging middleware
+error_logging_middleware(app)
 # Secret key for session management and CSRF(Cross Site Request Forgery) protection
 app.secret_key = 'some-secret'
 
