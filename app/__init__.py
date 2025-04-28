@@ -18,6 +18,7 @@ from .controllers.auth import auth_bp as auth_blueprint
 from .controllers.tutoriaControllers import tutoring as tutoria_blueprint
 from .controllers.comments import comments_bp
 from .controllers.ratings import ratings_bp
+from .controllers.email_controller import mail_bp
 
 
    # Register blueprints to enable routing
@@ -27,5 +28,6 @@ app.register_blueprint(auth_blueprint)          # Authentication routes
 app.register_blueprint(tutoria_blueprint)      # Tutoring routes
 app.register_blueprint(comments_bp)
 app.register_blueprint(ratings_bp, url_prefix='/comments')
+app.register_blueprint(mail_bp, url_prefix='/email')
 
    

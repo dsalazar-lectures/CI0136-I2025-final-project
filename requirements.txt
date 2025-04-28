@@ -19,3 +19,6 @@ setuptools==79.0.1
 SQLAlchemy==1.4.49
 typing_extensions==4.13.2
 Werkzeug==2.3.3
+
+Flask-Mail==0.10.0
+python-dotenv==1.0.1
