@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
-    <h1>Bienvenido al Sistema de Calificaciones</h1>
+{% extends "layout.html" %}
 
-    <button onclick="openReviewPopup()">Calificar</button>
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">Bienvenido al Sistema de Calificaciones</h1>
+
+    <div class="text-center my-4">
+        <button class="btn btn-primary" onclick="openReviewPopup()">Calificar Tutoría</button>
+    </div>
 
     {% include "review_popup.html" %}
-</body>
-</html>
+    <div id="modalOverlay" onclick="closeReviewPopup()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+{% endblock %}

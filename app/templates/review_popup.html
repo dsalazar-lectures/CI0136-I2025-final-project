@@ -1,18 +1,125 @@
-<div id="reviewModal" style="display:none; border:1px solid black; padding:20px; margin-top:20px;">
-    <h2>Deja tu resena</h2>
-    <form action="/send-review" method="POST">
-        <label>Califica (1-5):</label><br>
-        <input name="rating" type="number" min="1" max="5" required><br><br>
-        <label>Comentario:</label><br>
-        <textarea name="comment" rows="4" cols="50"></textarea><br><br>
-        <input type="hidden" name="tutor_id" value="999999999">  <!-- Tutor de prueba -->
-        <input type="hidden" name="session_id" value="12356789"> <!-- Sesión de prueba -->
-        <button type="submit">Enviar Resena</button>
-    </form>
+<!-- Este es el pop-up del review -->
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+
+        <div id="modalOverlay" style=
+            "display:none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background-color: rgba(0, 0, 0, 0.5); 
+            z-index: 99998;">
+        </div>
+
+        <div id="reviewModal" class="modal-custom" style=
+            "display:none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 99999; 
+            width: 90%; 
+            max-width: 500px;">
+        
+            <div class="card shadow">
+                <div class="card-header text-center py-3">
+                    <h4 class="mb-0">Califica a tu Tutor</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/send-review">
+                        <div class="mb-4 text-center">
+                            <div class="rating-stars mb-2">
+                                <i class="far fa-star" data-rating="1"></i>
+                                <i class="far fa-star" data-rating="2"></i>
+                                <i class="far fa-star" data-rating="3"></i>
+                                <i class="far fa-star" data-rating="4"></i>
+                                <i class="far fa-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" name="rating" id="selected-rating" value="">
+                            <p class="text-muted small">Haz clic en una estrella para calificar</p>
+                        </div>
+            
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Deja un comentario</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="4" placeholder="Escribe tu opinión aquí..."></textarea>
+                        </div>
+            
+                        <input type="hidden" name="tutor_id" value="Tutor Tutor">
+                        <input type="hidden" name="session_id" value="Sesion de Python">
+            
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-outline-secondary" onclick="closeReviewPopup()">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+
+
+
+{% block scripts %}
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.rating-stars .fa-star');
+        const ratingInput = document.getElementById('selected-rating');
+
+        function updateStars(selectedRating) {
+            stars.forEach(star => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                if (rating <= selectedRating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas', 'star-filled');
+                } else {
+                    star.classList.remove('fas', 'star-filled');
+                    star.classList.add('far');
+                }
+            });
+            ratingInput.value = selectedRating;
+        }
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                updateStars(rating);
+            });
+
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                stars.forEach(s => {
+                    const r = parseInt(s.getAttribute('data-rating'));
+                    if (r <= rating) {
+                        s.classList.add('star-filled');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseleave', function() {
+                if (!ratingInput.value) {
+                    stars.forEach(s => {
+                        s.classList.remove('star-filled');
+                    });
+                } else {
+                    updateStars(parseInt(ratingInput.value));
+                }
+            });
+        });
+    });
+
+    function closeReviewPopup() {
+        document.getElementById('reviewModal').style.display = 'none';
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+
     function openReviewPopup() {
         document.getElementById('reviewModal').style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
     }
 </script>
+{% endblock %}
