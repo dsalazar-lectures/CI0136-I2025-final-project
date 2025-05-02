@@ -94,6 +94,7 @@ The workflow follows a branching scheme organized by features and sprints.
    - CHK - CHIKI  
    - LCS - Los Crudos  
    - TDS - Tronaditas🔥
+   - AIA - Agentes IA
 - **Component Assignment:**
   - `001` - User Management
   - `002` - Search and Selection of Tutorials
@@ -131,6 +132,7 @@ All user stories follow the **INVEST principles:** Independent, Negotiable, Valu
    - CHK - CHIKI  
    - LCS - Los Crudos  
    - TDS - Tronaditas🔥
+   - AIA - Agentes IA
 
 
 ### User Story Format
