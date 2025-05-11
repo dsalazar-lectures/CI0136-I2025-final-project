@@ -8,7 +8,6 @@ def initialize_firebase():
         cred = credentials.Certificate("firebaseAccountKey.json")
         firebase_admin.initialize_app(cred)
     db = firestore.client()
-    print("PRIMER TESTING: ", db)
 
 def get_db():
     return db
