@@ -4,6 +4,7 @@ from models.review_model import get_all_reviews
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
+app.config['TESTING'] = False
 
 # Registrar Blueprint
 app.register_blueprint(review_bp)
