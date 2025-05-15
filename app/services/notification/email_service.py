@@ -1,6 +1,3 @@
-# Biblioteca para la clase abstracta
-from abc import ABC, abstractmethod
-
 # Bibliotecas para un manejo seguro de credenciales
 import os
 from dotenv import load_dotenv
@@ -9,21 +6,17 @@ from dotenv import load_dotenv
 import smtplib
 from email.message import EmailMessage
 
-# Clase abstracta para el servicio de notificaciones por correo electrnico
-class EmailService(ABC):
-  @abstractmethod
-  def send_email(self, to: str, subject: str, message: str) -> bool:
-    pass
+from app.services.notification.I_notification_service import NotificationService
 
 # Clase que envía un correo electrónico
-class SMTPEmailService(EmailService):
+class SMTPEmailService(NotificationService):
   def __init__(self):
     # Leemos un .env donde se encuentran credenciales del correo que enviará el email
     load_dotenv()
     self.emailSender = os.getenv("SENDER")  # Obtenemos la dirección de correo electrónico
     self.passwordSender = os.getenv("PASSWORD")  # Obtenemos la contraseña
 
-  def send_email(self, to, subject, message):
+  def send(self, to, subject, message):
     # Construcción del email
     email = EmailMessage()
     email["From"] = self.emailSender
