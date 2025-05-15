@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 
 # Acceso a los builders
-from app.models.builders import email_notification_builders
+from app.services.notification.builders import email_notification_builders
 
 # Clase abstracta para las fabricas
 class BodyFactory(ABC):
