@@ -9,29 +9,48 @@ document.addEventListener('DOMContentLoaded', function () {
     const passwordField = document.getElementById('password');
     const selectField = document.getElementById('role'); 
     const submitBtn = document.getElementById('submitBtn');
-    const passwordTooltip = document.createElement('div'); // Tooltip element
 
-    // Style the tooltip
-    passwordTooltip.style.position = 'absolute';
-    passwordTooltip.style.backgroundColor = '#f8d7da';
-    passwordTooltip.style.color = '#721c24';
-    passwordTooltip.style.padding = '5px';
-    passwordTooltip.style.border = '1px solid #f5c6cb';
-    passwordTooltip.style.borderRadius = '4px';
-    passwordTooltip.style.fontSize = '12px';
-    passwordTooltip.style.display = 'none'; // Hidden by default
-    passwordTooltip.textContent = 'Password must be at least eight characters long.';
-    document.body.appendChild(passwordTooltip);
+    // Create error message elements
+    const emailError = document.createElement('div');
+    const passwordError = document.createElement('div');
+
+    // Style error messages
+    [emailError, passwordError].forEach(error => {
+        error.style.color = 'red';
+        error.style.fontSize = '12px';
+        error.style.marginTop = '5px';
+        error.style.display = 'none'; // Hidden by default
+    });
+
+    emailError.textContent = 'Please enter a valid email address.';
+    passwordError.textContent = 'Password must be at least 8 characters long.';
+
+    // Append error messages to the DOM
+    emailField.parentNode.appendChild(emailError);
+    passwordField.parentNode.appendChild(passwordError);
 
     /**
-     * Checks if all required form fields are filled
+     * Checks if all required form fields are filled and valid
      * Enables or disables the submit button accordingly
      */
     function checkInputs() {
         let allFieldsFilled = emailField.value && passwordField.value;
         
+        // Validate email format
+        const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value);
+        if (!emailValid && emailField.value) {
+            emailError.style.display = 'block';
+        } else {
+            emailError.style.display = 'none';
+        }
+
         // Ensure password has at least 8 characters
         const isPasswordValid = passwordField.value.length >= 8;
+        if (!isPasswordValid && passwordField.value) {
+            passwordError.style.display = 'block';
+        } else {
+            passwordError.style.display = 'none';
+        }
 
         // If there's a select field (like on registration page), check that too
         if (selectField) {
@@ -39,22 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         // Update button state based on all conditions
-        submitBtn.disabled = !(allFieldsFilled && isPasswordValid);
-
-        // Show or hide tooltip based on password validity
-        if (!isPasswordValid && passwordField.value) {
-            const rect = passwordField.getBoundingClientRect();
-            passwordTooltip.style.left = `${rect.left}px`;
-            passwordTooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
-            passwordTooltip.style.display = 'block';
-        } else {
-            passwordTooltip.style.display = 'none';
-        }
-    }
-
-    // Initialize button state based on data attribute
-    if (submitBtn.getAttribute('data-enabled') === 'true') {
-        submitBtn.removeAttribute('disabled');
+        submitBtn.disabled = !(allFieldsFilled && emailValid && isPasswordValid);
     }
 
     // Add input event listeners to form fields

@@ -13,7 +13,7 @@ class MockUserRepository(IUserRepository):
         """
         self.users = {
             "admin@example.com": {
-                "password": "Admin1@",
+                "password": "Admin1@@@@@",
                 "id": 1,
                 "role": "Student"
             }

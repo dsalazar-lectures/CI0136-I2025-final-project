@@ -2,7 +2,7 @@
 Flask application initialization.
 This file creates the Flask app instance and registers all blueprints.
 """
-from flask import Flask
+from flask import Flask, render_template
 from app.middleware.error_logging import error_logging_middleware
 
 app = Flask(__name__)
@@ -30,4 +30,6 @@ app.register_blueprint(comments_bp)
 app.register_blueprint(ratings_bp, url_prefix='/comments')
 app.register_blueprint(mail_bp, url_prefix='/email')
 
-   
+@app.errorhandler(403)
+def forbidden_error(error):
+   return render_template("403.html"), 403
