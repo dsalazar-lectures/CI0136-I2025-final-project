@@ -2,7 +2,7 @@
 Tests for user registration and login validation services.
 """
 import pytest
-from app.models.repositories.mock_user_repository import MockUserRepository
+from app.models.repositories.users.mock_user_repository import MockUserRepository
 from app.models.services.registration_service import validate_registration_data, validate_login_data
 
 @pytest.fixture

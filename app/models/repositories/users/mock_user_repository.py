@@ -1,4 +1,4 @@
-from ..services.user_repository_interface import IUserRepository
+from ...services.user_repository_interface import IUserRepository
 
 class MockUserRepository(IUserRepository):
     """

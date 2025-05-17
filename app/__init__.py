@@ -4,12 +4,16 @@ This file creates the Flask app instance and registers all blueprints.
 """
 from flask import Flask
 from app.middleware.error_logging import error_logging_middleware
+from app.firebase_config import initialize_firebase
 
 app = Flask(__name__)
 # Initialize error logging middleware
 error_logging_middleware(app)
 # Secret key for session management and CSRF(Cross Site Request Forgery) protection
 app.secret_key = 'some-secret'
+
+# Inicializar Firebase
+initialize_firebase()
 
 # Import blueprint modules
 from .controllers.home import home_bp as home_blueprint
