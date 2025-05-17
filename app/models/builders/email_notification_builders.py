@@ -22,3 +22,12 @@ class ReminderEmailBuilder(Builder):
         "subject": "Recordatorio de tutoría",
         "body": "¡(user.name)!, recuerde que su tutoría de (tutoría), inicia en 1 hora"
     }
+
+
+# Clase que estructura un correo de tipo cambio de contraseña
+class PasswordChangeEmailBuilder(Builder):
+  def buildBody(self):
+    return {
+        "subject": "Contraseña actualizada",
+        "body": "Hola (Usuario), tu contraseña se ha cambiado exitosamente el día (fecha) a las (hora)."
+    }
