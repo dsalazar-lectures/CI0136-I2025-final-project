@@ -5,7 +5,7 @@ This module handles user registration functionality, including form processing,
 validation, and user creation.
 """
 from flask import Blueprint, render_template, request, redirect, flash, session, url_for, make_response
-from ..models.repositories.mock_user_repository import MockUserRepository
+from ..models.repositories.users.mock_user_repository import MockUserRepository
 from ..models.services.registration_service import validate_registration_data
 
 # Create a Blueprint for registration-related routes
