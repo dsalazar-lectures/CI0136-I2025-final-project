@@ -12,5 +12,6 @@ def tutor_profile():
     return redirect(url_for('home.home'))
   
   tutor_id = session.get('user_id')
+  print(f"tutor_id: {tutor_id}")
   tutorias = repo.get_tutorias_by_tutor(tutor_id)
   return render_template('tutor_profile.html', tutorias=tutorias)
