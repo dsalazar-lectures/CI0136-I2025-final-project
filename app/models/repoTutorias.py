@@ -31,3 +31,6 @@ class RepoTutoring:
             if t.id == int(id):
                 return t
         return None
+    
+    def get_tutorias_by_tutor(self, tutor_id):
+        return [t for t in self.tutorias if t.tutor_id == tutor_id]
