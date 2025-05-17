@@ -4,15 +4,15 @@ Authentication controller module.
 This module defines routes and handlers for authentication-related functionality.
 """
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for, make_response
-# from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
-from app.models.repositories.users.mock_user_repository import MockUserRepository
+from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
+# from app.models.repositories.users.mock_user_repository import MockUserRepository
 from ..models.services.registration_service import validate_registration_data, validate_login_data
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__)
 # Repository for retrieving and storing user data
-# user_repo = FirebaseUserRepository()
-user_repo = MockUserRepository()
+user_repo = FirebaseUserRepository()
+# user_repo = MockUserRepository()
 
 @auth_bp.route("/login", methods=("GET", "POST"))
 def login():
@@ -51,7 +51,10 @@ def login():
         session.pop('form_data', None)
         session.clear()
         session["user_id"] = user["id"]
+        session["name"] = user.get("name", email)
         session["role"] = user["role"]
+        session["email"] = email 
+
         return redirect(url_for("home.home"))
 
     # Handle GET request - display registration form

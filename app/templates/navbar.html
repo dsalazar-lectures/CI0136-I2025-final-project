@@ -1,19 +1,46 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Flask Notes App</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      <li class="nav-item">
-      <a class="nav-link" href="/#">Example</a>
-      </li>
-    </ul>
-    <form action="/logout" method="POST" class="navbar-nav mb-2 mb-lg-0">
-      <button class="btn btn-outline-light" type="submit">Cerrar sesión</button>
-    </form>
+      <!-- Sección izquierda -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Example</a>
+        </li>
+      </ul>
+
+      <!-- Sección derecha -->
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        {% if session.get("name") %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>
+              {% if session["name"] != session["user_id"] %}
+                {{ session["name"] }}
+              {% endif %}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="{{ url_for('profile.view_profile') }}">Perfil</a></li>
+            <li>
+              <form action="{{ url_for('auth.logout') }}" method="post" class="px-3">
+                <button type="submit" class="btn btn-link text-danger p-0">Cerrar sesión</button>
+              </form>
+            </li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light">Iniciar sesión</a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
-  </nav>
-  
+</nav>

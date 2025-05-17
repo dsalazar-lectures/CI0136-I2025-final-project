@@ -13,7 +13,7 @@ error_logging_middleware(app)
 app.secret_key = 'some-secret'
 
 # # Inicializar Firebase
-# initialize_firebase()
+initialize_firebase()
 
 # Import blueprint modules
 from .controllers.home import home_bp as home_blueprint
