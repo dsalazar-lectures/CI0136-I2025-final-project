@@ -2,7 +2,7 @@
 Flask application initialization.
 This file creates the Flask app instance and registers all blueprints.
 """
-from flask import Flask, render_template
+from flask import Flask, render_template, session, request 
 from app.middleware.error_logging import error_logging_middleware
 from app.firebase_config import initialize_firebase
 
@@ -12,9 +12,13 @@ error_logging_middleware(app)
 # Secret key for session management and CSRF(Cross Site Request Forgery) protection
 app.secret_key = 'some-secret'
 
-# # Inicializar Firebase
 initialize_firebase()
 
+@app.before_request
+def clear_session_on_restart():
+    if "user_id" in session and request.endpoint == "auth.login":
+        session.clear()
+        
 # Import blueprint modules
 from .controllers.home import home_bp as home_blueprint
 from .controllers.register import register_bp as register_blueprint  

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for
+from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 
 profile_bp = Blueprint("profile", __name__, url_prefix="/profile")
 
@@ -16,7 +16,30 @@ def view_profile():
 
     user_id = session["user_id"]
     role = session["role"]
-    name = "Usuario" 
+    name = session.get("name", "Usuario")
     email = session.get("email", f"{user_id}@example.com")
 
     return render_template("profile.html", name=name, role=role, email=email)
+
+
+@profile_bp.route("/edit", methods=["POST"])
+def edit_profile():
+    """
+    Handle profile edits for name and role.
+    """
+    if "user_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    # Get form data
+    new_name = request.form.get("name", "").strip()
+    new_role = request.form.get("role", "").strip()
+
+    if not new_name or not new_role:
+        flash("Name and role are required.", "danger")
+        return redirect(url_for("profile.view_profile"))
+
+    session["name"] = new_name
+    session["role"] = new_role
+
+    flash("Profile updated successfully.", "success")
+    return redirect(url_for("profile.view_profile"))
