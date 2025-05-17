@@ -30,5 +30,5 @@ def change_pass():
         if (service.change_password(current_password_input, new_password_input, "Pepito Salazar")):
             flash("Contraseña cambiada exitosamente", "success")
         else: 
-            flash("Error: La contraseña ingresada no es valida", "error")     
+            flash("La contraseña ingresada no es valida", "error")     
         return redirect("/change_password")
