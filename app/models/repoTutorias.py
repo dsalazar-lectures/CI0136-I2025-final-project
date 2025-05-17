@@ -16,12 +16,12 @@ class RepoTutoring:
         
 
         self.tutorias = [
-            Tutoring(1, "Tutoria de C++", "Sergio Brenes", "Programación II", "2025-10-01", 
+            Tutoring(1, "Tutoria de C++", 1, "Programación II", "2025-10-01", 
                     "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5,
                      student_list=[{"id": "e1", "name": "Carlos Matamoros"}, 
                                             {"id": "e2", "name": "María López"}]),
 
-            Tutoring(2, "Limites", "Alejandro Pacheco", "Cálculo I", "2025-10-05", 
+            Tutoring(2, "Limites", 2, "Cálculo I", "2025-10-05", 
                     "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10,
                     student_list=[]),
         ]
