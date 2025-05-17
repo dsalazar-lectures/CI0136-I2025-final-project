@@ -18,8 +18,8 @@ class RepoTutoring:
         self.tutorias = [
             Tutoring(1, "Tutoria de C++", 1, "Programación II", "2025-10-01", 
                     "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5,
-                     student_list=[{"id": "e1", "name": "Carlos Matamoros"}, 
-                                            {"id": "e2", "name": "María López"}]),
+                     student_list=[{"id": 1, "name": "Carlos Matamoros"}, 
+                                            {"id": 2, "name": "María López"}]),
 
             Tutoring(2, "Limites", 2, "Cálculo I", "2025-10-05", 
                     "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10,
@@ -34,3 +34,7 @@ class RepoTutoring:
     
     def get_tutorias_by_tutor(self, tutor_id):
         return [t for t in self.tutorias if t.tutor_id == tutor_id]
+    
+    def get_tutorias_by_student(self, student_id):
+        return [t for t in self.tutorias 
+                if any(s['id'] == student_id for s in t.student_list)]
