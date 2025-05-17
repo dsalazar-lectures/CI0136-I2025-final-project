@@ -21,14 +21,14 @@ def change_pass():
     confirm_password_input = request.form.get("confirm_password")
 
     if new_password_input != confirm_password_input:
-     flash("Las nuevas contraseñas no coinciden", "error")
+     flash("Las contraseñas no coinciden", "error")
      return redirect("/change_password")
     else:
         factory = body_factories.EmailBuilderFactory()
-        service = password_service.password_service()
-        if (service.change_password(current_password_input, new_password_input)):
+        service = password_service.ChangePasswordService()
+        #Pepito since there's still no user, a valid logged in user must be passed through the method
+        if (service.change_password(current_password_input, new_password_input, "Pepito Salazar")):
             flash("Contraseña cambiada exitosamente", "success")
         else: 
-            flash("Error al cambiar la contraseña", "error")     
-        #return redirect("/")
+            flash("Error: La contraseña ingresada no es valida", "error")     
         return redirect("/change_password")
