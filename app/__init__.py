@@ -20,6 +20,7 @@ from .controllers.comments import comments_bp
 from .controllers.ratings import ratings_bp
 from .controllers.email_controller import mail_bp
 from .controllers.tutor_profile import tutor_bp
+from .controllers.student_profile import student_bp
 
 
 # Register blueprints to enable routing
@@ -31,5 +32,4 @@ app.register_blueprint(comments_bp)
 app.register_blueprint(ratings_bp, url_prefix='/comments')
 app.register_blueprint(mail_bp, url_prefix='/email')
 app.register_blueprint(tutor_bp, url_prefix='/tutor')  # Tutor profile routes
-
-   
+app.register_blueprint(student_bp, url_prefix='/student')  # Student profile routes
