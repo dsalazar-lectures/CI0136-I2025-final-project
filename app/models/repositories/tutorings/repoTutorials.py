@@ -38,3 +38,19 @@ class RepoTutoring:
     def get_tutorias_by_student(self, student_id):
         return [t for t in self.tutorias 
                 if any(s['id'] == student_id for s in t.student_list)]
+    
+    def create_tutoria(self, title_tutoring, tutor_id, subject, date, start_time, description, method, capacity):
+        new_id = max(t.id for t in self.tutorias) + 1
+        new_tutoring = Tutoring(
+            new_id, 
+            title_tutoring, 
+            tutor_id, 
+            subject, 
+            date, 
+            start_time, 
+            description, 
+            method, 
+            capacity
+        )
+        self.tutorias.append(new_tutoring)
+        return new_tutoring
