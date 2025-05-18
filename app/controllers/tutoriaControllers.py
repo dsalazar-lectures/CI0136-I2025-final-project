@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template
-from ..models.repositories.tutorings.firebase_tutorings_repository import FirebaseTutoringRepository
+from ..models.repositories.tutorings.repoTutorials import RepoTutoring
+# from ..models.repositories.tutorings.firebase_tutorings_repository import FirebaseTutoringRepository
 
 tutoring = Blueprint('tutoring', __name__)
 
-repo = FirebaseTutoringRepository()
+repo = RepoTutoring()
 
 @tutoring.route('/tutoring/<id>')
 

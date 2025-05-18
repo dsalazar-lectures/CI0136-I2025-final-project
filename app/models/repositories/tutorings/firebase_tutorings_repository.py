@@ -9,7 +9,7 @@ class FirebaseTutoringRepository:
         # TODO: Consider to enhance this with an ADO pattern or similar.
 
         """Convierte un diccionario de Firebase a objeto Tutoring"""
-        from app.models.repoTutorias import Tutoring  # TODO change to use its own file.
+        from app.models.repositories.tutorings.repoTutorials import Tutoring  # TODO change to use its own file.
         return Tutoring(
             id_tutoring=data["id"],
             title_tutoring=data["title"],
