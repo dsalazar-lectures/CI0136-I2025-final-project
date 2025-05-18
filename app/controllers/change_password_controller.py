@@ -4,6 +4,9 @@ from app.models.builders.email_notification_builders import Builder
 from app.models.services import email_service
 from app.models.services import password_service
 from app.models.builders import body_factories
+from app.models.builders.body_factories import BodyFactory
+from app.models.services import email_notifier
+
 
 from flask import Blueprint, render_template
 
@@ -26,10 +29,19 @@ def change_pass():
     else:
         factory = body_factories.EmailBuilderFactory()
         service = password_service.ChangePasswordService()
+        notifier = email_notifier.SMTPNotifier()
         #Pepito since there's still no user, a valid logged in user must be passed through the method
         valid_password = service.validate_password(new_password_input)
         if (valid_password and service.change_password(current_password_input, new_password_input, "Pepito Salazar")):
             flash("Contraseña cambiada exitosamente", "success")
+
+            '''
+            #LOGIC TO SEND EMAIL AFTER CHANGING THE PASSWORD. USER SESSION REQUIRED
+            if (notifier.send(factory, user, "changepassword")):
+               #el correo se envio exitosamente
+            else:
+               #el correo no se envio exitosamente
+            '''   
         else: 
             if (valid_password):
                 flash("La contraseña ingresada no es valida", "error") #the current password specified is not the one stored in the DB

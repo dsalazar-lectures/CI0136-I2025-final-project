@@ -25,7 +25,7 @@ class ReminderEmailBuilder(Builder):
 
 
 # Clase que estructura un correo de tipo cambio de contraseña
-class PasswordChangeEmailBuilder(Builder):
+class ChangePasswordEmailBuilder(Builder):
   def buildBody(self):
     return {
         "subject": "Contraseña actualizada",
