@@ -17,7 +17,8 @@ class TestReviewSent(unittest.TestCase):
         response = self.client.post('/send-review', data={
             'student_id': 'EstudianteTest',
             'tutor_id': 'TutorTest',
-            'session_id': '123',
+            'session_id': 'Sesion de Java',
+            'review_id' : '55555',
             'rating': '4',
             'comment': 'Buen tutor.'
         })
@@ -27,7 +28,8 @@ class TestReviewSent(unittest.TestCase):
         response = self.client.post('/send-review', data={
             'student_id': 'EstudianteTest',
             'tutor_id': 'TutorTest',
-            'session_id': '123',
+            'session_id': 'Sesion de Java',
+            'review_id' : '55555',
             'rating': '6',
             'comment': 'Calificacion fuera de los limites.'
         })
@@ -37,7 +39,8 @@ class TestReviewSent(unittest.TestCase):
         response = self.client.post('/send-review', data={
             'student_id': 'EstudianteTest',
             'tutor_id': 'TutorTest',
-            'session_id': '123',
+            'session_id': 'Sesion de Java',
+            'review_id' : '55555',
             'rating': 'hola',
             'comment': 'La calificacion no es un numero.'
         })
@@ -47,7 +50,8 @@ class TestReviewSent(unittest.TestCase):
         response = self.client.post('/send-review', data={
             'student_id': 'EstudianteTest',
             'tutor_id': 'TutorTest',
-            'session_id': '123',
+            'session_id': 'Sesion de Java',
+            'review_id' : '55555',
             'comment': 'Sin calificacion.'
         })
         self.assertEqual(response.status_code, 400)  # Debe devolver error
@@ -56,7 +60,8 @@ class TestReviewSent(unittest.TestCase):
         response = self.client.post('/send-review', data={
             'student_id': 'EstudianteTest',
             'tutor_id': 'TutorTest',
-            'session_id': '123',
+            'session_id': 'Sesion de Java',
+            'review_id' : '55555',
             'rating': '5'
         })
         self.assertEqual(response.status_code, 302)  # Redirecciona

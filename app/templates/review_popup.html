@@ -50,6 +50,7 @@
                         <input type="hidden" name="student_id" value="EstudiantePrueba">
                         <input type="hidden" name="tutor_id" value="Tutor Tutor">
                         <input type="hidden" name="session_id" value="Sesion de Python">
+                        <input type="hidden" name="review_id">
             
                         <div class="d-flex justify-content-between mt-4">
                             <button type="button" class="btn btn-outline-secondary" onclick="closeReviewPopup()">Cancelar</button>
@@ -112,6 +113,8 @@
             });
         });
     });
+
+    document.querySelector('input[name="review_id"]').value = Math.floor(Math.random() * 99999) + 10000;
 
     function closeReviewPopup() {
         document.getElementById('reviewModal').style.display = 'none';

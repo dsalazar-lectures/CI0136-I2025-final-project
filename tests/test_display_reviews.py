@@ -21,7 +21,8 @@ class TestReviewDisplay(unittest.TestCase):
         self.client.post('/send-review', data={
             'student_id': 'EstudianteTest',
             'tutor_id': 'TutorTest',
-            'session_id': '321',
+            'session_id': 'Sesion de Java',
+            'review_id' : '55555',
             'rating': '3',
             'comment': 'Ni bueno ni malo.'
         })

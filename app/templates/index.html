@@ -30,11 +30,16 @@
                         </div>
                         <div class="flex-grow-1">
                             <!-- Nombre, luego estrellas y fecha debajo -->
-                            <h6 class="mb-1">{{ comment.student_id }}</h6>
+                            <div class="d-flex align-items-center">
+                                <h6 class="mb-1 flex-grow-1">{{ comment.student_id }}</h6>
+                                {% set comment_id = comment.review_id %}
+                                {% include "dropdown_menu.html" %}
+
+                            </div>
                             <div class="d-flex flex-wrap align-items-center mb-2">
                                 <div class="me-3">
                                     {% for i in range(5) %}
-                                        {% if i < comment.rating %}
+                                    {% if i < comment.rating %}
                                             <i class="fas fa-star star-filled"></i>
                                         {% else %}
                                             <i class="fas fa-star star-empty"></i>

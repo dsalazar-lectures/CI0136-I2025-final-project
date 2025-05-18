@@ -1,0 +1,21 @@
+<div class="dropdown">
+    <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuButton{{ comment_id }}" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-ellipsis-v"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" id="dropdownMenuButton{{ comment_id }}">
+        <!-- Opción Eliminar -->
+        <li>
+            <form action="{{ url_for('review_bp.remove_review', review_id=comment_id) }}" method="POST" class="m-0 p-0">
+                <button type="submit" class="dropdown-item text-danger">Eliminar</button>
+            </form>
+        </li>
+        <!-- Placeholder para Editar -->
+        <li>
+            <a class="dropdown-item text-muted" href="#">Editar</a>
+        </li>
+        <!-- Placeholder para Responder -->
+        <li>
+            <a class="dropdown-item text-muted" href="#">Responder</a>
+        </li>
+    </ul>
+</div>
