@@ -27,8 +27,12 @@ def change_pass():
         factory = body_factories.EmailBuilderFactory()
         service = password_service.ChangePasswordService()
         #Pepito since there's still no user, a valid logged in user must be passed through the method
-        if (service.change_password(current_password_input, new_password_input, "Pepito Salazar")):
+        valid_password = service.validate_password(new_password_input)
+        if (valid_password and service.change_password(current_password_input, new_password_input, "Pepito Salazar")):
             flash("Contraseña cambiada exitosamente", "success")
         else: 
-            flash("La contraseña ingresada no es valida", "error")     
+            if (valid_password):
+                flash("La contraseña ingresada no es valida", "error") #the current password specified is not the one stored in the DB
+            else: 
+               flash("La contraseña debe tener 8 caracteres, mayuscula, minuscula y simbolos", "error") #the password doesn't meet the standars
         return redirect("/change_password")

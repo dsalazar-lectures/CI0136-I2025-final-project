@@ -1,6 +1,9 @@
 # Biblioteca para la clase abstracta
 from abc import ABC, abstractmethod
+#module required to create password hashes
 import bcrypt
+#module requiered for regular expressions
+import re
 
 class PasswordService(ABC):
     def __init__(self):
@@ -22,6 +25,32 @@ class PasswordService(ABC):
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(plain_text_pass.encode('utf-8'), salt)
 
+
+    #8 caracteres, mayusculas, minusculas, números y simbolos
+    def validate_password(self, new_pass_input: str) -> bool:
+       
+        valid_password = True
+
+        # At last 8 characters
+        if len(new_pass_input) < 8:
+            valid_password = False
+
+        # At least a lowercase letter
+        if not re.search(r"[a-z]", new_pass_input):
+            valid_password = False
+
+        # At least an upercase letter
+        if not re.search(r"[A-Z]", new_pass_input):
+            valid_password = False
+
+        # At least a number
+        if not re.search(r"\d", new_pass_input):
+            valid_password = False
+
+        # At least a simbol
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-+=\\/\[\]`~';]", new_pass_input):
+            valid_password = False
+        return valid_password
 
 class ChangePasswordService(PasswordService):
 
