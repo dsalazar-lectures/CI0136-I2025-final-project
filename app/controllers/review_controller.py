@@ -85,3 +85,20 @@ def add_reply(review_id):
         logger.error(f"Error en add_reply: {str(e)}")
         flash("Error al procesar tu respuesta", "danger")
         return redirect(request.referrer or '/')
+    
+def edit_review(review_id):
+    comment = request.form.get('comment', '').strip()
+    rating = request.form.get('rating')
+
+    if not rating or not rating.isdigit() or not (1 <= int(rating) <= 5):
+        flash("Calificación inválida.", "warning")
+        return redirect(request.referrer or '/')
+
+    from app.models.review_model import update_review
+
+    if update_review(review_id, int(rating), comment):
+        flash("Reseña actualizada correctamente.", "success")
+    else:
+        flash("No se encontró la reseña a editar.", "warning")
+    
+    return redirect('/')
