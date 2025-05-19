@@ -6,15 +6,15 @@ app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 app.config['TESTING'] = False
 
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.jinja_env.auto_reload = True
+
 # Registrar Blueprint
 app.register_blueprint(review_bp)
 
-
-# Datos de ejemplo para los comentarios
-comments = get_all_reviews()
-
 @app.route("/")
 def home():
+    comments = get_all_reviews()
     return render_template("index.html", comments=comments)
 
 if __name__ == "__main__":

@@ -5,14 +5,15 @@ from pathlib import Path
 
 # Configuración de archivo JSON
 JSON_FILE = "reviews_data.json"
-JSON_PATH = Path(__file__).parent / JSON_FILE
+JSON_PATH = Path(__file__).parent / "reviews_data.json"
 
 def _load_reviews():
-    """Carga las reviews desde el archivo JSON"""
+    """Carga las reviews desde el archivo JSON o crea archivo con valores por defecto si no existe"""
     if JSON_PATH.exists():
         with open(JSON_PATH, 'r', encoding='utf-8') as f:
             return json.load(f)
-    return [
+
+    default_reviews = [
         {
             'student_id': 'Estudiante Estudiante',
             'rating': 5,
@@ -36,6 +37,9 @@ def _load_reviews():
             'reply': None
         }
     ]
+
+    _save_reviews(default_reviews)
+    return default_reviews
 
 def _save_reviews(reviews):
     """Guarda las reviews en el archivo JSON"""

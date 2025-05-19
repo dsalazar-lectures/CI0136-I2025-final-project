@@ -1,8 +1,8 @@
 <div class="dropdown">
-    <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuButton{{ comment_id }}" data-bs-toggle="dropdown" aria-expanded="false">
+    <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuBtn{{ comment_id }}" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-ellipsis-v"></i>
     </button>
-    <ul class="dropdown-menu dropdown-menu-end" id="dropdownMenuButton{{ comment_id }}">
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuBtn{{ comment_id }}">
         <!-- Opción Eliminar -->
         <li>
             <form action="{{ url_for('review_bp.remove_review', review_id=comment_id) }}" method="POST" class="m-0 p-0">
