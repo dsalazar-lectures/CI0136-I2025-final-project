@@ -13,5 +13,4 @@ def tutor_profile():
   
   tutor_id = session.get('user_id')
   tutorias = repo.get_tutorias_by_tutor(tutor_id)
-  print(f"tutorias: {tutorias}")
   return render_template('tutor_profile.html', tutorias=tutorias)
