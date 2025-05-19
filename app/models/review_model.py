@@ -78,3 +78,17 @@ def get_review_by_id(review_id):
     """Busca una review por ID"""
     reviews = _load_reviews()
     return next((r for r in reviews if r['review_id'] == review_id), None)
+
+def update_review(review_id, new_rating, new_comment):
+    reviews = _load_reviews()
+    updated = False
+    for review in reviews:
+        if review['review_id'] == review_id:
+            review['rating'] = new_rating
+            review['comment'] = new_comment
+            review['date'] = datetime.now().strftime('%d/%m/%Y')
+            updated = True
+            break
+    if updated:
+        _save_reviews(reviews)
+    return updated
