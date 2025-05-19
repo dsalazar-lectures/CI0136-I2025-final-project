@@ -13,9 +13,29 @@
         <li>
             <a class="dropdown-item text-muted" href="#">Editar</a>
         </li>
-        <!-- Placeholder para Responder -->
+        <!-- Responder -->
         <li>
-            <a class="dropdown-item text-muted" href="#">Responder</a>
+            <button type="button" class="dropdown-item text-muted" onclick="showReplyPrompt('{{ comment_id }}', '{{ tutor_id }}')">Responder</button>
         </li>
     </ul>
 </div>
+
+<script>
+function showReplyPrompt(reviewId, tutorId) {
+    const replyText = prompt("Escribe tu respuesta:");
+    if (replyText && replyText.trim() !== '') {
+        fetch(`/reply-review/${reviewId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `tutor_id=${encodeURIComponent(tutorId)}&comment=${encodeURIComponent(replyText)}`
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        });
+    }
+}
+</script>

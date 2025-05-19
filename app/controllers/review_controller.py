@@ -1,6 +1,11 @@
-from flask import request, session, redirect, flash, abort
-from models.review_model import add_review, get_all_reviews
+from flask import request, redirect, flash, abort
+from app.models.review_model import add_review, get_all_reviews, add_reply_to_review, get_review_by_id
+import logging
+from datetime import datetime
 
+# Configuración de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def send_review():
     rating = request.form.get('rating')
@@ -44,6 +49,33 @@ def delete_review(review_id):
             flash("Reseña eliminada exitosamente.", "success")
 
     return redirect("/")
+
+def add_reply(review_id):
+    try:
+        tutor_id = request.form.get('tutor_id')
+        comment = request.form.get('comment', '').strip()
+
+        if not comment:
+            flash("El comentario no puede estar vacío", "warning")
+            return redirect(request.referrer or '/')
+
+        if not tutor_id:
+            flash("Debes iniciar sesión como tutor para responder", "danger")
+            return redirect(request.referrer or '/')
+
+        if add_reply_to_review(review_id, tutor_id, comment):
+            logger.info(f"Respuesta añadida a review {review_id}")
+            flash("Respuesta publicada exitosamente", "success")
+        else:
+            logger.warning(f"Review no encontrada: {review_id}")
+            flash("No se encontró la reseña", "danger")
+
+        return redirect(request.referrer or '/')
+
+    except Exception as e:
+        logger.error(f"Error en add_reply: {str(e)}")
+        flash("Error al procesar tu respuesta", "danger")
+        return redirect(request.referrer or '/')
 
 def print_resena(review):
     print("\n--- Nueva Resena Recibida ---")

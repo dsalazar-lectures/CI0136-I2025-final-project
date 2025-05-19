@@ -1,6 +1,6 @@
 from flask import Flask, render_template
-from routes.review_routes import review_bp
-from models.review_model import get_all_reviews
+from app.routes.review_routes import review_bp
+from app.models.review_model import get_all_reviews
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'

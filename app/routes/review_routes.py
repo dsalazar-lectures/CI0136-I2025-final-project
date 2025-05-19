@@ -1,5 +1,5 @@
 from flask import Blueprint
-from controllers.review_controller import send_review, delete_review
+from app.controllers.review_controller import send_review, delete_review, add_reply
 
 review_bp = Blueprint('review_bp', __name__)
 
@@ -10,3 +10,7 @@ def create_review():
 @review_bp.route("/delete-review/<int:review_id>", methods=["POST"])
 def remove_review(review_id):
     return delete_review(review_id)
+
+@review_bp.route("/reply-review/<int:review_id>", methods=["POST"])
+def reply_review(review_id):
+    return add_reply(review_id)
