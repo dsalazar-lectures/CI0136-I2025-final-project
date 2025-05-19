@@ -11,8 +11,9 @@
         </li>
         <!-- Placeholder para Editar -->
         <li>
-            <a class="dropdown-item text-muted" href="#">Editar</a>
+  <button class="dropdown-item text-muted" onclick="showEditPrompt('{{ comment_id }}', '{{ comment.comment }}', '{{ comment.rating }}')">Editar</button>
         </li>
+
         <!-- Responder -->
         <li>
             <button type="button" class="dropdown-item text-muted" onclick="showReplyPrompt('{{ comment_id }}', '{{ tutor_id }}')">Responder</button>
@@ -38,4 +39,29 @@ function showReplyPrompt(reviewId, tutorId) {
         });
     }
 }
+
+function showEditPrompt(reviewId, currentComment, currentRating) {
+    const newComment = prompt("Edita tu comentario:", currentComment);
+    if (newComment === null) return;
+
+    const newRating = prompt("Edita la calificación (1-5):", currentRating);
+    if (newRating === null || isNaN(newRating) || newRating < 1 || newRating > 5) {
+        alert("Calificación inválida.");
+        return;
+    }
+
+    fetch(`/edit-review/${reviewId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `comment=${encodeURIComponent(newComment)}&rating=${encodeURIComponent(newRating)}`
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+    });
+}
 </script>
+
