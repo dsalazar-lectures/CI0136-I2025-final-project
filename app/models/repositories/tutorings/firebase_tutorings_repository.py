@@ -49,5 +49,16 @@ class FirebaseTutoringRepository:
         return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
     
     def get_tutorias_by_student(self, student_id):
-        return [t for t in self.tutorias 
-                if any(s['id'] == student_id for s in t.student_list)]
+        def operation():
+            query = db.collection(self.collection_name)
+            docs = query.stream()
+            tutorias = []
+
+            for snapshot in docs:
+                tutoria = snapshot.to_dict()
+                if any(s['id'] == student_id for s in tutoria.get("student_list", [])):
+                    tutorias.append(self._dict_to_tutoring(tutoria))
+            
+            return tutorias
+
+        return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
