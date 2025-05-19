@@ -38,10 +38,10 @@ def _load_reviews():
         }
     ]
 
-    _save_reviews(default_reviews)
+    save_reviews(default_reviews)
     return default_reviews
 
-def _save_reviews(reviews):
+def save_reviews(reviews):
     """Guarda las reviews en el archivo JSON"""
     with open(JSON_PATH, 'w', encoding='utf-8') as f:
         json.dump(reviews, f, indent=2, ensure_ascii=False)
@@ -54,7 +54,7 @@ def add_review(review):
     review["date"] = datetime.now().strftime('%d/%m/%Y')
     review["reply"] = None
     reviews.append(review)
-    _save_reviews(reviews)
+    save_reviews(reviews)
 
 def add_reply_to_review(review_id, tutor_id, comment):
     """Añade una respuesta (permite múltiples respuestas)"""
@@ -70,7 +70,7 @@ def add_reply_to_review(review_id, tutor_id, comment):
                 'date': datetime.now().strftime('%d/%m/%Y'),
                 'comment': comment
             })
-            _save_reviews(reviews)
+            save_reviews(reviews)
             return True
     return False
 

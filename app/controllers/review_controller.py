@@ -1,8 +1,9 @@
 from flask import request, redirect, flash, abort
-from app.models.review_model import add_review, get_all_reviews, add_reply_to_review, get_review_by_id
+from app.models.review_model import add_review, get_all_reviews, add_reply_to_review, save_reviews, get_review_by_id
 import logging
 from datetime import datetime
 from app.controllers.review_presenter_controller import ConsoleReviewPresenter ## Si queremos agregar en un futuro LogFileReviewPresenter, EmailReviewPresenter
+
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +52,6 @@ def delete_review(review_id):
     updated_reviews = [r for r in reviews if r['review_id'] != review_id]
     
     if len(updated_reviews) < len(reviews):
-        from models.review_model import save_reviews
         save_reviews(updated_reviews)
         flash("Reseña eliminada exitosamente.", "success")
     else:
