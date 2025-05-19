@@ -18,19 +18,27 @@ def send_review():
     tutor_id = request.form.get('tutor_id')
     session_id = request.form.get('session_id')
     review_id = request.form.get('review_id')
-    
+
+    # Verificar que la calificación no esté vacía
     if not rating:
-        flash("Calificación inválida, la calificación no puede estar vacía.", "warning")
-        abort(400)
-    
+        flash("La calificación no puede estar vacía.", "warning")
+        return redirect(request.referrer or '/comments')
+
+    # Verificar que la calificación sea un número y esté en el rango válido
     if not rating.isdigit():
-        flash("Calificación inválida, la calificación debe ser un dígito.", "warning")
-        abort(400)
+        flash("La calificación debe ser un número válido.", "warning")
+        return redirect(request.referrer or '/comments')
     
     if not (1 <= int(rating) <= 5):
-        flash("Calificación inválida, debe estar entre 1 y 5.", "warning")
-        abort(400)
-    
+        flash("La calificación debe estar entre 1 y 5.", "warning")
+        return redirect(request.referrer or '/comments')
+
+    # Verificar que el comentario no esté vacío
+    if not comment.strip():
+        flash("El comentario no puede estar vacío.", "warning")
+        return redirect(request.referrer or '/comments')
+
+    # Crear el diccionario de la reseña
     review = {
         "student_id": student_id,
         "tutor_id": tutor_id,
@@ -39,12 +47,13 @@ def send_review():
         "review_id": int(review_id),
         "comment": comment
     }
-    
+
+    # Guardar la reseña
     add_review(review)
-    
-    # Utilizamos la estrategia de presentación configurada por el momento
+
+    # Utilizar la estrategia de presentación configurada por el momento
     DEFAULT_PRESENTER.present_review(review)
-    
+
     return redirect("/comments")
 
 def delete_review(review_id):
@@ -65,7 +74,7 @@ def add_reply(review_id):
         comment = request.form.get('comment', '').strip()
         
         if not comment:
-            flash("El comentario no puede estar vacío", "warning")
+            flash("El comentario no puede estar vacio", "warning")
             return redirect(request.referrer or '/comments')
         
         if not tutor_id:
