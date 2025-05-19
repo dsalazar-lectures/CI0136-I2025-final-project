@@ -25,9 +25,10 @@ from .controllers.ratings import ratings_bp
 from .controllers.email_controller import mail_bp
 from .controllers.tutor_profile import tutor_bp
 from .controllers.student_profile import student_bp
-
+from .routes.review_routes import review_bp
 
 # Register blueprints to enable routing
+app.register_blueprint(review_bp)
 app.register_blueprint(home_blueprint)          # Home page routes
 app.register_blueprint(register_blueprint)      # Registration routes
 app.register_blueprint(auth_blueprint)          # Authentication routes
