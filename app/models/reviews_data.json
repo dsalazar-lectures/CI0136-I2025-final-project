@@ -16,10 +16,9 @@
     "student_id": "EstudiantePrueba",
     "tutor_id": "Tutor Tutor",
     "session_id": "Sesion de Python",
+    "review_id": 99999,
     "rating": 2,
-    "review_id": 48984,
-    "comment": "A",
-    "date": "19/05/2025",
-    "reply": null
+    "comment": "asda",
+    "date": "19/05/2025"
   }
 ]
