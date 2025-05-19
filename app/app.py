@@ -1,6 +1,5 @@
 from flask import Flask, render_template
-from routes.review_routes import review_bp
-from app.models.review_model import get_all_reviews
+from app.routes.review_routes import review_bp
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
@@ -13,7 +12,6 @@ app.register_blueprint(review_bp)
 
 @app.route("/")
 def home():
-    comments = get_all_reviews()
     return render_template("home.html")
 
 if __name__ == "__main__":

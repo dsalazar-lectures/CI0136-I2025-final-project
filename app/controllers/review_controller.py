@@ -45,7 +45,7 @@ def send_review():
     # Utilizamos la estrategia de presentación configurada por el momento
     DEFAULT_PRESENTER.present_review(review)
     
-    return redirect("/")
+    return redirect("/comments")
 
 def delete_review(review_id):
     reviews = get_all_reviews()
@@ -57,7 +57,7 @@ def delete_review(review_id):
     else:
         flash("No se encontró la reseña a eliminar.", "warning")
     
-    return redirect("/")
+    return redirect("/comments")
 
 def add_reply(review_id):
     try:
@@ -66,11 +66,11 @@ def add_reply(review_id):
         
         if not comment:
             flash("El comentario no puede estar vacío", "warning")
-            return redirect(request.referrer or '/')
+            return redirect(request.referrer or '/comments')
         
         if not tutor_id:
             flash("Debes iniciar sesión como tutor para responder", "danger")
-            return redirect(request.referrer or '/')
+            return redirect(request.referrer or '/comments')
         
         if add_reply_to_review(review_id, tutor_id, comment):
             logger.info(f"Respuesta añadida a review {review_id}")
@@ -79,12 +79,12 @@ def add_reply(review_id):
             logger.warning(f"Review no encontrada: {review_id}")
             flash("No se encontró la reseña", "danger")
         
-        return redirect(request.referrer or '/')
+        return redirect(request.referrer or '/comments')
     
     except Exception as e:
         logger.error(f"Error en add_reply: {str(e)}")
         flash("Error al procesar tu respuesta", "danger")
-        return redirect(request.referrer or '/')
+        return redirect(request.referrer or '/comments')
     
 def edit_review(review_id):
     comment = request.form.get('comment', '').strip()
@@ -92,7 +92,7 @@ def edit_review(review_id):
 
     if not rating or not rating.isdigit() or not (1 <= int(rating) <= 5):
         flash("Calificación inválida.", "warning")
-        return redirect(request.referrer or '/')
+        return redirect(request.referrer or '/comments')
 
     from app.models.review_model import update_review
 
@@ -101,4 +101,4 @@ def edit_review(review_id):
     else:
         flash("No se encontró la reseña a editar.", "warning")
     
-    return redirect('/')
+    return redirect('/comments')
