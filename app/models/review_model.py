@@ -90,5 +90,5 @@ def update_review(review_id, new_rating, new_comment):
             updated = True
             break
     if updated:
-        _save_reviews(reviews)
+        save_reviews(reviews)
     return updated
