@@ -1,18 +1,5 @@
 [
   {
-    "student_id": "Estudiante Estudiante",
-    "rating": 5,
-    "date": "05/04/2023",
-    "comment": "Lorem ipsum dolor sit amet...",
-    "session_id": "Sesion de Python",
-    "review_id": 54321,
-    "reply": {
-      "tutor_id": "Tutor Tutor",
-      "date": "06/04/2023",
-      "comment": "Lorem ipsum dolor sit amet"
-    }
-  },
-  {
     "student_id": "EstudiantePrueba",
     "tutor_id": "Tutor Tutor",
     "session_id": "Sesion de Python",
