@@ -19,7 +19,11 @@ class SMTPNotifier(EmailNotifier):
         smtp_service = email_service.SMTPEmailService()
         builder = factory.createBody(builder_type)
         notification_data = builder.buildBody()
+        email_to = user["email"]
 
-        #User's email address based on the logged in user. Session required
-        #email_to = user.mail 
+        #simulation when missing the email credentials
+        print("###########################################")
+        print("ENVIANDO CORREO A : " + email_to + "\n")
+        return True
+        #The line below only works with the environment variable credentials
         #return smtp_service.send_email(email_to, notification_data["subject"], notification_data["body"])

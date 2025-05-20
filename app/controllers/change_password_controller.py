@@ -4,7 +4,11 @@ from app.models.builders.email_notification_builders import Builder
 from app.models.services import email_service
 from app.models.services import password_service
 from app.models.services import email_notifier
-#from app.models.repositories.users import firebase_user_repository
+from app.models.repositories.users import firebase_user_repository
+
+####################################################
+# THIS ONLY WORKS IF THERE'S AN ACTIVA SESSION
+####################################################
 
 
 from flask import Blueprint, render_template
@@ -22,7 +26,7 @@ def index():
 
 @c_password_bp.route("/change_pass", methods=["POST"])
 def change_pass():
-
+    
     current_password_input = request.form.get("current_password")
     new_password_input = request.form.get("new_password")
     confirm_password_input = request.form.get("confirm_password")
@@ -31,20 +35,21 @@ def change_pass():
      flash("Las contraseñas no coinciden", "error")
      return redirect("/change_password")
     else:
+        repo = firebase_user_repository.FirebaseUserRepository()
+        user = repo.get_user_by_id(session["user_id"])
+
         service = password_service.ChangePasswordService()
         notifier = email_notifier.SMTPNotifier()
+
         valid_password = service.validate_password(new_password_input)
-        #Pepito since there's still no user, a valid logged in user must be passed through the method
-        if (valid_password and service.change_password(current_password_input, new_password_input, "Pepito Salazar")):
+
+        if (valid_password and service.change_password(current_password_input, new_password_input, user)):
             flash("Contraseña cambiada exitosamente", "success")
 
-            '''
-            #LOGIC TO SEND EMAIL AFTER CHANGING THE PASSWORD. USER SESSION REQUIRED
-            if (notifier.send(user, "changepassword")):
-               #el correo se envio exitosamente
-            else:
-               #el correo no se envio exitosamente
-            '''   
+            
+            #Notify by email after changing the password
+            print("correo enviado") if notifier.send(user, "changepassword") else print("error")
+               
         else: 
             if (valid_password):
                 flash("La actual contraseña ingresada no es valida", "error") #the current password specified is not the one stored in the DB

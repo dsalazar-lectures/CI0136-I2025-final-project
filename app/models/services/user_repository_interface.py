@@ -52,3 +52,7 @@ class IUserRepository(ABC):
     @abstractmethod
     def get_user_by_id(self, id):
         pass
+
+    @abstractmethod
+    def update_user_password(self, email, new_password):
+        pass
