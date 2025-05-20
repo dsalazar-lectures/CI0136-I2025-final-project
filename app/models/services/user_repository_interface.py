@@ -48,3 +48,7 @@ class IUserRepository(ABC):
             bool: True if user exists, False otherwise
         """
         pass
+
+    @abstractmethod
+    def get_user_by_id(self, id):
+        pass

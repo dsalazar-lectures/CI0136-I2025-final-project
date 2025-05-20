@@ -4,14 +4,23 @@ from abc import ABC, abstractmethod
 import bcrypt
 #module requiered for regular expressions
 import re
+from app.models.repositories.users import firebase_user_repository
+from flask import session
 
 class PasswordService(ABC):
     def __init__(self):
         pass
     
     #@abstractmethod
-    def get_stored_hash_password(user):
-        pass
+    def get_stored_hash_password(self, user):
+        repo = firebase_user_repository.FirebaseUserRepository()
+        user = repo.get_user_by_id(user)
+
+        #The line belows must be the productive code. The DB must store a hash, right now it's in plain text
+        #return user["password"]
+
+        #we hash the password since it's in plain text in the DB for the moment
+        return self.get_mock_hash_password(user["password"])
 
     #the new hash password must be store to the DB
     #@abstractmethod
@@ -20,12 +29,13 @@ class PasswordService(ABC):
 
     #mock function to retrieve a temp hash password
     #only available while the DB doesn't exist
-    def get_mock_hash_password(self):
-        plain_text_pass = "contraseña"
+    def get_mock_hash_password(self, hash_password: str):
+        #plain_text_pass = "contraseña"
+        plain_text_pass = hash_password
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(plain_text_pass.encode('utf-8'), salt)
 
-
+    #Passtraseña123.
     #8 caracteres, mayusculas, minusculas, números y simbolos
     def validate_password(self, new_pass_input: str) -> bool:
        
@@ -63,7 +73,9 @@ class ChangePasswordService(PasswordService):
         pass_change_successfully = False
 
         #temporal, it must be change for get_stored_hash_password() whenever the DB is available
-        mocked_hashed_pass = self.get_mock_hash_password() 
+        #mocked_hashed_pass = self.get_mock_hash_password("contraseña") 
+
+        mocked_hashed_pass = self.get_stored_hash_password(session["user_id"])
 
         if (self.verify_password(current_pass_input, mocked_hashed_pass)):
             salt = bcrypt.gensalt()

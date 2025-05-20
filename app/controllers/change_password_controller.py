@@ -1,9 +1,10 @@
-from flask import redirect, url_for, flash, request
+from flask import redirect, url_for, flash, request, session
 from app.models.services.email_service import EmailService
 from app.models.builders.email_notification_builders import Builder
 from app.models.services import email_service
 from app.models.services import password_service
 from app.models.services import email_notifier
+#from app.models.repositories.users import firebase_user_repository
 
 
 from flask import Blueprint, render_template
@@ -12,11 +13,16 @@ c_password_bp = Blueprint('cpassword', __name__)
 
 @c_password_bp.route("/change_password")
 def index():
-  return render_template("change_password.html")
+  #this works only if there's an active session
+  if session:
+    return render_template("change_password.html")
+  else:
+     return redirect("/")
 
 
 @c_password_bp.route("/change_pass", methods=["POST"])
 def change_pass():
+
     current_password_input = request.form.get("current_password")
     new_password_input = request.form.get("new_password")
     confirm_password_input = request.form.get("confirm_password")

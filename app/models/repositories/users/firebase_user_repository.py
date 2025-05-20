@@ -44,3 +44,16 @@ class FirebaseUserRepository(IUserRepository):
             return doc.exists
 
         return safe_execute(operation, fallback=False, context="[user_exists]")
+    
+    def get_user_by_id(self, id):
+        def operation():
+                users_ref = db.collection(self.collection_name)
+                all_users = users_ref.stream()
+
+                for user_doc in all_users:
+                    data = user_doc.to_dict()
+                    if data and data.get("id") == id:
+                        return data
+                return None
+
+        return safe_execute(operation, fallback=None, context="[get_user_by_id]")
