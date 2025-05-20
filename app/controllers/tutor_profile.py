@@ -6,7 +6,7 @@ tutor_bp = Blueprint('tutor', __name__)
 repo = FirebaseTutoringRepository()
 
 @tutor_bp.route('/profile')
-@login_and_role_required
+@login_and_role_required ('Tutor')
 def tutor_profile():
   if session.get('role') != 'Tutor':
     return redirect(url_for('home.home'))
