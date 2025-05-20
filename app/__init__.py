@@ -24,17 +24,18 @@ from .controllers.home import home_bp as home_blueprint
 from .controllers.register import register_bp as register_blueprint  
 from .controllers.auth import auth_bp as auth_blueprint
 from .controllers.tutoriaControllers import tutoring as tutoria_blueprint
-from .controllers.comments import comments_bp
-from .controllers.ratings import ratings_bp
 from .controllers.email_controller import mail_bp
+from .controllers.tutor_profile import tutor_bp
+from .controllers.student_profile import student_bp
+from .routes.review_routes import review_bp
 from .controllers.profile_controller import profile_bp as profile_blueprint
 
 # Register blueprints to enable routing
+app.register_blueprint(review_bp)
 app.register_blueprint(home_blueprint)          # Home page routes
 app.register_blueprint(register_blueprint)      # Registration routes
 app.register_blueprint(auth_blueprint)          # Authentication routes
 app.register_blueprint(tutoria_blueprint)      # Tutoring routes
-app.register_blueprint(comments_bp)
-app.register_blueprint(ratings_bp, url_prefix='/comments')
 app.register_blueprint(mail_bp, url_prefix='/email')
-app.register_blueprint(profile_blueprint, url_prefix='/profile')
+app.register_blueprint(student_bp, url_prefix='/student')
+app.register_blueprint(profile_blueprint, url_prefix="/profile")

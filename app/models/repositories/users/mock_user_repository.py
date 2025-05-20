@@ -16,6 +16,11 @@ class MockUserRepository(IUserRepository):
                 "password": "Admin1@@@@@",
                 "id": 1,
                 "role": "Student"
+            },
+            "tutor@example.com": {
+                "password": "Tutor1@",
+                "id": 2,
+                "role": "Tutor"
             }
         }
         self.next_id = 2

@@ -1,0 +1,67 @@
+<div class="dropdown">
+    <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuBtn{{ comment_id }}" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-ellipsis-v"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuBtn{{ comment_id }}">
+        <!-- Opción Eliminar -->
+        <li>
+            <form action="{{ url_for('review_bp.remove_review', review_id=comment_id) }}" method="POST" class="m-0 p-0">
+                <button type="submit" class="dropdown-item text-danger">Eliminar</button>
+            </form>
+        </li>
+        <!-- Placeholder para Editar -->
+        <li>
+  <button class="dropdown-item text-muted" onclick="showEditPrompt('{{ comment_id }}', '{{ comment.comment }}', '{{ comment.rating }}')">Editar</button>
+        </li>
+
+        <!-- Responder -->
+        <li>
+            <button type="button" class="dropdown-item text-muted" onclick="showReplyPrompt('{{ comment_id }}', '{{ tutor_id }}')">Responder</button>
+        </li>
+    </ul>
+</div>
+
+<script>
+function showReplyPrompt(reviewId, tutorId) {
+    const replyText = prompt("Escribe tu respuesta:");
+    if (replyText && replyText.trim() !== '') {
+        fetch(`/reply-review/${reviewId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `tutor_id=${encodeURIComponent(tutorId)}&comment=${encodeURIComponent(replyText)}`
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        });
+    }
+}
+
+function showEditPrompt(reviewId, currentComment, currentRating) {
+    const newComment = prompt("Edita tu comentario:", currentComment);
+    if (newComment === null) return;
+
+    const newRating = prompt("Edita la calificación (1-5):", currentRating);
+    if (newRating === null || isNaN(newRating) || newRating < 1 || newRating > 5) {
+        alert("Calificación inválida.");
+        return;
+    }
+
+    fetch(`/edit-review/${reviewId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `comment=${encodeURIComponent(newComment)}&rating=${encodeURIComponent(newRating)}`
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
+    });
+}
+</script>
+

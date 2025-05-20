@@ -8,29 +8,36 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- Sección izquierda -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="#">Example</a>
         </li>
+        {% if session.get("role") == 'Student' %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('student.student_profile') }}">Mis Tutorías</a>
+        </li>
+        {% endif %}
       </ul>
 
-      <!-- Sección derecha -->
       <ul class="navbar-nav mb-2 mb-lg-0">
         {% if session.get("name") %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button"
              data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle me-1"></i>
-              {% if session["name"] != session["user_id"] %}
-                {{ session["name"] }}
-              {% endif %}
+            {% if session["name"] != session["user_id"] %}
+              {{ session["name"] }}
+            {% endif %}
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            {% if session.get("role") == 'Tutor' %}
+            <li><a class="dropdown-item" href="{{ url_for('tutor.tutor_profile') }}">Mi Perfil (Tutor)</a></li>
+            {% endif %}
             <li><a class="dropdown-item" href="{{ url_for('profile.view_profile') }}">Perfil</a></li>
+            <li><hr class="dropdown-divider"></li>
             <li>
-              <form action="{{ url_for('auth.logout') }}" method="post" class="px-3">
-                <button type="submit" class="btn btn-link text-danger p-0">Cerrar sesión</button>
+              <form action="{{ url_for('auth.logout') }}" method="post" class="d-inline">
+                <button type="submit" class="dropdown-item text-danger">Cerrar sesión</button>
               </form>
             </li>
           </ul>
