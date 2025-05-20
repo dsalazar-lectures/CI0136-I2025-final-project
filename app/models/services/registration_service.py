@@ -30,8 +30,8 @@ def validate_registration_data(email, password, role, user_repo):
     if not validate_password(password):
         return 'Password must include at least one uppercase letter, one number, and one special character.', 'danger'
 
-    if len(password) < 6:
-        return 'Password must be at least 6 characters long.', 'danger'
+    if len(password) < 8:
+        return 'Password must be at least eight characters long.', 'danger'
 
     if role != 'Student':
         return 'Role not available at the moment.', 'danger'
