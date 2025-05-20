@@ -1,24 +1,25 @@
 from functools import wraps
-from flask import session, redirect, url_for, flash
+from flask import session, abort
 
-def login_required(f):
+def login_and_role_required(required_role):
     """
-    Decorator to enforce user authentication for a route.
-
-    Checks if the "user_id" key exists in the session.
-    If the user is not logged in , it redirects the user
-    to the login page. Otherwise, it allows the decorated
-    function to execute.
+    Decorator to enforce user authentication and role-based access control for a route.
 
     Args:
-        f (function): The route handler function to be decorated.
+        required_role (str): The role required to access the route.
 
     Returns:
-        function: The decorated function that enforces login requirements.
+        Function: The wrapped function that enforces login and role requirements.
     """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "user_id" not in session:
-            return redirect(url_for("auth.login"))
-        return f(*args, **kwargs)
-    return decorated_function
+    def decorator(func):
+        @wraps(func)
+        def wrapped_function(*args, **kwargs):
+            # Check if the user is logged in
+            if "user_id" not in session:
+                abort(403)  # Return a 403 Forbidden error if not logged in
+            # Check if the user has the required role
+            if "role" not in session or session["role"] != required_role:
+                abort(403)  # Return a 403 Forbidden error if role doesn't match
+            return func(*args, **kwargs)
+        return wrapped_function
+    return decorator

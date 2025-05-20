@@ -21,7 +21,7 @@
         type="email" 
         id="email" 
         name="email" 
-        class="form-control {% if errors and errors.get('email') %}is-invalid{% elif form_data.get('email') %}is-valid{% endif %}" 
+        class="form-control {% if errors and errors.get('email') %}is-invalid{% endif %}" 
         value="{{ form_data.get('email', '') }}">
       {% if errors and errors.get('email') %}
         <div class="invalid-feedback">
@@ -36,7 +36,7 @@
         type="password" 
         id="password" 
         name="password" 
-        class="form-control {% if errors and errors.get('password') %}is-invalid{% elif form_data.get('password') %}is-valid{% endif %}" 
+        class="form-control {% if errors and errors.get('password') %}is-invalid{% endif %}" 
         value="{{ form_data.get('password', '') }}">
       {% if errors and errors.get('password') %}
         <div class="invalid-feedback">
@@ -50,11 +50,11 @@
       <select 
         name="role" 
         id="role" 
-        class="form-select {% if errors and errors.get('role') %}is-invalid{% elif form_data.get('role') %}is-valid{% endif %}" 
+        class="form-select {% if errors and errors.get('role') %}is-invalid{% endif %}" 
         required>
         <option value="">Select a role</option>
         <option value="Student" {% if form_data.get('role') == 'Student' %}selected{% endif %}>Student</option>
-        <option value="Guest" {% if form_data.get('role') == 'Guest' %}selected{% endif %}>Guest</option>
+        <option value="Tutor" {% if form_data.get('role') == 'Tutor' %}selected{% endif %}>Tutor</option>
         <option value="Admin" {% if form_data.get('role') == 'Admin' %}selected{% endif %}>Admin</option>
       </select>
       {% if errors and errors.get('role') %}
