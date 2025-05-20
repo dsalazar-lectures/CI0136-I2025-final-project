@@ -42,4 +42,4 @@ def getListTutorials():
         print("Tutoring not found")
         return render_template('404.html'), 404
     else:
-        return render_template('list_tutory.html', tutorias=tutorias, current_user=current_user)
+        return render_template('list_tutorials.html', tutorias=tutorials)
