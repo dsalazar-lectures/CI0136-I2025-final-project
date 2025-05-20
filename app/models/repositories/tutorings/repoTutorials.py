@@ -17,12 +17,12 @@ class RepoTutoring:
         
 
         self.tutorias = [
-            Tutoring(1, "Tutoria de C++", 1, "Programación II", "2025-10-01", 
+            Tutoring(1, "Tutoria de C++", 1, "JUan", "Programación II", "2025-10-01", 
                     "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5,
                      student_list=[{"id": 1, "name": "Carlos Matamoros"}, 
                                             {"id": 2, "name": "María López"}]),
 
-            Tutoring(2, "Limites", 2, "Cálculo I", "2025-10-05", 
+            Tutoring(2, "Limites", 2, "MArio", "Cálculo I", "2025-10-05", 
                     "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10,
                     student_list=[]),
         ]
@@ -55,3 +55,8 @@ class RepoTutoring:
         )
         self.tutorias.append(new_tutoring)
         return new_tutoring
+    
+    def list_tutorials(self):
+        return self.tutorias
+
+    

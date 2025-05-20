@@ -34,3 +34,12 @@ def create_tutoring():
         )
         return redirect(url_for('tutorial.getTutoriaById', id=new_tutoring.id))
     return render_template('tutorial_creation.html')
+
+@tutoring.route('/tutorial/list')
+def getListTutorials():
+    tutorials = repo.list_tutorials()
+    if tutorials is None:
+        print("Tutoring not found")
+        return render_template('404.html'), 404
+    else:
+        return render_template('list_tutory.html', tutorias=tutorias, current_user=current_user)
