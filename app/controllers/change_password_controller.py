@@ -15,11 +15,14 @@ from flask import Blueprint, render_template
 
 c_password_bp = Blueprint('cpassword', __name__)
 
+repo = firebase_user_repository.FirebaseUserRepository()
+
 @c_password_bp.route("/change_password")
 def index():
   #this works only if there's an active session
   if session:
-    return render_template("change_password.html")
+    user = repo.get_user_by_id(session["user_id"])   
+    return render_template("change_password.html", user_name=user["name"])
   else:
      return redirect("/")
 
@@ -35,7 +38,6 @@ def change_pass():
      flash("Las contraseñas no coinciden", "error")
      return redirect("/change_password")
     else:
-        repo = firebase_user_repository.FirebaseUserRepository()
         user = repo.get_user_by_id(session["user_id"])
 
         service = password_service.ChangePasswordService()
