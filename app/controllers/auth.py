@@ -60,7 +60,6 @@ def login():
     response.headers["Pragma"] = "no-cache"
     return response
 
-
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
     """Clear the current session, including the stored user id."""

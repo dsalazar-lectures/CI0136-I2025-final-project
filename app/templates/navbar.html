@@ -7,13 +7,25 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       <li class="nav-item">
-      <a class="nav-link" href="/#">Example</a>
+        <a class="nav-link" href="/#">Example</a>
       </li>
+      {% if session.role == 'Student' %}
+      <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('student.student_profile') }}">
+              Mis Tutorías
+          </a>
+      </li>
+      {% endif %}
     </ul>
     <form action="/logout" method="POST" class="navbar-nav mb-2 mb-lg-0">
+      {% if session.role == 'Tutor' %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('tutor.tutor_profile') }}">Mi Perfil</a>
+      </li>
+      {% endif %}
       <button class="btn btn-outline-light" type="submit">Cerrar sesión</button>
     </form>
     </div>
   </div>
-  </nav>
+</nav>
   

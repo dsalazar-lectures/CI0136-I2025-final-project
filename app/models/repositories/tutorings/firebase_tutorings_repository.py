@@ -13,7 +13,8 @@ class FirebaseTutoringRepository:
         return Tutoring(
             id_tutoring=data["id"],
             title_tutoring=data["title"],
-            id_tutor=data["tutor"],
+            tutor_id=data["tutor_id"],
+            tutor=data["tutor"],
             subject=data["subject"],
             date=data["date"],
             start_time=data["start_time"],
@@ -32,5 +33,32 @@ class FirebaseTutoringRepository:
             for doc in docs:
                 return self._dict_to_tutoring(doc.to_dict())
             return None
+
+        return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
+    
+    def get_tutorias_by_tutor(self, tutor_id):
+        def operation():
+            query = db.collection(self.collection_name).where("tutor_id", "==", tutor_id).get()
+            tutorias = []
+
+            for snapshot in query:
+                tutorias.append(self._dict_to_tutoring(snapshot.to_dict()))
+            
+            return tutorias
+
+        return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
+    
+    def get_tutorias_by_student(self, student_id):
+        def operation():
+            query = db.collection(self.collection_name)
+            docs = query.stream()
+            tutorias = []
+
+            for snapshot in docs:
+                tutoria = snapshot.to_dict()
+                if any(s['id'] == student_id for s in tutoria.get("student_list", [])):
+                    tutorias.append(self._dict_to_tutoring(tutoria))
+            
+            return tutorias
 
         return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
