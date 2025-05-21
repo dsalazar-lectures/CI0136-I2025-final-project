@@ -31,9 +31,13 @@
                         </div>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                        <button class="button-back" style="background-color: gray; color: white; padding: 4px 10px; border-radius: 5px; font-size: 0.75em; white-space: nowrap; width: auto; min-width: 0;">Ver detalles</button>
-                      
-                        <button type="submit" class="button-back" style="background-color: green; color: white; padding: 4px 10px; border-radius: 5px; font-size: 0.75em; white-space: nowrap; width: auto; min-width: 0;">Inscribirme</button>
+                        <a href="/tutorial/{{ tutoria.id }}" class="button-back" style="background-color: gray; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 0.85em; width: auto;">Ver detalles</a>
+                        <form action="{{ url_for('tutorial.register_tutoria') }}" method="POST" style="display: inline;">
+                            <input type="hidden" name="id_tutoria" value="{{tutoria.id}}"> <!-- {{tutoria.id}}-->
+                            <input type="hidden" name="id_student" value="{{session.user_id}}"> <!-- {{session.user_id}}-->
+                            <input type="hidden" name="name_student" value="{{session.user_name}}"> <!-- {{session.user_name}}-->
+                            <button type="submit" class="button-back" style="background-color: green; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.85em;">Inscribirme</button>
+                        </form>
                     </div>
                 </div>
                 {% endfor %}

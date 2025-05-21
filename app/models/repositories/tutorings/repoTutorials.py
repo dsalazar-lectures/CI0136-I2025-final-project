@@ -17,12 +17,12 @@ class RepoTutoring:
         
 
         self.tutorias = [
-            Tutoring(1, "Tutoria de C++", 1, "JUan", "Programación II", "2025-10-01", 
+            Tutoring(1, "Tutoria de C++", 1, "Sergio Brenes", "Programación II", "2025-10-01", 
                     "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5,
                      student_list=[{"id": 1, "name": "Carlos Matamoros"}, 
                                             {"id": 2, "name": "María López"}]),
 
-            Tutoring(2, "Limites", 2, "MArio", "Cálculo I", "2025-10-05", 
+            Tutoring(2, "Limites", 2, "Luigi Bros", "Cálculo I", "2025-10-05", 
                     "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10,
                     student_list=[]),
         ]
@@ -58,5 +58,21 @@ class RepoTutoring:
     
     def list_tutorials(self):
         return self.tutorias
-
     
+    def register_in_tutoria(self, id_student, name_student, id_tutoria):
+        resgister = False  # Inicializar la variable
+        tutoria = self.get_tutoria_by_id(id_tutoria)
+        if tutoria.capacity == len(tutoria.student_list):
+            print("No hay cupos disponibles")
+        else:
+            for student in tutoria.student_list:
+                if student["id"] == id_student:
+                    print("El estudiante ya está registrado")
+                    resgister = False
+                    break
+            else:  # Este bloque se ejecuta si no se rompe el bucle
+                tutoria.student_list.append({"id": id_student, "name": name_student})
+                print("Estudiante registrado")
+                resgister = True
+        return resgister
+
