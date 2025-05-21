@@ -24,7 +24,7 @@
     <div class="detail-item"><i class="fa-solid fa-user-group"></i><span><strong>Cupos disponibles:</strong> {{ tutoring.capacity }}</span></div>
     </div>
 
-    <a href="/tutorias" class="button-back">Volver a la lista de tutorías</a>
+    <a href="{{ url_for('tutorial.getListTutorials') }}" class="button-back">Volver a la lista de tutorías</a>
     
     <div class="students">
     <h2>Estudiantes Inscritos</h2>
