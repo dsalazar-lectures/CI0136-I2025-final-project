@@ -37,6 +37,10 @@ def validate_registration_data(name, email, password, role, user_repo):
     if len(password) < 8:
         return 'Password must be at least eight characters long.', 'danger'
 
+    VALID_ROLES = {"Student", "Administrator", "Tutor"}
+    if role not in VALID_ROLES:
+        return "Invalid role selected. Must be Student, Administrator, or Tutor.", "danger"
+
     if user_repo.user_exists(email):
         return 'This email is already registered.', 'danger'
 
