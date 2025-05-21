@@ -4,9 +4,9 @@ User registration and authentication services.
 This module provides functions to validate user registration data
 and authenticate user login credentials.
 """
-from ...utils.utils import validate_email, validate_password
+from ...utils.utils import validate_name, validate_email, validate_password
 
-def validate_registration_data(email, password, role, user_repo):
+def validate_registration_data(name, email, password, role, user_repo):
     """
     Validates user registration data against business rules.
     
@@ -21,8 +21,12 @@ def validate_registration_data(email, password, role, user_repo):
             - error_message (str): Description of validation error or None if valid
             - category (str): Error category ('danger') or None if valid
     """
-    if not email or not password:
+
+    if not name or not email or not password:
         return 'All fields are required.', 'danger'
+    
+    if not validate_name(name):
+        return 'Invalid name.', 'danger'
 
     if not validate_email(email):
         return 'Invalid email.', 'danger'
@@ -32,9 +36,6 @@ def validate_registration_data(email, password, role, user_repo):
 
     if len(password) < 8:
         return 'Password must be at least eight characters long.', 'danger'
-
-    if role != 'Student':
-        return 'Role not available at the moment.', 'danger'
 
     if user_repo.user_exists(email):
         return 'This email is already registered.', 'danger'

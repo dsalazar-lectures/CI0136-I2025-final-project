@@ -36,22 +36,24 @@ def register():
     """
     if request.method == 'POST':
         # Extract form data
+        name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
         role = request.form.get('role')
         # Store form data in session for form repopulation in case of errors
         session['form_data'] = {
+            'name': name,
             'email': email,
             'password': password,
             'role': role
         }
-        error_message, error_category = validate_registration_data(email, password, role, user_repo)
+        error_message, error_category = validate_registration_data(name, email, password, role, user_repo)
 
         if error_message:
             flash(error_message, error_category)
             return redirect(url_for('register.register'))
         # Create new user and clear session data
-        user_repo.add_user(email, password, role)
+        user_repo.add_user(name, email, password, role)
         session.pop('form_data', None)
         session.clear()
         # Notify user of successful registration and redirect to login

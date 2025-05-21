@@ -13,7 +13,7 @@ class FirebaseUserRepository(IUserRepository):
 
         return safe_execute(operation, fallback=None, context="[get_user_by_email]")
 
-    def add_user(self, email, password, role):
+    def add_user(self, name, email, password, role):
         def operation():
             users_ref = db.collection(self.collection_name)
 
@@ -27,6 +27,8 @@ class FirebaseUserRepository(IUserRepository):
                     max_id = max(max_id, data['id'] + 1)
 
             new_user = {
+                "email": email,
+                "name": name,
                 "password": password,
                 "id": max_id,
                 "role": role
@@ -44,3 +46,13 @@ class FirebaseUserRepository(IUserRepository):
             return doc.exists
 
         return safe_execute(operation, fallback=False, context="[user_exists]")
+
+    def update_user_fields(self, email, updates):
+        allowed_fields = {"name", "role"}
+        filtered_updates = {k: v for k, v in updates.items() if k in allowed_fields}
+
+        def operation():
+            doc_ref = db.collection(self.collection_name).document(email)
+            doc_ref.update(filtered_updates)
+
+        return safe_execute(operation, fallback=None, context="[update_user_fields]")
