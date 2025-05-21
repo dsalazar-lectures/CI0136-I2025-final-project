@@ -49,14 +49,25 @@
         </div>
 
         <div class="modal-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+
           <div class="mb-3">
             <label for="name" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ name }}" required>
+            <input type="text" class="form-control" id="name" name="name" value="{{ name }}">
           </div>
 
           <div class="mb-3">
             <label for="role" class="form-label">Role</label>
-            <select class="form-select" id="role" name="role" required>
+            <select class="form-select" id="role" name="role">
               <option value="Student" {% if role == 'Student' %}selected{% endif %}>Student</option>
               <option value="Tutor" {% if role == 'Tutor' %}selected{% endif %}>Tutor</option>
             </select>
@@ -76,4 +87,13 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    {% if show_modal or (get_flashed_messages(with_categories=true)|length > 0) %}
+      var editModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+      editModal.show();
+    {% endif %}
+  });
+</script>
 {% endblock %}
