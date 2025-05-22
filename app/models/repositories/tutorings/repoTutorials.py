@@ -18,7 +18,7 @@ class RepoTutoring:
 
         self.tutorias = [
             Tutoring(1, "Tutoria de C++", 1, "Sergio Brenes", "Programación II", "2025-10-01", 
-                    "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 5,
+                    "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 3,
                      student_list=[{"id": 1, "name": "Carlos Matamoros"}, 
                                             {"id": 2, "name": "María López"}]),
 

@@ -43,7 +43,7 @@ def getListTutorials():
         print("Tutoring not found")
         return render_template('404.html'), 404
     else:
-        return render_template('list_tutorials.html', tutorias=tutorials)
+        return render_template('list_tutorials.html', tutorias=tutorials, len=len)
 
 @tutoring.route('/tutorial/register_tutoria', methods=["POST"])
 @login_required
@@ -62,6 +62,7 @@ def register_tutoria():
             exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)
             if exito:
                 flash("Te has registrado exitosamente.", "success")
+                tutoria.capacity -= 1
             else:
                 flash("No fue posible registrarte.", "danger")
     else:

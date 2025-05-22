@@ -29,27 +29,29 @@
                             <div class="column" style="flex: 1; margin-right: 10px;">
                                 <p><strong>Tutor:</strong> {{ tutoria.tutor }}</p>
                                 <p><strong>Curso:</strong> {{ tutoria.subject }}</p>
-                                <p><strong>Fecha:</strong> {{ tutoria.date }}</p>
+                    
                             </div>
                             <div class="column" style="flex: 1; margin-left: 10px;">
-                                <p><strong>Hora:</strong> {{ tutoria.start_time }}</p>
-                                <p><strong>Modalidad:</strong> {{ tutoria.method }}</p>
-                                <p><strong>Cupos disponibles:</strong> {{ tutoria.capacity }}</p>
+                                
                             </div>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                             <a href="/tutorial/{{ tutoria.id }}" class="button-back" style="background-color: gray; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 0.85em; width: auto;">Ver detalles</a>
+                            {% if tutoria.capacity - len(tutoria.student_list) > 0 %}
                             <form action="{{ url_for('tutorial.register_tutoria') }}" method="POST" style="display: inline;">
                                 <input type="hidden" name="id_tutoria" value="{{tutoria.id}}">
                                 <input type="hidden" name="id_student" value="{{session.user_id}}">
                                 <input type="hidden" name="name_student" value="{{session.user_name}}">
                                 <button type="submit" class="button-back" style="background-color: green; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.85em;">Inscribirme</button>
                             </form>
+                            {% else %}
+                            <p style="color: red; font-size: 0.85em;">Tutoría sin cupo</p>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
                 {% else %}
-                    <p>No hay tutorías disponibles.</p>
+                <p style="color: red; font-size: 1em; text-align: center;">No hay tutorías disponibles.</p>
                 {% endif %}
             </div>
         </div>
