@@ -5,14 +5,16 @@ This module handles user registration functionality, including form processing,
 validation, and user creation.
 """
 from flask import Blueprint, render_template, request, redirect, flash, session, url_for, make_response
-from ..models.repositories.mock_user_repository import MockUserRepository
+# from ..models.repositories.users.mock_user_repository import MockUserRepository
+# from app.models.repositories.users.mock_user_repository import MockUserRepository
+from app.models.repositories.users.firebase_user_repository import FirebaseUserRepository
 from ..models.services.registration_service import validate_registration_data
 
 # Create a Blueprint for registration-related routes
 register_bp = Blueprint('register', __name__, url_prefix='/register')
 # Repository for retrieving and storing user data
-user_repo = MockUserRepository() 
-
+# user_repo = MockUserRepository() 
+user_repo = FirebaseUserRepository()
 @register_bp.route('/', methods=['GET', 'POST'])
 def register():
     """
