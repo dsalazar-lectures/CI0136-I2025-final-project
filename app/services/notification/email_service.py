@@ -1,4 +1,4 @@
-from app.services.notification.smtp_email_type import SMTPEmailService
+from app.services.notification.types.smtp_email_type import SMTPEmailService
 from app.services.notification.factories.email_factory import EmailBuilderFactory
 
 class Emailservice():

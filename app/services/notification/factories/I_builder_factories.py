@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from app.services.notification.builders.I_notification_builder import Builder
 
 # Clase abstracta para las fabricas
-class BodyFactory(ABC):
+class BuilderFactory(ABC):
   @abstractmethod
   def createBody(self, builderType: str, datos) -> Builder:
     pass
