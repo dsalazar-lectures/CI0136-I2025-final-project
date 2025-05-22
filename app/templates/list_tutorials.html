@@ -37,7 +37,7 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                             <a href="/tutorial/{{ tutoria.id }}" class="button-back" style="background-color: gray; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 0.85em; width: auto;">Ver detalles</a>
-                            {% if tutoria.capacity - len(tutoria.student_list) > 0 %}
+                            {% if tutoria.capacity > 0 %}
                             <form action="{{ url_for('tutorial.register_tutoria') }}" method="POST" style="display: inline;">
                                 <input type="hidden" name="id_tutoria" value="{{tutoria.id}}">
                                 <input type="hidden" name="id_student" value="{{session.user_id}}">
