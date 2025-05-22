@@ -54,13 +54,18 @@ def register_tutoria():
 
     tutoria = repo.get_tutoria_by_id(id_tutoria)
     if tutoria:
-        exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)
-        if exito:
-            flash("Te has registrado exitosamente.")
+        if tutoria.capacity == len(tutoria.student_list):
+            flash("No hay cupos disponibles para esta tutoría.", "warning")
+        elif any(student["id"] == id_student for student in tutoria.student_list):
+            flash("Ya estás registrado en esta tutoría.", "info")
         else:
-            flash("No fue posible registrarte.")
+            exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)
+            if exito:
+                flash("Te has registrado exitosamente.", "success")
+            else:
+                flash("No fue posible registrarte.", "danger")
     else:
-        flash("La tutoría no fue encontrada.")
+        flash("La tutoría no fue encontrada.", "danger")
 
     return redirect(url_for('tutorial.getListTutorials'))
 
