@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from ..models.repositories.tutorial.repoTutorials import RepoTutoring
+from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 # from ..models.repositories.tutorings.firebase_tutorings_repository import FirebaseTutoringRepository
 
-tutoring = Blueprint('tutorial', __name__)
+tutorial = Blueprint('tutorial', __name__)
 
-repo = RepoTutoring()
+repo = Tutorial_mock_repo()
 
-@tutoring.route('/tutorial/<id>')
+@tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
     tutoring = repo.get_tutorial_by_id(id)
@@ -17,7 +17,7 @@ def getTutoriaById(id):
     else:
         return render_template('tutorial.html', tutoring=tutoring)
     
-@tutoring.route('/tutorial/create', methods=['GET', 'POST'])
+@tutorial.route('/tutorial/create', methods=['GET', 'POST'])
 def create_tutorial():
     if request.method == 'POST':
         title_tutoring = request.form['title_tutoring']

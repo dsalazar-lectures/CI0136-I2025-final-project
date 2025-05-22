@@ -19,7 +19,7 @@ initialize_firebase()
 from .controllers.home import home_bp as home_blueprint
 from .controllers.register import register_bp as register_blueprint  
 from .controllers.auth import auth_bp as auth_blueprint
-from .controllers.tutoriaControllers import tutoring as tutorial_blueprint
+from .controllers.tutorial_controller import tutorial as tutorial_blueprint
 from .controllers.comments import comments_bp
 from .controllers.ratings import ratings_bp
 from .controllers.email_controller import mail_bp
