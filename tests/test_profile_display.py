@@ -1,13 +1,13 @@
 def test_profile_displays_name_and_role(client, auth):
     # Register and log in a test user
-    auth.register(email="user@test.com", password="TestPass1!", name="Rolandito", role="Student")
+    auth.register(email="user@test.com", password="TestPass1!", name="Tatiana", role="Student")
     auth.login(email="user@test.com", password="TestPass1!")
 
     # Access the profile page
     response = client.get("/profile/", follow_redirects=True)
 
     # Check that the user's name and role are shown
-    assert b"Rolandito" in response.data
+    assert b"Tatiana" in response.data
     assert b"Student" in response.data
     assert response.status_code == 200
 
