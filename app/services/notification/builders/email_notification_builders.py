@@ -24,7 +24,7 @@ class loginEmailBuilder(Builder):
 class ReminderEmailBuilder(Builder):
   def buildBody(self, data: dict) -> dict:
     username = data.get("username")
-    if user is None:
+    if username is None:
       raise ValueError("El usuario no puede ser nulo")
     emailTo = data.get("emailTo")
     if emailTo is None:
