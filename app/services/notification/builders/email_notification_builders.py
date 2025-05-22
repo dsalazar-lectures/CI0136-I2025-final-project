@@ -1,5 +1,6 @@
 from app.services.notification.builders.I_notification_builder import Builder
 
+
 # Clase que estructura un correo de tipo login
 class loginEmailBuilder(Builder):
   def buildBody(self):
