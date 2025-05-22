@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from ..models.repositories.tutorings.repoTutorials import RepoTutoring
+from ..models.repositories.tutorial.repoTutorials import RepoTutoring
 # from ..models.repositories.tutorings.firebase_tutorings_repository import FirebaseTutoringRepository
 
 tutoring = Blueprint('tutorial', __name__)
@@ -33,8 +33,8 @@ def create_tutorial():
 
         #TODO: Get the tutor ID and name from DB
 
-        new_tutoring = repo.create_tutorial(
+        new_tutorial = repo.create_tutorial(
             title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
         )
-        return redirect(url_for('tutorial.getTutoriaById', id=new_tutoring.id))
+        return redirect(url_for('tutorial.getTutoriaById', id=new_tutorial.id))
     return render_template('tutorial_creation.html')
