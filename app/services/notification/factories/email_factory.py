@@ -10,6 +10,6 @@ class EmailBuilderFactory(BodyFactory):
     if builderType == "login":
       return email_notification_builders.loginEmailBuilder()
     elif builderType == "reminder":
-      return email_notification_builders.ReminderEmailBuilder();
+      return email_notification_builders.ReminderEmailBuilder()
     else:
       raise ValueError("Builder no soportado")
