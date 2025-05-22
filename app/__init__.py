@@ -5,6 +5,7 @@ This file creates the Flask app instance and registers all blueprints.
 from flask import Flask, render_template, session, request 
 from app.middleware.error_logging import error_logging_middleware
 from app.firebase_config import initialize_firebase
+from app.utils.error_handlers import register_error_handlers
 
 app = Flask(__name__)
 # Initialize error logging middleware
@@ -13,10 +14,11 @@ error_logging_middleware(app)
 app.secret_key = 'some-secret'
 
 initialize_firebase()
+register_error_handlers(app)
 
 @app.before_request
 def clear_session_on_restart():
-    if "user_id" in session and request.endpoint == "auth.login":
+    if request.endpoint == "auth.login" and request.method == "GET" and "user_id" in session:
         session.clear()
         
 # Import blueprint modules
@@ -39,3 +41,4 @@ app.register_blueprint(tutoria_blueprint)      # Tutoring routes
 app.register_blueprint(mail_bp, url_prefix='/email')
 app.register_blueprint(student_bp, url_prefix='/student')
 app.register_blueprint(profile_blueprint, url_prefix="/profile")
+

@@ -1,80 +1,170 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+  <style>
+    body {
+      background-color: #5e5b5b;
+    }
 
-  <h2>Create an Account</h2>
+    .register-wrapper {
+      max-width: 460px;
+      margin: 60px auto;
+      padding: 30px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
 
-  <form action="/register" method="POST" novalidate>
-    <div class="mb-3">
-      <label for="email" class="form-label">Email:</label>
-      <input 
-        type="email" 
-        id="email" 
-        name="email" 
-        class="form-control {% if errors and errors.get('email') %}is-invalid{% endif %}" 
-        value="{{ form_data.get('email', '') }}">
-      {% if errors and errors.get('email') %}
-        <div class="invalid-feedback">
-          {{ errors.get('email') }}
-        </div>
+    .form-control,
+    .form-select {
+      background-color: #f2f2f2;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      box-shadow: none;
+      border: 1px solid #ccc;
+    }
+
+    #submitBtn {
+      background-color: #4d84c4;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      width: 100%;
+      font-weight: bold;
+      color: white;
+    }
+
+    #submitBtn:disabled {
+      background-color: #a0b8d8;
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 25px;
+    }
+
+    p {
+      text-align: center;
+    }
+  </style>
+
+  <div class="register-wrapper">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
       {% endif %}
-    </div>
+    {% endwith %}
 
-    <div class="mb-3">
-      <label for="password" class="form-label">Password:</label>
-      <input 
-        type="password" 
-        id="password" 
-        name="password" 
-        class="form-control {% if errors and errors.get('password') %}is-invalid{% endif %}" 
-        value="{{ form_data.get('password', '') }}">
-      {% if errors and errors.get('password') %}
-        <div class="invalid-feedback">
-          {{ errors.get('password') }}
+    <h2>Create an Account</h2>
+
+    <form action="/register" method="POST" novalidate>
+
+      <div class="mb-3">
+        <label for="name" class="form-label fw-semibold">Name:</label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-control {% if errors and errors.get('name') %}is-invalid{% endif %}" 
+          value="{{ form_data.get('name', '') }}">
+        {% if errors and errors.get('name') %}
+          <div class="invalid-feedback">
+            {{ errors.get('name') }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label fw-semibold">Email:</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="form-control {% if errors and errors.get('email') %}is-invalid{% endif %}" 
+          value="{{ form_data.get('email', '') }}">
+        {% if errors and errors.get('email') %}
+          <div class="invalid-feedback">
+            {{ errors.get('email') }}
+          </div>
+        {% endif %}
+      </div>
+      <div class="mb-3"></div>
+      <div class="mb-3">
+        <label for="password" class="form-label fw-semibold">Password:</label>
+        <div class="position-relative">
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-control pe-5 {% if errors and errors.get('password') %}border-danger{% endif %}" 
+            value="{{ form_data.get('password', '') }}"
+            style="padding-right: 2.75rem;">
+          <i class="bi bi-eye position-absolute top-50 translate-middle-y text-muted"
+            id="eyeIcon"
+            style="right: 1rem; cursor: pointer; pointer-events: auto;"></i>
         </div>
-      {% endif %}
-    </div>
+        {% if errors and errors.get('password') %}
+          <div class="text-danger small ms-1 mt-1">
+            {{ errors.get('password') }}
+          </div>
+        {% endif %}
+      </div>
 
-    <div class="mb-3">
-      <label for="role" class="form-label">Role:</label>
-      <select 
-        name="role" 
-        id="role" 
-        class="form-select {% if errors and errors.get('role') %}is-invalid{% endif %}" 
-        required>
-        <option value="">Select a role</option>
-        <option value="Student" {% if form_data.get('role') == 'Student' %}selected{% endif %}>Student</option>
-        <option value="Tutor" {% if form_data.get('role') == 'Tutor' %}selected{% endif %}>Tutor</option>
-        <option value="Admin" {% if form_data.get('role') == 'Admin' %}selected{% endif %}>Admin</option>
-      </select>
-      {% if errors and errors.get('role') %}
-        <div class="invalid-feedback">
-          {{ errors.get('role') }}
-        </div>
-      {% endif %}
-    </div>
+      <div class="mb-3">
+        <label for="role" class="form-label fw-semibold">Role:</label>
+        <select 
+          name="role" 
+          id="role" 
+          class="form-select {% if errors and errors.get('role') %}is-invalid{% endif %}" 
+          required>
+          <option value="">Select a role</option>
+          <option value="Student" {% if form_data.get('role') == 'Student' %}selected{% endif %}>Student</option>
+          <option value="Tutor" {% if form_data.get('role') == 'Tutor' %}selected{% endif %}>Tutor</option>
+          <option value="Admin" {% if form_data.get('role') == 'Admin' %}selected{% endif %}>Admin</option>
+        </select>
+        {% if errors and errors.get('role') %}
+          <div class="invalid-feedback">
+            {{ errors.get('role') }}
+          </div>
+        {% endif %}
+      </div>
 
-    <button 
-      type="submit" 
-      class="btn btn-primary"
-      id="submitBtn"
-      {% if not form_data %}disabled{% endif %}>
-      Register
-    </button>
-  </form>
+      <button 
+        type="submit" 
+        class="btn"
+        id="submitBtn"
+        {% if not form_data %}disabled{% endif %}>
+        Sign Up
+      </button>
+    </form>
 
-  <p class="mt-3">
-    Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
-  </p>
+    <p class="mt-3">
+      Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+    </p>
+  </div>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const eyeIcon = document.getElementById("eyeIcon");
+      const passwordInput = document.getElementById("password");
+
+      eyeIcon.addEventListener("click", function () {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        eyeIcon.classList.toggle("bi-eye");
+        eyeIcon.classList.toggle("bi-eye-slash");
+      });
+    });
+  </script>
 {% endblock %}
