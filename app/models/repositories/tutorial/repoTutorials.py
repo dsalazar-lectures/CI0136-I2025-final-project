@@ -1,7 +1,7 @@
 from .tutorial import Tutorial
 from .ITutorial import ITutorialRepository
 
-class RepoTutoring(ITutorialRepository):
+class Tutorial_mock_repo(ITutorialRepository):
     def __init__(self):
         
 
