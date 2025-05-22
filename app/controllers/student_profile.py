@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for
 from ..utils.auth import login_required
-from ..models.repositories.tutorings.firebase_tutorings_repository import FirebaseTutoringRepository
+from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 
 student_bp = Blueprint('student', __name__)
 repo = FirebaseTutoringRepository()
