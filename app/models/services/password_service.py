@@ -4,6 +4,9 @@ from abc import ABC, abstractmethod
 import bcrypt
 #module requiered for regular expressions
 import re
+from app.models.repositories.users import firebase_user_repository
+
+repo = firebase_user_repository.FirebaseUserRepository()
 
 class PasswordService(ABC):
     def __init__(self):
@@ -21,7 +24,7 @@ class PasswordService(ABC):
     #the new hash password must be store to the DB
     #@abstractmethod
     def store_new_pass_to_db(self, new_hash_password, user):
-        pass
+        print("CONTRASEÑA CAMBIADA EXITOSAMENTE") if repo.update_user_password(user["email"], new_hash_password) else print("ERROR AL CAMBIAR LA CONTRASEÑA")
 
     #mock function to retrieve a password hash
     #only available while passwords are stored in plain text in the DB
@@ -72,7 +75,9 @@ class ChangePasswordService(PasswordService):
         if (self.verify_password(current_pass_input, hashed_password)):
             salt = bcrypt.gensalt()
             new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt)
-            self.store_new_pass_to_db(new_hash_password, user)  
+            #self.store_new_pass_to_db(new_hash_password, user)  
+            #we  don't pass the hash yet, since passwords are stored in plain text for the moment
+            self.store_new_pass_to_db(new_pass_input, user)
             pass_change_successfully = True
         return pass_change_successfully
     
