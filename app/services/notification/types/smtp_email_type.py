@@ -4,14 +4,14 @@ from email.message import EmailMessage
 
 from .i_notification_type import INotificationService
 
-# Clase que envía un correo electrónico
+# Clase que envía un correo electrónico usando smtp
 class SMTPEmailService(INotificationService):
   """
   Servicio de envío de correos electrónicos utilizando el servidor SMTP de Gmail.
 
   Atributos:
-      emailSender (str): Dirección de correo del remitente.
-      passwordSender (str): Contraseña o clave de aplicación del remitente.
+    emailSender (str): Dirección de correo del remitente.
+    passwordSender (str): Contraseña o clave de aplicación del remitente.
   """
 
   def __init__(self, emailSender: str, passwordSender: str):
@@ -25,15 +25,16 @@ class SMTPEmailService(INotificationService):
     Parámetros:
     ----------
     data : dict
-        Diccionario que contiene la información del correo electrónico:
-        - 'to': Correo electrónico del destinatario.
-        - 'subject': Asunto del correo electrónico.
-        - 'message': Cuerpo del mensaje del correo electrónico.
+      Diccionario que contiene la información del correo electrónico:
+      - 'to': Correo electrónico del destinatario.
+      - 'subject': Asunto del correo electrónico.
+      - 'message': Cuerpo del mensaje del correo electrónico.
 
     Retorna:
     -------
     bool
-        True si el correo electrónico se envió correctamente, False en caso contrario.
+      - True si el correo electrónico se envió correctamente.
+      - False en caso contrario.
     """
     # Construcción del email
     email = EmailMessage()
