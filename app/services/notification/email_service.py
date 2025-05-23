@@ -22,8 +22,7 @@ class EmailService():
         
         # Send the email using the SMTP service
         try:
-            self.smtp_service.send(email_body)
+            return self.smtp_service.send(email_body)
         except Exception as e:
             print(f"Error sending email: {e}")
             return False
-        return True
