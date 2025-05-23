@@ -8,7 +8,7 @@ from app.services.notification import SMTPEmailService
 # test para validar que el servicio de email se crea correctamente
 def test_create_email_service():
     factory = EmailBuilderFactory()
-    smtp_service = SMTPEmailService()
+    smtp_service = SMTPEmailService("smtp.example.com", "password")
     email_service = EmailService(factory, smtp_service)
     assert email_service is not None
     assert isinstance(email_service, EmailService)

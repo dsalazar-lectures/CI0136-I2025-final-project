@@ -1,7 +1,3 @@
-# Bibliotecas para un manejo seguro de credenciales
-import os
-from dotenv import load_dotenv
-
 # Bibliotecas para crear y enviar un mensaje por email
 import smtplib
 from email.message import EmailMessage
@@ -10,13 +6,35 @@ from .i_notification_type import INotificationService
 
 # Clase que envía un correo electrónico
 class SMTPEmailService(INotificationService):
-  def __init__(self):
-    # Leemos un .env donde se encuentran credenciales del correo que enviará el email
-    load_dotenv()
-    self.emailSender = os.getenv("SENDER")  # Obtenemos la dirección de correo electrónico
-    self.passwordSender = os.getenv("PASSWORD")  # Obtenemos la contraseña
+  """
+  Servicio de envío de correos electrónicos utilizando el servidor SMTP de Gmail.
 
-  def send(self, data):
+  Atributos:
+      emailSender (str): Dirección de correo del remitente.
+      passwordSender (str): Contraseña o clave de aplicación del remitente.
+  """
+
+  def __init__(self, emailSender: str, passwordSender: str):
+    self.emailSender = emailSender  # Obtenemos el email
+    self.passwordSender = passwordSender  # Obtenemos la contraseña
+
+  def send(self, data) -> bool:
+    """
+    Envía un correo electrónico utilizando el servidor SMTP de Gmail.
+
+    Parámetros:
+    ----------
+    data : dict
+        Diccionario que contiene la información del correo electrónico:
+        - 'to': Correo electrónico del destinatario.
+        - 'subject': Asunto del correo electrónico.
+        - 'message': Cuerpo del mensaje del correo electrónico.
+
+    Retorna:
+    -------
+    bool
+        True si el correo electrónico se envió correctamente, False en caso contrario.
+    """
     # Construcción del email
     email = EmailMessage()
     email["From"] = self.emailSender
