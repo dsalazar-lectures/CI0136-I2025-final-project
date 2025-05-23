@@ -1,4 +1,4 @@
-from app.services.notification.builders.I_notification_builder import Builder
+from .i_notification_builder import Builder
 import datetime
 
 # Clase que estructura un correo de tipo login

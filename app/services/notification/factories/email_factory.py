@@ -1,8 +1,7 @@
 # Acceso al Ifactory
-from app.services.notification.factories.I_builder_factories import BuilderFactory
+from .i_builder_factories import BuilderFactory
 # Acceso a los builders
-from app.services.notification.builders.I_notification_builder import Builder
-from app.services.notification.builders.I_notification_builder import email_notification_builders
+from builders import *
 
 # Clase fabrica para los builders de tipo email
 class EmailBuilderFactory(BuilderFactory):

@@ -1,5 +1,5 @@
-from app.services.notification.types.smtp_email_type import SMTPEmailService
-from app.services.notification.factories.email_factory import EmailBuilderFactory
+from .types import SMTPEmailService
+from .factories import EmailBuilderFactory
 
 class Emailservice():
     def __init__(self):
