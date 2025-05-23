@@ -1,11 +1,11 @@
 # Acceso al Ifactory
-from .i_builder_factories import BuilderFactory
+from .i_builder_factories import IBuilderFactory
 # Acceso a los builders
-from builders import *
+from ..builders import *
 
 # Clase fabrica para los builders de tipo email
-class EmailBuilderFactory(BuilderFactory):
-  def create_builder(self, builder_type: str) -> Builder:
+class EmailBuilderFactory(IBuilderFactory):
+  def create_builder(self, builder_type: str) -> IBuilder:
     if builder_type == "login":
       return email_notification_builders.LoginEmailBuilder()
     elif builder_type == "reminder":

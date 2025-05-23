@@ -2,11 +2,11 @@
 from abc import ABC, abstractmethod
 
 # Acceso a los builders
-from builders import Builder
+from ..builders import *
 
 # Clase abstracta para las fabricas
-class BuilderFactory(ABC):
+class IBuilderFactory(ABC):
   @abstractmethod
-  def create_builder(self, builder_type: str) -> Builder:
+  def create_builder(self, builder_type: str) -> IBuilder:
     pass
 

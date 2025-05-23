@@ -1,8 +1,8 @@
-from .i_notification_builder import Builder
+from .i_notification_builder import IBuilder
 import datetime
 
 # Clase que estructura un correo de tipo login
-class LoginEmailBuilder(Builder):
+class LoginEmailBuilder(IBuilder):
   def build_body(self, data: dict) -> dict:
     username = data.get("username")
     if username is None:
@@ -20,7 +20,7 @@ class LoginEmailBuilder(Builder):
     }
 
 # Clase que estructura un correo de tipo reminder
-class ReminderEmailBuilder(Builder):
+class ReminderEmailBuilder(IBuilder):
   def build_body(self, data: dict) -> dict:
     username = data.get("username")
     if username is None:

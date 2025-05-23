@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 import smtplib
 from email.message import EmailMessage
 
-from .i_notification_type import NotificationService
+from .i_notification_type import INotificationService
 
 # Clase que envía un correo electrónico
-class SMTPEmailService(NotificationService):
+class SMTPEmailService(INotificationService):
   def __init__(self):
     # Leemos un .env donde se encuentran credenciales del correo que enviará el email
     load_dotenv()
