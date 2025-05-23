@@ -5,10 +5,10 @@ from builders import *
 
 # Clase fabrica para los builders de tipo email
 class EmailBuilderFactory(BuilderFactory):
-  def createBuilder(self, builderType: str) -> Builder:
-    if builderType == "login":
-      return email_notification_builders.loginEmailBuilder()
-    elif builderType == "reminder":
+  def create_builder(self, builder_type: str) -> Builder:
+    if builder_type == "login":
+      return email_notification_builders.LoginEmailBuilder()
+    elif builder_type == "reminder":
       return email_notification_builders.ReminderEmailBuilder()
     else:
       raise ValueError("Builder no soportado")

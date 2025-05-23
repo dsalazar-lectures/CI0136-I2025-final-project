@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import smtplib
 from email.message import EmailMessage
 
-from .I_notification_type import NotificationService
+from .i_notification_type import NotificationService
 
 # Clase que envía un correo electrónico
 class SMTPEmailService(NotificationService):

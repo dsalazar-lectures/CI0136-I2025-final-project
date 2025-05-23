@@ -1,7 +1,7 @@
 from .types import SMTPEmailService
 from .factories import EmailBuilderFactory
 
-class Emailservice():
+class EmailService():
     def __init__(self):
         self.factory = EmailBuilderFactory()
         self.smtp_service = SMTPEmailService()

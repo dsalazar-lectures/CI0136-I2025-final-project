@@ -7,6 +7,6 @@ from builders import Builder
 # Clase abstracta para las fabricas
 class BuilderFactory(ABC):
   @abstractmethod
-  def createBody(self, builderType: str, datos) -> Builder:
+  def create_builder(self, builder_type: str) -> Builder:
     pass
 
