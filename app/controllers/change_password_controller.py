@@ -1,7 +1,4 @@
 from flask import redirect, url_for, flash, request, session
-from app.models.services.email_service import EmailService
-from app.models.builders.email_notification_builders import Builder
-from app.models.services import email_service
 from app.models.services import password_service
 from app.models.services import email_notifier
 from app.models.repositories.users import firebase_user_repository
@@ -50,7 +47,7 @@ def change_pass():
 
             
             #Notify by email after changing the password
-            print("correo enviado") if notifier.send(user, "changepassword") else print("error")
+            #print("correo enviado") if notifier.send(user, "changepassword") else print("error")
                
         else: 
             if (valid_password):
