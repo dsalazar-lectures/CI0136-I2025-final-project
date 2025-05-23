@@ -1,0 +1,109 @@
+[flake8]
+max-line-length = 79
+exclude = .git,__pycache__,build,dist,venv,app/static,app/templates
+per-file-ignores =
+    __init__.py: F401
+    # Ignore unused imports in __init__.py files
+
+# Focus on naming conventions, indentation, blank lines, encoding, and comments
+select = N,E1,E2,E3,E9,W
+# N: pep8-naming
+# E1: indentation errors
+# E2: whitespace errors
+# E3: blank line errors
+# E9: syntax errors and encoding
+# W: pycodestyle warnings
+
+# Binary operator line break rules
+ignore = W504
+# W503: line break before binary operator (allowed)
+# W504: line break after binary operator (not allowed)
+
+# Comment rules
+# E201: whitespace after '('
+# E202: whitespace before ')'
+# E203: whitespace before ':'
+# E211: whitespace before '('
+# E221: multiple spaces before operator
+# E222: multiple spaces after operator
+# E223: tab before operator
+# E224: tab after operator
+# E225: missing whitespace around operator
+# E226: missing whitespace around arithmetic operator
+# E227: missing whitespace around bitwise or shift operator
+# E228: missing whitespace around modulo operator
+# E231: missing whitespace after ','
+# E241: multiple spaces after ','
+# E242: tab after ','
+# E251: unexpected spaces around keyword / parameter equals
+# E261: at least two spaces before inline comment
+# E262: inline comment should start with '# '
+# E265: block comment should start with '# '
+# E266: too many leading '#' for block comment
+# E271: multiple spaces after keyword
+# E272: multiple spaces before keyword
+# E273: tab after keyword
+# E274: tab before keyword
+# E275: missing whitespace after keyword
+
+# Encoding rules
+# E901: SyntaxError or IndentationError
+# E902: IOError
+# E999: SyntaxError: invalid syntax
+# W191: indentation contains tabs
+# W291: trailing whitespace
+# W292: no newline at end of file
+# W293: blank line contains whitespace
+# W391: blank line at end of file
+# W601: .has_key() is deprecated, use 'in'
+# W602: deprecated form of raising exception
+# W603: '<>' is deprecated, use '!='
+# W604: backticks are deprecated, use 'repr()'
+# W605: invalid escape sequence
+# W606: 'async' and 'await' are reserved keywords starting with Python 3.7
+
+# Blank line rules
+# E301: expected 1 blank line, found 0
+# E302: expected 2 blank lines, found 0
+# E303: too many blank lines
+# E304: blank lines found after function decorator
+# E305: expected 2 blank lines after class or function definition
+# E306: expected 1 blank line before a nested definition
+
+# Indentation rules
+# E111: indentation is not a multiple of 4
+# E112: expected an indented block
+# E113: unexpected indentation
+# E114: indentation is not a multiple of 4 (comment)
+# E115: expected an indented block (comment)
+# E116: unexpected indentation (comment)
+# E117: over-indented
+# E121: continuation line indentation is not a multiple of 4
+# E122: continuation line missing indentation or outdented
+# E123: closing bracket does not match indentation of opening bracket's line
+# E124: closing bracket does not match visual indentation
+# E125: continuation line with same indent as next logical line
+# E126: continuation line over-indented for hanging indent
+# E127: continuation line over-indented for visual indent
+# E128: continuation line under-indented for visual indent
+# E129: visually indented line with same indent as next logical line
+# E131: continuation line unaligned for hanging indent
+# E133: closing bracket is missing indentation
+
+# Naming convention rules
+# N801: Class names should use CapWords convention
+# N802: Function name should be lowercase
+# N803: Argument name should be lowercase
+# N804: First argument of a classmethod should be named 'cls'
+# N805: First argument of a method should be named 'self'
+# N806: Variable in function should be lowercase
+# N807: Function name should not start and end with '__'
+# N811: Constant imported as non constant
+# N812: Lowercase imported as non-lowercase
+# N813: Camelcase imported as lowercase
+# N814: Camelcase imported as constant
+# N815: MixedCase variable in class scope
+# N816: MixedCase variable in global scope
+# N817: Camelcase imported as acronym
+# N818: Error suffix in exception names
+# N819: Constant name should be uppercase 

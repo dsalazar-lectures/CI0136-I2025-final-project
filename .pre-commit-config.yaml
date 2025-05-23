@@ -1,0 +1,13 @@
+repos:
+-   repo: https://github.com/pycqa/flake8
+    rev: 7.0.0  # same versin that  in requirements 
+    hooks:
+    -   id: flake8
+        additional_dependencies: [
+            'pep8-naming==0.14.0'
+        ]
+        args: [
+            '--max-line-length=79',
+            '--select=E1,E2,E3,E9,N,W',
+            '--exclude=.git,__pycache__,build,dist,venv,app/static,app/templates'
+        ] 
