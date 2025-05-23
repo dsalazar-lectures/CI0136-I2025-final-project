@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, session, redirect, url_for
-from ..utils.auth import login_required
+from ..utils.auth import login_or_role_required
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 
 tutor_bp = Blueprint('tutor', __name__)
 repo = FirebaseTutoringRepository()
 
 @tutor_bp.route('/profile')
-@login_required
+@login_or_role_required ('Tutor')
 def tutor_profile():
   if session.get('role') != 'Tutor':
     return redirect(url_for('home.home'))
