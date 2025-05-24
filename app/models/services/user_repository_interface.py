@@ -48,3 +48,11 @@ class IUserRepository(ABC):
             bool: True if user exists, False otherwise
         """
         pass
+
+    @abstractmethod
+    def get_user_by_id(self, id):
+        pass
+
+    @abstractmethod
+    def update_user_password(self, email, new_password):
+        pass
