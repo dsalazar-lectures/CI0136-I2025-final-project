@@ -11,8 +11,8 @@ repo1 = FirebaseTutoringRepository()
 @tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
-    tutoring = repo.get_tutorial_by_id(id)
-
+    #tutoring = repo.get_tutorial_by_id(id)
+    tutoring = repo1.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     if tutoring is None:
         print("Tutorial not found")
         return render_template('404.html'), 404
@@ -44,6 +44,7 @@ def create_tutorial():
 @tutorial.route('/tutorial/list')
 def getListTutorials():
     tutorials = repo1.get_list_tutorials()
+    #tutorials = repo.list_tutorials()
     print("TUTORIAS:", tutorials) 
     if tutorials is None:
         print("Tutoring not found")
@@ -61,6 +62,7 @@ def register_tutoria():
     print(f"ID del estudiante: {id_student}")
     print(name_student)
     tutoria = repo1.get_tutoria_by_id(id_tutoria)
+    #tutoria = repo.get_tutorial_by_id(id_tutoria) 
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
             flash("No hay cupos disponibles para esta tutoría.", "warning")
@@ -68,6 +70,7 @@ def register_tutoria():
             flash("Ya estás registrado en esta tutoría.", "info")
         else:
             exito = repo1.register_in_tutoria(id_student, name_student, id_tutoria)
+            #exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)  # Cambié el repositorio mock por el repositorio de Firebase
             if exito:
                 flash("Te has registrado exitosamente.", "success")
                 tutoria.capacity -= 1
