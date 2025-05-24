@@ -1,16 +1,16 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from ..models.repositories.tutorings.repoTutorials import RepoTutoring
+from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 # from ..models.repositories.tutorings.firebase_tutorings_repository import FirebaseTutoringRepository
-from app.utils.auth import login_required
+from ..utils.auth import login_or_role_required
+#from flask_login import login_required
+tutorial = Blueprint('tutorial', __name__)
 
-tutoring = Blueprint('tutorial', __name__)
+repo = Tutorial_mock_repo()
 
-repo = RepoTutoring()
-
-@tutoring.route('/tutorial/<id>')
+@tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
-    tutoring = repo.get_tutoria_by_id(id)
+    tutoring = repo.get_tutorial_by_id(id)
 
     if tutoring is None:
         print("Tutorial not found")
@@ -18,11 +18,10 @@ def getTutoriaById(id):
     else:
         return render_template('tutorial.html', tutoring=tutoring)
     
-@tutoring.route('/tutorial/create', methods=['GET', 'POST'])
-def create_tutoring():
+@tutorial.route('/tutorial/create', methods=['GET', 'POST'])
+def create_tutorial():
     if request.method == 'POST':
         title_tutoring = request.form['title_tutoring']
-        tutor_id = int(request.form['tutor_id'])
         subject = request.form['subject']
         date = request.form['date']
         start_time = request.form['start_time']
@@ -30,13 +29,18 @@ def create_tutoring():
         method = request.form['method']
         capacity = int(request.form['capacity'])
 
-        new_tutoring = repo.create_tutoria(
-            title_tutoring, tutor_id, subject, date, start_time, description, method, capacity
+        tutor_id = 2 # This should be replaced with the actual tutor ID from DB
+        tutor = "Ana Gómez" # This should be replaced with the actual tutor name from the DB
+
+        #TODO: Get the tutor ID and name from DB
+
+        new_tutorial = repo.create_tutorial(
+            title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
         )
-        return redirect(url_for('tutorial.getTutoriaById', id=new_tutoring.id))
+        return redirect(url_for('tutorial.getTutoriaById', id=new_tutorial.id))
     return render_template('tutorial_creation.html')
 
-@tutoring.route('/tutorial/list')
+@tutorial.route('/tutorial/list')
 def getListTutorials():
     tutorials = repo.list_tutorials()
     if tutorials is None:
@@ -45,14 +49,16 @@ def getListTutorials():
     else:
         return render_template('list_tutorials.html', tutorias=tutorials, len=len)
 
-@tutoring.route('/tutorial/register_tutoria', methods=["POST"])
-@login_required
+@tutorial.route('/tutorial/register_tutoria', methods=["POST"])
+@login_or_role_required ('Student')
 def register_tutoria():
+    print(session)
     id_tutoria = request.form["id_tutoria"]
-    id_student = session["user_id"]  # Obtener el ID del usuario autenticado desde la sesión
-    name_student = session.get("user_name", "Usuario Anónimo")  # Obtener el nombre del usuario autenticado
-
-    tutoria = repo.get_tutoria_by_id(id_tutoria)
+    id_student = session.get('user_id')
+    name_student = session.get("name", "usuario anonimo")  # Obtener el nombre del usuario autenticado
+    print(f"ID del estudiante: {id_student}")
+    print(name_student)
+    tutoria = repo.get_tutorial_by_id(id_tutoria)
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
             flash("No hay cupos disponibles para esta tutoría.", "warning")
