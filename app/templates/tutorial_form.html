@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if edit_mode %}Editar{% else %}Crear{% endif %} Tutoría</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tutorial_form.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>{% if edit_mode %}Editar{% else %}Crear{% endif %} Tutoría</h1>
+        <div class="divider"></div>
+
+        <form method="POST" class="details">
+            <div class="detail-item">
+                <i class="fa-solid fa-heading"></i>
+                <input type="text" name="title_tutoring" placeholder="Título" required value="{{ tutoring.title if tutoring else '' }}">
+            </div>
+            <div class="detail-item">
+                <i class="fa-solid fa-book"></i>
+                <input type="text" name="subject" placeholder="Materia" required value="{{ tutoring.subject if tutoring else '' }}">
+            </div>
+            <div class="detail-item">
+                <i class="fa-solid fa-calendar-days"></i>
+                <input type="date" name="date" required value="{{ tutoring.date if tutoring else '' }}">
+            </div>
+            <div class="detail-item">
+                <i class="fa-solid fa-clock"></i>
+                <input type="time" name="start_time" required value="{{ tutoring.start_time if tutoring else '' }}">
+            </div>
+            <div class="detail-item">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <input type="text" name="description" placeholder="Descripción" required value="{{ tutoring.description if tutoring else '' }}">
+            </div>
+            <div class="detail-item">
+                <i class="fa-solid fa-laptop"></i>
+                <select name="method" required>
+                    <option value="Virtual" {% if tutoring and tutoring.method == 'Virtual' %}selected{% endif %}>Virtual</option>
+                    <option value="Presencial" {% if tutoring and tutoring.method == 'Presencial' %}selected{% endif %}>Presencial</option>
+                </select>
+            </div>
+            <div class="detail-item">
+                <i class="fa-solid fa-user-group"></i>
+                <input type="number" name="capacity" min="1" placeholder="Capacidad" required value="{{ tutoring.capacity if tutoring else '' }}">
+            </div>
+    </div>
+    <div class="form-buttons">
+        <button type="submit">Guardar cambios</button>
+        <a href="/tutorias" class="button-back button-cancel">Cancelar</a>
+    </div>
+</body>
+</html>

@@ -45,3 +45,16 @@ class Tutorial_mock_repo(ITutorialRepository):
         )
         self.tutorias.append(new_tutoring)
         return new_tutoring
+    
+    def update_tutorial(self, id, updated_data):
+        tutorial = self.get_tutorial_by_id(id)
+        if tutorial:
+            tutorial.title = updated_data.get('title_tutoring', tutorial.title)
+            tutorial.subject = updated_data.get('subject', tutorial.subject)
+            tutorial.date = updated_data.get('date', tutorial.date)
+            tutorial.start_time = updated_data.get('start_time', tutorial.start_time)
+            tutorial.description = updated_data.get('description', tutorial.description)
+            tutorial.method = updated_data.get('method', tutorial.method)
+            tutorial.capacity = updated_data.get('capacity', tutorial.capacity)
+            return True
+        return False

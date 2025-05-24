@@ -37,4 +37,27 @@ def create_tutorial():
             title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
         )
         return redirect(url_for('tutorial.getTutoriaById', id=new_tutorial.id))
-    return render_template('tutorial_creation.html')
+    return render_template('tutorial_form.html', tutoring=None, edit_mode=False)
+
+@tutorial.route('/tutorial/<id>/edit', methods=['GET', 'POST'])
+def edit_tutorial(id):
+    tutoring = repo.get_tutorial_by_id(id)
+
+    if tutoring is None:
+        return render_template('404.html'), 404
+
+    if request.method == 'POST':
+        updated_data = {
+            'title_tutoring': request.form['title_tutoring'],
+            'subject': request.form['subject'],
+            'date': request.form['date'],
+            'start_time': request.form['start_time'],
+            'description': request.form['description'],
+            'method': request.form['method'],
+            'capacity': int(request.form['capacity']),
+        }
+
+        repo.update_tutorial(id, updated_data)
+        return redirect(url_for('tutorial.getTutoriaById', id=id))
+
+    return render_template('tutorial_form.html', tutoring=tutoring, edit_mode=True)

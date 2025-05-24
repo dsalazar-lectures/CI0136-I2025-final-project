@@ -16,3 +16,7 @@ class ITutorialRepository(ABC):
     @abstractmethod
     def create_tutorial(self, title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity):
         pass
+
+    @abstractmethod
+    def update_tutorial(self, id, updated_data):
+        pass
