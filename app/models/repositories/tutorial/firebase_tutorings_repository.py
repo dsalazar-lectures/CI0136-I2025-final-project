@@ -62,3 +62,35 @@ class FirebaseTutoringRepository:
             return tutorias
 
         return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
+
+    def register_in_tutoria(self, id_student, name_student, id_tutoria):
+        def operation():
+            # Obtiene una tutoria por su ID
+            tutoria_ref = db.collection(self.collection_name).where("id", "==", id_tutoria).limit(1)
+            docs = tutoria_ref.stream()
+            
+            for doc in docs: # Solo debería haber un documento, porque las tutorias son unicas
+                tutoria = doc.to_dict()
+                doc_id = doc.id  # Firebase document ID
+                
+                # Verificar si hay cupos disponibles
+                if tutoria["capacity"] == len(tutoria.get("student_list", [])):
+                    print("No hay cupos disponibles")
+                    return False
+                
+                # Verificar si el estudiante ya está registrado
+                for student in tutoria.get("student_list", []):
+                    if student["id"] == id_student:
+                        print("El estudiante ya está registrado")
+                        return False
+                
+                # Registrar al estudiante
+                tutoria["student_list"].append({"id": id_student, "name": name_student})
+                db.collection(self.collection_name).document(doc_id).update({"student_list": tutoria["student_list"]})
+                print("Estudiante registrado")
+                return True
+            
+            print("Tutoria no encontrada")
+            return False
+
+        return safe_execute(operation, fallback=False, context="[register_in_tutoria]")
