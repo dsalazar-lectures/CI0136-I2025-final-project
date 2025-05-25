@@ -46,8 +46,9 @@
 </style>
 
 <script>
-const LOGS_PER_PAGE = 4;
-const MAX_PAGE = 9;
+const LOGS_PER_PAGE = 30;
+const LOG_COUNT = {{ log_count|int }};
+const MAX_PAGE = Math.max(0, Math.ceil(LOG_COUNT / LOGS_PER_PAGE) - 1);
 let page = 0;
 const pathParts = window.location.pathname.split('/');
 const lastPart = pathParts[pathParts.length - 1];

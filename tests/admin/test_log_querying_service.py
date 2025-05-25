@@ -12,3 +12,9 @@ class LogQueryingTests(TestCase):
     def test_iterator_load_logs_doesnt_trow_exceptions(self):
         iterator = LogIterator(MagicMock())
         iterator.load_logs(0, 10)
+
+    def test_get_log_count_doesnt_throw_exceptions(self):
+        mock_repo = MagicMock()
+        model = LogQueryingService(mock_repo)
+        model.get_log_count()
+
