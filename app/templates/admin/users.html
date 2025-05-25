@@ -1,0 +1,85 @@
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Status</th>
+      <th>Acciones</th> 
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.role }}</td>
+      <td>
+        <input type="checkbox" class="status-toggle" data-email="{{ user.email }}" {% if user.status %}checked{% endif %}>
+      </td>
+      <td>
+        <button class="send-email-btn" data-email="{{ user.email }}">Enviar corrreo de baneo</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script>
+  
+  document.querySelectorAll('.status-toggle').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      const email = this.dataset.email;
+      const status = this.checked;
+
+      fetch('/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ email: email, status: status })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+          alert('Failed to update status: ' + (data.error || 'Unknown error'));
+          checkbox.checked = !status;
+        }
+      })
+      .catch(error => {
+        alert('Error updating status: ' + error);
+        checkbox.checked = !status;
+      });
+    });
+  });
+
+  
+  document.querySelectorAll('.send-email-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+      const email = this.dataset.email;
+
+      fetch('/admin/send-ban-email', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ email: email })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Correo enviado a ' + email);
+        } else {
+          alert('No se pudo enviar el correo: ' + (data.error || 'Error desconocido'));
+        }
+      })
+      .catch(error => {
+        alert('Error al enviar el correo: ' + error);
+      });
+    });
+  });
+</script>
