@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mis Tutorías</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='tutoring_style.css') }}">
+</head>
+<body>
+  <div class="content">
+    <div class="flash">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {{ messages[0] }}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="container">
+      <h1>Mis Tutorías</h1>
+      <div class="divider"></div>
+
+      <div class="filters-header">
+        
+        <form method="GET" action="{{ url_for('tutorial.listTutorTutorials') }}" id="filterForm" class="filters-form">
+          <input 
+            type="text" 
+            name="search" 
+            placeholder="Buscar por título o curso" 
+            value="{{ request.args.get('search', '') }}" 
+            id="searchInput"
+          />
+        
+          <select name="sort" onchange="document.getElementById('filterForm').submit()">
+            <option value="">Ordenar por fecha</option>
+            <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Más cercanas</option>
+            <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Más lejanas</option>
+          </select>
+        </form>
+        
+        <script>
+          let debounceTimer;
+          const searchInput = document.getElementById('searchInput');
+          const form = document.getElementById('filterForm');
+        
+          searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+              form.submit();
+            }, 500);
+          });
+        </script>
+        
+
+        <a href="{{ url_for('tutorial.create_tutorial') }}" class="button-edit">Crear nueva tutoría</a>
+      </div>
+
+      <div class="tutory-list">
+        {% if tutorias %}
+          {% for tutoria in tutorias %}
+            <div class="tutory-tab">
+              <h2>{{ tutoria.title }}</h2>
+              
+              <div class="tutory-card">
+                <div class="column">
+                  <p><strong>Curso:</strong> {{ tutoria.subject }}</p>
+                  <p><strong>Fecha:</strong> {{ tutoria.date }}</p>
+                </div>
+              </div>
+
+              <div class="actions">
+                <a href="{{ url_for('tutorial.getTutoriaById', id=tutoria.id, user_role= ('tutor')) }}" class="button-edit">Ver detalles</a>
+                <a href="{{ url_for('tutorial.edit_tutorial', id=tutoria.id) }}" class="button-edit">Editar</a>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class= no-available>No hay tutorías disponibles.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
