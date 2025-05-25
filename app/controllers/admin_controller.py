@@ -82,13 +82,13 @@ def ban_notification_emai():
     email = data.get('email')
     if not email:
         return jsonify(success=False, error='Email no proporcionado')
-    subject = "Banneo temporal"
-    message = "Usted ha incumplido las reglas de este servicio, por lo tanto será baneado"
+    subject = "Temporal Ban"
+    message = "You have been banned from this page because you violated our behavior rules"
     SendBanEmail = SMTPEmailService()
     success = SendBanEmail.send_email(email,subject,message)
     if(success):
-     return jsonify(success=True, message='Usuario notificado con éxito')
+     return jsonify(success=True, message='User was notified with success')
     else:
-     return jsonify(success=True, message='Usuario notificado con éxito')
+     return jsonify(success=True, message='User was not notified with succes')
 
     

@@ -6,7 +6,7 @@
       <th>Email</th>
       <th>Role</th>
       <th>Status</th>
-      <th>Acciones</th> 
+      <th>Actions</th> 
     </tr>
   </thead>
   <tbody>
@@ -20,7 +20,7 @@
         <input type="checkbox" class="status-toggle" data-email="{{ user.email }}" {% if user.status %}checked{% endif %}>
       </td>
       <td>
-        <button class="send-email-btn" data-email="{{ user.email }}">Enviar corrreo de baneo</button>
+        <button class="send-email-btn" data-email="{{ user.email }}">Send Ban email</button>
       </td>
     </tr>
     {% endfor %}
