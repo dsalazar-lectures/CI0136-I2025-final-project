@@ -83,7 +83,7 @@ def register_tutoria():
     print(session)
     id_tutoria = request.form["id_tutoria"]
     id_student = session.get('user_id')
-    name_student = session.get("name", "usuario anonimo")  # Obtener el nombre del usuario autenticado
+    name_student = session.get("name", "usuario anonimo") 
     print(f"ID del estudiante: {id_student}")
     print(name_student)
     #tutoria = repo1.get_tutoria_by_id(id_tutoria)

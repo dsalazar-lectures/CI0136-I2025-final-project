@@ -67,7 +67,7 @@ class Tutorial_mock_repo(ITutorialRepository):
         return self.tutorias
     
     def register_in_tutoria(self, id_student, name_student, id_tutoria):
-        resgister = False  # Inicializar la variable
+        resgister = False
         tutoria = self.get_tutorial_by_id(id_tutoria)
         if tutoria.capacity == len(tutoria.student_list):
             print("No hay cupos disponibles")
@@ -77,7 +77,7 @@ class Tutorial_mock_repo(ITutorialRepository):
                     print("El estudiante ya está registrado")
                     resgister = False
                     break
-            else:  # Este bloque se ejecuta si no se rompe el bucle
+            else: 
                 tutoria.student_list.append({"id": id_student, "name": name_student})
                 print("Estudiante registrado")
                 resgister = True
