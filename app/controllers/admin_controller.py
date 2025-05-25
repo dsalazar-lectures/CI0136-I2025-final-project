@@ -9,6 +9,8 @@ from app.models.repositories.users.firebase_user_repository import FirebaseUserR
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 user_repo = FirebaseUserRepository()
+from app.models.services.email_service import SMTPEmailService
+
 
 def admin_required(f):
     @wraps(f)
@@ -71,3 +73,22 @@ def reviews():
 @admin_required
 def settings():
     return "<h1>Settings</h1>"
+
+
+@admin_bp.route('/send-ban-email', methods=['POST'])
+@admin_required
+def ban_notification_emai():
+    data = request.get_json()
+    email = data.get('email')
+    if not email:
+        return jsonify(success=False, error='Email no proporcionado')
+    subject = "Banneo temporal"
+    message = "Usted ha incumplido las reglas de este servicio, por lo tanto será baneado"
+    SendBanEmail = SMTPEmailService()
+    success = SendBanEmail.send_email(email,subject,message)
+    if(success):
+     return jsonify(success=True, message='Usuario notificado con éxito')
+    else:
+     return jsonify(success=True, message='Usuario notificado con éxito')
+
+    
