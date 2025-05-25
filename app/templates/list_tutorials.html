@@ -40,7 +40,7 @@
                         <div class="tutory-actions">
                             <a href="/tutorial/{{ tutoria.id }}" class="button-edit">Ver detalles</a>
 
-                            {% if tutoria.capacity > 0 %}
+                            {% if tutoria.capacity - tutoria.student_list|length > 0 %}
                             <form action="{{ url_for('tutorial.register_tutoria') }}" method="POST" style="display: inline; ">
                                 <input type="hidden" name="id_tutoria" value="{{ tutoria.id }}">
                                 <input type="hidden" name="id_student" value="{{ session.user_id }}">

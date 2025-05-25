@@ -1,16 +1,18 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
-# from ..models.repositories.tutorings.firebase_tutorings_repository import FirebaseTutoringRepository
+from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 from ..utils.auth import login_or_role_required
 #from flask_login import login_required
 tutorial = Blueprint('tutorial', __name__)
 
 repo = Tutorial_mock_repo()
+repo1 = FirebaseTutoringRepository()
 
 @tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
     tutoring = repo.get_tutorial_by_id(id)
+    #tutoring = repo1.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     user_role = request.args.get('user_role', 'student')
     if tutoring is None:
         print("Tutorial not found")
@@ -66,7 +68,9 @@ def edit_tutorial(id):
 
 @tutorial.route('/tutorial/list')
 def getListTutorials():
+    #tutorials = repo1.get_list_tutorials()
     tutorials = repo.list_tutorials()
+    print("TUTORIAS:", tutorials) 
     if tutorials is None:
         print("Tutoring not found")
         return render_template('404.html'), 404
@@ -82,17 +86,18 @@ def register_tutoria():
     name_student = session.get("name", "usuario anonimo")  # Obtener el nombre del usuario autenticado
     print(f"ID del estudiante: {id_student}")
     print(name_student)
-    tutoria = repo.get_tutorial_by_id(id_tutoria)
+    #tutoria = repo1.get_tutoria_by_id(id_tutoria)
+    tutoria = repo.get_tutorial_by_id(id_tutoria) 
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
             flash("No hay cupos disponibles para esta tutoría.", "warning")
-        elif any(student["id"] == id_student for student in tutoria.student_list):
+        elif any(str(student["id"]) == str(id_student) for student in tutoria.student_list):
             flash("Ya estás registrado en esta tutoría.", "info")
         else:
-            exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)
+            #exito = repo1.register_in_tutoria(id_student, name_student, id_tutoria)
+            exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)  
             if exito:
                 flash("Te has registrado exitosamente.", "success")
-                tutoria.capacity -= 1
             else:
                 flash("No fue posible registrarte.", "danger")
     else:

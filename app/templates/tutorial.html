@@ -21,7 +21,7 @@
     <div class="detail-item"><i class="fa-solid fa-clock"></i><span><strong>Hora:</strong> {{ tutoring.start_time }}</span></div>
     <div class="detail-item"><i class="fa-solid fa-pen-to-square"></i><span><strong>Descripción:</strong> {{ tutoring.description }}</span></div>
     <div class="detail-item"><i class="fa-solid fa-laptop"></i><span><strong>Modalidad:</strong> {{ tutoring.method }}</span></div>
-    <div class="detail-item"><i class="fa-solid fa-user-group"></i><span><strong>Cupos disponibles:</strong> {{ tutoring.capacity }}</span></div>
+    <div class="detail-item"><i class="fa-solid fa-user-group"></i><span><strong>Cupos disponibles:</strong> {{ tutoring.capacity - tutoring.student_list|length}}</span></div>
     </div>
 
     <a href="{% if user_role == 'tutor' %}{{ url_for('tutorial.listTutorTutorials') }}{% else %}{{ url_for('tutorial.getListTutorials') }}{% endif %}" class="button-back">
