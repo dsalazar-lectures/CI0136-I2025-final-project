@@ -48,3 +48,4 @@ app.register_blueprint(tutor_bp, url_prefix='/tutor')  # Tutor profile routes
 app.register_blueprint(student_bp, url_prefix='/student')  # Student profile routes
 app.register_blueprint(change_pass)
 app.register_blueprint(recovery_pass)
+
