@@ -91,14 +91,13 @@ def register_tutoria():
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
             flash("No hay cupos disponibles para esta tutoría.", "warning")
-        elif any(student["id"] == id_student for student in tutoria.student_list):
+        elif any(str(student["id"]) == str(id_student) for student in tutoria.student_list):
             flash("Ya estás registrado en esta tutoría.", "info")
         else:
             #exito = repo1.register_in_tutoria(id_student, name_student, id_tutoria)
-            exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)  # Cambié el repositorio mock por el repositorio de Firebase
+            exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)  
             if exito:
                 flash("Te has registrado exitosamente.", "success")
-                tutoria.capacity -= 1
             else:
                 flash("No fue posible registrarte.", "danger")
     else:
