@@ -46,4 +46,4 @@ def settings():
 @admin_required
 def logs(page_number, logs_per_page):
     logs = LogQueryingService(FirebaseLogRepository()).get_log_page(int(page_number), int(logs_per_page))
-    return render_template("admin/log_list.html", logs = logs)
+    return render_template("admin/log_list.html", logs=logs, log_count = log_count)

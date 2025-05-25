@@ -33,11 +33,47 @@
     </tbody>
 </table>
 
+<div style="display: flex; justify-content: center; margin: 24px 0;">
+    <button id="prev-btn" style="margin-right: 12px; padding: 8px 16px; border-radius: 4px; border: none; background: #1976d2; color: #fff; cursor: pointer;">Anterior</button>
+    <span id="page-indicator" style="align-self: center; font-weight: bold;"></span>
+    <button id="next-btn" style="margin-left: 12px; padding: 8px 16px; border-radius: 4px; border: none; background: #1976d2; color: #fff; cursor: pointer;">Siguiente</button>
+</div>
+
 <style>
     table tr + tr {
-        /* Espacio entre filas */
         border-top: 8px solid transparent;
     }
 </style>
+
+<script>
+const LOGS_PER_PAGE = 4;
+const MAX_PAGE = 9;
+let page = 0;
+const pathParts = window.location.pathname.split('/');
+const lastPart = pathParts[pathParts.length - 1];
+if (lastPart.startsWith('page_number=')) {
+    const match = lastPart.match(/^page_number=(\d+)/);
+    if (match) {
+        page = parseInt(match[1]);
+    }
+}
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const pageIndicator = document.getElementById('page-indicator');
+pageIndicator.textContent = "Página " + (page + 1);
+
+function goToPage(newPage) {
+    if (newPage < 0) newPage = 0;
+    if (newPage > MAX_PAGE) newPage = MAX_PAGE;
+    window.location.href = `/logs/page_number=${newPage}&logs_per_page=${LOGS_PER_PAGE}`;
+}
+
+prevBtn.onclick = function() {
+    if(page > 0) goToPage(page - 1);
+};
+nextBtn.onclick = function() {
+    if(page < MAX_PAGE) goToPage(page + 1);
+};
+</script>
 
 {% endblock %}
