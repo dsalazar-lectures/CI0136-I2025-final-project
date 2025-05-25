@@ -45,4 +45,5 @@ app.register_blueprint(ratings_bp, url_prefix='/comments')
 app.register_blueprint(mail_bp, url_prefix='/email')
 app.register_blueprint(student_bp, url_prefix='/student')
 app.register_blueprint(profile_blueprint, url_prefix="/profile")
+app.register_blueprint(tutor_bp, url_prefix='/tutor')
 
