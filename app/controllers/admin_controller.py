@@ -42,7 +42,7 @@ def reviews():
 def settings():
     return "<h1>Settings</h1>"
 
-@admin_bp.route('/logs')
+@admin_bp.route('/logs/page_number=<page_number>&logs_per_page=<logs_per_page>')
 @admin_required
 def logs(page_number, logs_per_page):
     logs = LogQueryingService(FirebaseLogRepository()).get_log_page(page_number, logs_per_page)
