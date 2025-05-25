@@ -25,12 +25,12 @@
   }
 
   .logout-btn {
-    background-color: #dc3545;
+    background-color: #832630;
     border: none;
   }
 
   .logout-btn:hover {
-    background-color: #bb2d3b;
+    background-color: #832630;
   }
 </style>
 
@@ -46,7 +46,12 @@
       </div>
       <div>
         <h5 class="mb-1">{{ name }}</h5>
-        <span class="badge profile-badge px-3 py-1">{{ role }}</span>
+        {% set badge_class =
+          "bg-success" if role == "Student" else
+          "bg-primary" if role == "Tutor" else
+          "bg-dark" if role == "Admin" else "bg-secondary"
+        %}
+        <span class="badge {{ badge_class }} px-3 py-1 text-white">{{ role }}</span>
       </div>
     </div>
     <!-- Button to open modal -->
@@ -56,10 +61,22 @@
   </div>
 
   <!-- Additional information -->
-  <div class="mt-4 p-4 profile-container">
-    <h6 class="fw-bold mb-2">Information</h6>
-    <div class="mb-1 text-muted">Email</div>
-    <div>{{ email }}</div>
+  <div class="mt-4 p-4 profile-container d-flex justify-content-between align-items-center">
+  <div>
+      <h6 class="fw-bold mb-2">Information</h6>
+      <div class="mb-1 text-muted">Email</div>
+      <div>{{ email }}</div>
+    </div>
+
+    {% if role == 'Tutor' %}
+      <a href="{{ url_for('tutor.tutor_profile') }}" class="btn btn-success px-4">
+        Sessions
+      </a>
+    {% elif role == 'Student' %}
+      <a href="{{ url_for('student.student_profile') }}" class="btn btn-success px-4">
+        Sessions
+      </a>
+    {% endif %}
   </div>
 
   <form action="{{ url_for('auth.logout') }}" method="post">
@@ -101,6 +118,7 @@
             <select class="form-select" id="role" name="role">
               <option value="Student" {% if role == 'Student' %}selected{% endif %}>Student</option>
               <option value="Tutor" {% if role == 'Tutor' %}selected{% endif %}>Tutor</option>
+              <option value="Admin" {% if role == 'Admin' %}selected{% endif %}>Admin</option>
             </select>
           </div>
 
