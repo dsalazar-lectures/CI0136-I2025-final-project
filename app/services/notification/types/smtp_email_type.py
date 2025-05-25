@@ -4,6 +4,7 @@ from email.message import EmailMessage
 
 from .i_notification_type import INotificationService
 
+
 # Clase que envía un correo electrónico usando smtp
 class SMTPEmailService(INotificationService):
   """
