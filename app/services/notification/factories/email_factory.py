@@ -16,5 +16,7 @@ class EmailBuilderFactory(IBuilderFactory):
       return email_notification_builders.SuccessPasswordChangeEmailBuilder()
     elif builder_type == "successRegister":
       return email_notification_builders.SuccessRegisterEmailBuilder()
+    elif builder_type == "newTutorial":
+      return email_notification_builders.NewTutorialEmailBuilder()
     else:
       raise ValueError("Builder no soportado")

@@ -206,3 +206,47 @@ class SuccessRegisterEmailBuilder(IBuilder):
           + "Su cuenta fue creada a las " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n"
           + "Gracias por usar nuestro servicio.\n"
     }
+  
+
+class NewTutorialEmailBuilder(IBuilder):
+  """
+  Clase NewTutorialEmailBuilder
+  Se encarga de construir el cuerpo del correo de nueva tutoría.
+  """
+  def build_body(self, data: dict) -> dict:
+    """
+    Construye el cuerpo del correo de nueva tutoría.
+
+    Args:
+      data (dict): Diccionario con la información necesaria para el correo.
+        - username (str): Nombre de usuario del destinatario.
+        - emailTo (str): Correo electrónico del destinatario.
+        - tutorial (str): Tutoría que se ha creado.
+
+    Returns:
+      dict: Diccionario con la información del correo a enviar.
+        - to (str): Correo electrónico del destinatario.
+        - subject (str): Asunto del correo electrónico.
+        - body (str): Cuerpo del mensaje del correo.
+
+    Raises:
+      ValueError: Si el nombre de usuario, correo electrónico o tutoría son nulos.
+    """
+    username = data.get("username")
+    if username is None:
+      raise ValueError("El nombre de usuario no puede ser nulo")
+    
+    email_to = data.get("emailTo")
+    if email_to is None:
+      raise ValueError("El correo electrónico no puede ser nulo")
+    
+    tutorial = data.get("tutorial")
+    if tutorial is None:
+      raise ValueError("La tutoría no puede ser nula")
+
+    return {
+      "to": email_to,
+      "subject": "Nueva tutoría",
+      "body": "Hola " + username + ", se ha creado una nueva tutoría: " + tutorial + "\n"
+          + "Gracias por usar nuestro servicio.\n"
+    }
