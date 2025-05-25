@@ -41,7 +41,7 @@ class SMTPEmailService(INotificationService):
     email["From"] = self.emailSender
     email["To"] = data["to"]
     email["Subject"] = data["subject"]
-    email.set_content(data["message"])
+    email.set_content(data["body"])
 
     # Envío del email con smtp
     try:
