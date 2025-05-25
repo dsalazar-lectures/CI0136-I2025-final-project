@@ -99,13 +99,28 @@ def reset_password_form(token):
         
         # Actualizar la contraseña en Firebase
         repo.update_user_password(email, new_password)
+        user = repo.get_user_by_email(email)
         
         flash("Password updated successfully", "success")
         log_audit(
-            user = email,
+            user = user.get("name", "Usuario"),
             action_type = AuditActionType.USER_PASSWORD_RESET,
             details = "Password updated successfully",
         )
+
+        # Enviar correo de confirmación
+        email_data = {
+            "username": user.get("name", "Usuario"),
+            "emailTo": email,
+        }
+        if not send_email_notification("successPasswordChange", email_data):
+            log_audit(
+                user = user.get("name", "Usuario"),
+                action_type = AuditActionType.USER_PASSWORD_RESET,
+                details = "Failed to send confirmation email",
+            )
+            return redirect(url_for("recoveryPassword.reset_password_form", token=token))
+        
         return redirect(url_for("auth.login"))
 
     return render_template("reset_password.html", token=token)

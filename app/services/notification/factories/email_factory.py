@@ -12,5 +12,7 @@ class EmailBuilderFactory(IBuilderFactory):
       return email_notification_builders.ReminderEmailBuilder()
     elif builder_type == "recoveryPassword":
       return email_notification_builders.PasswordRecoveryEmailBuilder()
+    elif builder_type == "successPasswordChange":
+      return email_notification_builders.SuccessPasswordChangeEmailBuilder()
     else:
       raise ValueError("Builder no soportado")

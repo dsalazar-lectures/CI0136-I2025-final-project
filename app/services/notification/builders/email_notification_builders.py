@@ -127,3 +127,43 @@ class PasswordRecoveryEmailBuilder(IBuilder):
       + "Este enlace es válido por 15 minutos.\n\n" 
       + "Si no solicitó este cambio, ignore este correo.\n"
     }
+  
+class SuccessPasswordChangeEmailBuilder(IBuilder):
+  """
+  Clase SuccessPasswordChangeEmailBuilder
+  Se encarga de construir el cuerpo del correo de cambio de contraseña exitoso.
+  """
+  def build_body(self, data: dict) -> dict:
+    """
+    Construye el cuerpo del correo de cambio de contraseña exitoso.
+
+    Args:
+      data (dict): Diccionario con la información necesaria para el correo.
+        - username (str): Nombre de usuario del destinatario.
+        - emailTo (str): Correo electrónico del destinatario.
+
+    Returns:
+      dict: Diccionario con la información del correo a enviar.
+        - to (str): Correo electrónico del destinatario.
+        - subject (str): Asunto del correo electrónico.
+        - body (str): Cuerpo del mensaje del correo.
+
+    Raises:
+      ValueError: Si el nombre de usuario o el correo electrónico son nulos.
+    """
+    username = data.get("username")
+    if username is None:
+      raise ValueError("El nombre de usuario no puede ser nulo")
+    
+    email_to = data.get("emailTo")
+    if email_to is None:
+      raise ValueError("El correo electrónico no puede ser nulo")
+
+    return {
+      "to": email_to,
+      "subject": "Cambio de contraseña exitoso",
+      "body": "Hola " + username + ", su contraseña ha sido cambiada exitosamente!\n"
+          + "Su contraseña se modificó a las " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n"
+          + "Si usted no realizó ese cambio, por favor comuníquese con soporte al cliente, soporteFlask@gmail.com.\n"
+          + "Gracias por usar nuestro servicio.\n"
+    }
