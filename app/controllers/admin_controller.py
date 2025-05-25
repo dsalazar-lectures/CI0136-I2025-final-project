@@ -45,5 +45,5 @@ def settings():
 @admin_bp.route('/logs/page_number=<page_number>&logs_per_page=<logs_per_page>')
 @admin_required
 def logs(page_number, logs_per_page):
-    logs = LogQueryingService(FirebaseLogRepository()).get_log_page(page_number, logs_per_page)
-    return render_template("log_list.html", logs)
+    logs = LogQueryingService(FirebaseLogRepository()).get_log_page(int(page_number), int(logs_per_page))
+    return render_template("log_list.html", logs = logs)
