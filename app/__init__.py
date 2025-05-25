@@ -33,6 +33,7 @@ from .controllers.student_profile import student_bp
 from .routes.review_routes import review_bp
 from .controllers.profile_controller import profile_bp as profile_blueprint
 from .controllers.change_password_controller import c_password_bp as change_pass
+from .controllers.recovery_password_controller import rec_password_bp as recovery_pass
 
 # Register blueprints to enable routing
 app.register_blueprint(review_bp)
@@ -46,3 +47,4 @@ app.register_blueprint(profile_blueprint, url_prefix="/profile")
 app.register_blueprint(tutor_bp, url_prefix='/tutor')  # Tutor profile routes
 app.register_blueprint(student_bp, url_prefix='/student')  # Student profile routes
 app.register_blueprint(change_pass)
+app.register_blueprint(recovery_pass)
