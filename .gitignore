@@ -185,3 +185,4 @@ cython_debug/
 
 # secrets
 firebaseAccountKey.json
+env.txt
