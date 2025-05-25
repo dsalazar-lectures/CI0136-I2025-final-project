@@ -1,9 +1,43 @@
 {% extends 'base.html' %}
 
+{% include 'navbar.html' %}
+
+{% block title %}Logs{% endblock %}
+
 {% block content %}
 
-<h1>Logs:</h1>
-<br>
-<p>{{logs}}</p>
+<table style="width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.15); background: #fff;">
+    <thead>
+        <tr style="background: #1976d2;">
+            <th style="width: 20%; text-align: center; padding: 12px; color: #fff;">Acción</th>
+            <th style="width: 20%; text-align: center; padding: 12px; color: #fff;">Usuario</th>
+            <th style="width: 20%; text-align: center; padding: 12px; color: #fff;">Fecha y hora</th>
+            <th style="width: 40%; text-align: center; padding: 12px 24px 12px 24px; color: #fff;">Detalles</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr style="border-bottom: 1px solid #1565c0; background: #e3f2fd;">
+            <td style="width: 20%; text-align: center; padding: 10px 8px;">{{ log.action_type }}</td>
+            <td style="width: 20%; text-align: center; padding: 10px 8px;">{{ log.user }}</td>
+            <td style="width: 20%; text-align: center; padding: 10px 8px;">
+                {{ log.timestamp[:19] }}
+            </td>
+            <td style="width: 40%; padding: 10px 24px 10px 24px;">
+                <div class="log-details" style="max-height: 100px; overflow-y: auto; max-width: 100%; background: #fffde7; border-radius: 4px; padding: 8px;">
+                    {{log.details}}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<style>
+    table tr + tr {
+        /* Espacio entre filas */
+        border-top: 8px solid transparent;
+    }
+</style>
 
 {% endblock %}

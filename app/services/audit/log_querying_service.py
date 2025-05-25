@@ -1,6 +1,5 @@
 from typing import List
 from app.models.repositories.firebase_log_repository import IFirebaseLogRepository
-from app.services.audit.audit_observer import AuditEvent
 
 class LogIterator:
     logs: List[dict]
