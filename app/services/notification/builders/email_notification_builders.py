@@ -122,7 +122,7 @@ class PasswordRecoveryEmailBuilder(IBuilder):
       "to": email_to,
       "subject": "Recuperación de contraseña",
       "body": "Hola " + username + ", hemos recibido una solicitud para restablecer su contraseña "
-      + "a las " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n\n"
+      + "a las " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "\n"
       + "Haga clic en el siguiente enlace para restablecer su contraseña: " + reset_link + "\n"
       + "Este enlace es válido por 15 minutos.\n\n" 
       + "Si no solicitó este cambio, ignore este correo.\n"
