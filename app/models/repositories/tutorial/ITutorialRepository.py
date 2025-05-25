@@ -20,9 +20,11 @@ class ITutorialRepository(ABC):
     @abstractmethod
     def update_tutorial(self, id, updated_data):
         pass
+
     @abstractmethod
     def list_tutorials(self):
         pass
+    
     @abstractmethod
     def register_in_tutoria(self, id_student, name_student, id_tutoria):
         pass
