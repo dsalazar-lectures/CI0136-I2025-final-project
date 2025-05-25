@@ -1,33 +1,25 @@
-from app.firebase_config import db
-from typing import Callable, Iterable, List
-from audit_observer import AuditEvent
+from typing import List
+from app.models.repositories.firebase_log_repository import IFirebaseLogRepository
+from app.services.audit.audit_observer import AuditEvent
 
 class LogIterator:
     logs: List[AuditEvent]
-    def __init__(self):
-        logs = []
+    log_repository: IFirebaseLogRepository
+
+    def __init__(self, log_repository: IFirebaseLogRepository):
+        self.log_repository = log_repository
         
-    def load_logs_range(
-        self,
-        start_index: int = 0,
-        count = None
-    ):
-        query = db.collection("logs").order_by('timestamp').offset(start_index)
-        if count is not None:
-            query = query.limit(count)
-        log_objects = [doc.to_dict() for doc in query.stream()]
-        for log_object in log_objects:
-            log = self.logs.append(AuditEvent())
-            for key, value in log_object.items():
-                setattr(log, key, value)
         
+    def load_logs(self, start_index: int = 0, count = None ):
+        self.logs = self.log_repository.get_logs_in_range(start_index, count)
 
 class LogQueryingService:
+    log_iterator: LogIterator
 
-    def __init__(self):
-        self.log_iterator: LogIterator = LogIterator()
+    def __init__(self, log_repository: IFirebaseLogRepository):
+        self.log_iterator = LogIterator(log_repository)
 
     def get_log_page(self, page_number, logs_per_page) -> List[AuditEvent]:
-        self.log_iterator.load_logs_range(page_number * logs_per_page, logs_per_page)
+        self.log_iterator.load_logs(page_number * logs_per_page, logs_per_page)
         return self.log_iterator.logs
 

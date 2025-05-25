@@ -1,3 +1,5 @@
+from app.models.repositories.firebase_log_repository import FirebaseLogRepository
+from app.services.audit.log_querying_service import LogQueryingService
 from flask import Blueprint, render_template
 # from flask_login import login_required
 from functools import wraps
@@ -42,5 +44,6 @@ def settings():
 
 @admin_bp.route('/logs')
 @admin_required
-def settings():
-    return "<h1>Logs</h1>"
+def logs(page_number, logs_per_page):
+    logs = LogQueryingService(FirebaseLogRepository()).get_log_page(page_number, logs_per_page)
+    return render_template("log_list.html", logs)
