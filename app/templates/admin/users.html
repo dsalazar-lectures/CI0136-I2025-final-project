@@ -29,7 +29,7 @@
       const email = this.dataset.email;
       const status = this.checked;
 
-      fetch('/admin/users/update_status', {
+      fetch('/admin/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
