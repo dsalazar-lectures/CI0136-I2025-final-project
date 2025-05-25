@@ -7,13 +7,17 @@ class Tutorial_mock_repo(ITutorialRepository):
 
         self.tutorias = [
             Tutorial(1, "Tutoria de C++", 1, "Juan Pérez", "Programación II", "2025-10-01", 
-                    "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 1,
+                    "10:00", "Reforzar lo aprendido sobre C++", "Virtual", 2,
                      student_list=[{"id": 1, "name": "Carlos Matamoros"}, 
                                             {"id": 2, "name": "María López"}]),
 
             Tutorial(2, "Limites", 2, "Ana Gómez", "Cálculo I", "2025-10-05", 
                     "14:00", "Reforzar lo aprendido sobre limites", "Presencial", 10,
                     student_list=[]),
+
+            Tutorial(3, "Matrices", 2, "Roberto Chinchilla", "Algebra Lineal", "2025-10-05", 
+                    "17:00", "Reforzar lo aprendido sobre limites", "Virtual", 8,
+                    student_list=[{"id": 1, "name": "Carlos Matamoros"},])
         ]
 
     def get_tutorial_by_id(self, id):
