@@ -8,6 +8,7 @@ from ..models.repositories.users.firebase_user_repository import FirebaseUserRep
 # from app.models.repositories.users.mock_user_repository import MockUserRepository
 from ..models.services.registration_service import validate_registration_data, validate_login_data
 from app.services.notification import send_email_notification
+from app.services.audit import log_audit, AuditActionType
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__)
@@ -65,8 +66,7 @@ def login():
         
         # Attempt to send the email notification
         if not send_email_notification("login", email_data):
-            # (TODO) If email sending fails, log the error
-            pass
+            log_audit(session["name"], AuditActionType.USER_LOGIN, "Login Mail could not be sent")
 
         return redirect(url_for("home.home"))
 
