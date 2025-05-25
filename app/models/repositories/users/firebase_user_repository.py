@@ -56,3 +56,20 @@ class FirebaseUserRepository(IUserRepository):
             doc_ref.update(filtered_updates)
 
         return safe_execute(operation, fallback=None, context="[update_user_fields]")
+
+    def get_all_users(self):
+        def operation():
+            users_ref = db.collection(self.collection_name)
+            all_users_docs = users_ref.stream()
+            users_list = [doc.to_dict() for doc in all_users_docs]
+            return users_list
+
+        return safe_execute(operation, fallback=[], context="[get_all_users]")
+
+    def update_user_status(self, email, status):
+        def operation():
+            doc_ref = db.collection(self.collection_name).document(email)
+            doc_ref.update({"status": status})
+            return True
+
+        return safe_execute(operation, fallback=False, context="[update_user_status]")
