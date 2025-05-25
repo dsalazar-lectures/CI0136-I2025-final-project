@@ -1,5 +1,24 @@
 import re
 
+def validate_name(name):
+    """
+    Validates a name against a specific regex pattern.
+
+    The name must:
+    - Start with an uppercase letter.
+    - Contain only letters, spaces, and hyphens.
+    - Be between 2 and 50 characters long.
+
+    Args:
+        name (str): The name string to validate.
+
+    Returns:
+        re.Match or None: A match object if the name meets the criteria,
+                          or None if it does not.
+    """
+    name_regex = r'^[A-Z][a-zA-Z\s-]{1,49}$'
+    return re.match(name_regex, name)
+
 def validate_email(email):
     """
     Validates an email address against a specific regex pattern.

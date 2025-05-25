@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Tutoría</title>
+</head>
+<body>
+    <h1>Crear Nueva Tutoría</h1>
+    <form action="/tutorial/create" method="post">
+        <label for="title_tutoring">Título:</label>
+        <input type="text" id="title_tutoring" name="title_tutoring" required><br>
+
+        <label for="subject">Materia:</label>
+        <input type="text" id="subject" name="subject" required><br>
+
+        <label for="date">Fecha:</label>
+        <input type="date" id="date" name="date" required><br>
+
+        <label for="start_time">Hora de inicio:</label>
+        <input type="time" id="start_time" name="start_time" required><br>
+
+        <label for="description">Descripción:</label>
+        <textarea id="description" name="description"></textarea><br>
+
+        <label for="method">Método (Virtual/Presencial):</label>
+        <input type="text" id="method" name="method" required><br>
+
+        <label for="capacity">Capacidad:</label>
+        <input type="number" id="capacity" name="capacity" required><br>
+
+        <button type="submit">Crear Tutoría</button>
+    </form>
+</body>
+</html>
