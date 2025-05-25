@@ -1,6 +1,6 @@
 from app.models.repositories.firebase_log_repository import FirebaseLogRepository
 from app.services.audit.log_querying_service import LogQueryingService
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 # from flask_login import login_required
 from functools import wraps
 # from app.models.user import User
@@ -41,6 +41,12 @@ def reviews():
 @admin_required
 def settings():
     return "<h1>Settings</h1>"
+
+@admin_bp.route('/logs')
+@admin_required
+def logs_redirect():
+    LOGS_PER_PAGE = 30
+    return redirect(url_for('admin.logs', page_number=0, logs_per_page=LOGS_PER_PAGE))
 
 @admin_bp.route('/logs/page_number=<page_number>&logs_per_page=<logs_per_page>')
 @admin_required
