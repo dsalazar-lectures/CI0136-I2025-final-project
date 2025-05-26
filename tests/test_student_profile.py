@@ -1,12 +1,11 @@
 def test_student_dashboard_access(client, auth):
     # Registrar y loguear estudiante
-    auth.register(email='student@test.com', password='StudentPass1!', role='Student')
-    auth.login(email='student@test.com', password='StudentPass1!')
+    auth.login(email='user@test.com', password='TestPass1!')
     
-    response = client.get('/student/dashboard')
+    response = client.get('/student/profile')
     assert b'Mis Tutorias Inscritas' in response.data
 
 def test_non_student_redirect(client, auth):
-    auth.login(email='admin@example.com', password='Admin1@')
-    response = client.get('/student/dashboard')
+    auth.login(email='tutor@example.com', password='Tutor1@@')
+    response = client.get('/student/profile')
     assert response.status_code == 302
