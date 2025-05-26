@@ -1,6 +1,8 @@
 from app.models.repositories.firebase_log_repository import FirebaseLogRepository
 from app.services.audit.log_querying_service import LogQueryingService
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for
+from ..utils.auth import login_or_role_required
+
 # from flask_login import login_required
 from functools import wraps
 # from app.models.user import User
@@ -14,15 +16,8 @@ user_repo = FirebaseUserRepository()
 from app.models.services.email_service import SMTPEmailService
 
 
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        # TODO: Implement admin check logic
-        return f(*args, **kwargs)
-    return decorated_function
-
 @admin_bp.route('/')
-@admin_required
+@login_or_role_required('Admin')
 def dashboard():
   return render_template('admin/dashboard.html')
 
@@ -31,7 +26,7 @@ def dashboard():
 # @app.route('/admin/users')
 
 @admin_bp.route('/users', methods=['GET', 'POST'])
-@admin_required
+@login_or_role_required('Admin')
 def users():
     if request.method == 'POST':
         # This is the AJAX request to update user status:
@@ -62,33 +57,29 @@ def users():
 
 
 @admin_bp.route('/tutorials')
-@admin_required
+@login_or_role_required('Admin')
 def tutorials():
     return "<h1>Tutorials</h1>"
 
 @admin_bp.route('/reviews')
-@admin_required
+@login_or_role_required('Admin')
 def reviews():
     return "<h1>Reviews</h1>"
 
-@admin_bp.route('/logs')
-@admin_required
-def logs():
-    return "<h1>Logs</h1>"
 
 @admin_bp.route('/settings')
-@admin_required
+@login_or_role_required('Admin')
 def settings():
     return "<h1>Settings</h1>"
 
 @admin_bp.route('/logs')
-@admin_required
+@login_or_role_required('Admin')
 def logs_redirect():
     LOGS_PER_PAGE = 10
     return redirect(url_for('admin.logs', page_number=0, logs_per_page=LOGS_PER_PAGE))
 
 @admin_bp.route('/logs/page_number=<page_number>&logs_per_page=<logs_per_page>')
-@admin_required
+@login_or_role_required('Admin')
 def logs(page_number, logs_per_page):
     page_number = int(page_number)
     logs_per_page = int(logs_per_page)
@@ -98,7 +89,7 @@ def logs(page_number, logs_per_page):
     return render_template("admin/log_list.html", logs=logs, log_count=log_count)
 
 @admin_bp.route('/send-ban-email', methods=['POST'])
-@admin_required
+@login_or_role_required('Admin')
 def ban_notification_emai():
     data = request.get_json()
     email = data.get('email')
