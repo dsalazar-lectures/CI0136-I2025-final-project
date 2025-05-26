@@ -69,6 +69,11 @@ def tutorials():
 def reviews():
     return "<h1>Reviews</h1>"
 
+@admin_bp.route('/logs')
+@admin_required
+def logs():
+    return "<h1>Logs</h1>"
+
 @admin_bp.route('/settings')
 @admin_required
 def settings():
