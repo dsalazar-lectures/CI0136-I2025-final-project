@@ -9,6 +9,8 @@ from flask import Blueprint, render_template, request, redirect, flash, session,
 # from app.models.repositories.users.mock_user_repository import MockUserRepository
 from app.models.repositories.users.firebase_user_repository import FirebaseUserRepository
 from ..models.services.registration_service import validate_registration_data
+from app.services.notification import send_email_notification
+from app.services.audit import log_audit, AuditActionType
 
 # Create a Blueprint for registration-related routes
 register_bp = Blueprint('register', __name__, url_prefix='/register')
@@ -54,6 +56,17 @@ def register():
             return redirect(url_for('register.register'))
         # Create new user and clear session data
         user_repo.add_user(name, email, password, role)
+        # Send a registration notification email
+        email_data = {
+            "username": name,
+            "emailTo": email,
+        }
+        if not send_email_notification("successRegister", email_data):
+            log_audit(
+                user=name,
+                action_type=AuditActionType.USER_REGISTER,
+                details=f"Failed to send registration email to {email}"
+            )
         session.pop('form_data', None)
         session.clear()
         # Notify user of successful registration and redirect to login

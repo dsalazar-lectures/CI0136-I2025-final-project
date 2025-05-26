@@ -69,3 +69,9 @@ class MockUserRepository(IUserRepository):
             bool: True if user exists, False otherwise
         """
         return email in self.users
+
+    def get_user_by_id(self, id):
+        pass
+
+    def update_user_password(self, email, new_password):
+        pass
