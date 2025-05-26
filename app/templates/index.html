@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block title %}Comentarios{% endblock %}
+
+{% block content %}
+{% set tutor_id = session.get('tutor_id', '') %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="card shadow-sm">
+            <!-- Header -->
+            <div class="card-header text-center border-bottom py-4">
+                <div class="d-flex flex-column align-items-center">
+                    <div class="avatar avatar-lg mb-3">
+                        <i class="fas fa-user fa-2x text-secondary"></i>
+                    </div>
+                    <h4 class="mb-0">Tutor Tutor</h4>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Comentarios</h5>
+                    <button class="btn btn-primary" onclick="openReviewPopup()">Calificar Tutor</button>
+                </div>
+
+                {% for comment in comments %}
+                <div class="{% if not loop.first %}mt-4 pt-4 border-top{% endif %}">
+                    <div class="d-flex">
+                        <div class="avatar avatar-md me-3">
+                            <i class="fas fa-user text-secondary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <!-- Nombre y menú -->
+                            <div class="d-flex align-items-center">
+                                <h6 class="mb-1 flex-grow-1">{{ comment.student_id }}</h6>
+                                {% set comment_id = comment.review_id %}
+                                {% include "dropdown_menu.html" %}
+                            </div>
+
+                            <!-- Estrellas y fecha -->
+                            <div class="d-flex flex-wrap align-items-center mb-2">
+                                <div class="me-3">
+                                    {% for i in range(5) %}
+                                        {% if i < comment.rating %}
+                                            <i class="fas fa-star star-filled"></i>
+                                        {% else %}
+                                            <i class="fas fa-star star-empty"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">{{ comment.date }}</small>
+                            </div>
+
+                            <!-- Comentario -->
+                            <p class="small text-secondary mb-3">
+                                {{ comment.comment }}
+                            </p>
+
+                            <!-- Respuestas -->
+                            {% if comment.replies %}
+                                {% for reply in comment.replies %}
+                                <div class="ms-4 ps-3 reply-indent mt-3">
+                                    <div class="d-flex">
+                                        <div class="avatar avatar-sm me-2">
+                                            <i class="fas fa-user text-secondary"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ reply.tutor_id }}</h6>
+                                            <div class="mb-2">
+                                                <small class="text-muted">{{ reply.date }}</small>
+                                            </div>
+                                            <p class="small text-secondary mb-0">
+                                                {{ reply.comment }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% include "review_popup.html" %}

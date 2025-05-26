@@ -5,12 +5,15 @@ This module defines routes and handlers for authentication-related functionality
 """
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for, make_response
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
+# from app.models.repositories.users.mock_user_repository import MockUserRepository
 from ..models.services.registration_service import validate_registration_data, validate_login_data
+from app.services.notification import send_email_notification
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__)
 # Repository for retrieving and storing user data
 user_repo = FirebaseUserRepository()
+# user_repo = MockUserRepository()
 
 @auth_bp.route("/login", methods=("GET", "POST"))
 def login():
@@ -49,7 +52,22 @@ def login():
         session.pop('form_data', None)
         session.clear()
         session["user_id"] = user["id"]
+        session["name"] = user.get("name", email)
         session["role"] = user["role"]
+        session["email"] = email 
+
+        # Send a login notification email
+        # Prepare email data for notification
+        email_data = {
+            "username": session["name"],
+            "emailTo": session["email"],
+        }
+        
+        # Attempt to send the email notification
+        if not send_email_notification("login", email_data):
+            # (TODO) If email sending fails, log the error
+            pass
+
         return redirect(url_for("home.home"))
 
     # Handle GET request - display registration form
@@ -66,3 +84,4 @@ def logout():
     """Clear the current session, including the stored user id."""
     session.clear()
     return redirect(url_for("auth.login"))
+    

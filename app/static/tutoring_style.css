@@ -1,5 +1,8 @@
-body {
+* {
     font-family: 'Poppins', sans-serif;
+}
+
+body {
     background-color: linear-gradient(to bottom, #eef2f7, #ffffff);
     color: #34495e;
     margin: 0;
@@ -13,6 +16,17 @@ body {
     padding: 40px;
     border: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.flash {
+    background-color: #3498db;
+    padding: 10px;
+    margin: 15px auto;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    font-weight: bold;
 }
 
 h1 {
@@ -97,7 +111,6 @@ h1 {
     transform: translateY(-5px);
 }
 
-
 .students-name {
     font-weight: 600;
     color: #34495e;
@@ -106,4 +119,110 @@ h1 {
 .student-card i {
     font-size: 1.5;
     color: #34495e;
+}
+.tutory-tab {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f1f8e9;
+    margin-bottom: 20px;
+}
+
+.tutory-tab h2 {
+    text-align: center;
+    color: #3498db;
+    margin-bottom: 15px;
+}
+
+.tutory-card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-top: 10px;
+}
+
+.column {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin: 0px 30px;
+}
+
+.button-edit {
+    background-color: #1976d2;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.button-edit:hover {
+    background-color: #0d47a1;
+}
+
+input[type="text"], select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+.filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 20px;
+}
+
+.tutory-actions {
+    display: flex;
+    gap: 20px;
+    margin: 30px auto 0;
+    width: 94%;
+}
+.tutory-actions .button-edit {
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    font-size: 0.9em;
+    border: none;
+}
+
+.no-capacity,
+.no-available {
+    color: red; font-size: 1em; text-align: center;
+}
+  
+
+@media (max-width: 600px) {
+    .tutory-card {
+        flex-direction: column;
+        padding-left: 0;
+    }
+
+    .column {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .button-edit{
+        width: 100%;
+        text-align: center;
+    }
 }

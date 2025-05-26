@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 from .audit_observer import AuditObserver, AuditEvent
+from app.models.repositories.firebase_log_repository import FirebaseLogRepository
 
 class FileAuditObserver(AuditObserver):
     def __init__(self, log_dir: str = "logs"):
@@ -16,7 +17,7 @@ class FileAuditObserver(AuditObserver):
         return os.path.join(self.log_dir, f"audit_log_{current_date}.log")
 
     def update(self, event: AuditEvent) -> None:
+        FirebaseLogRepository().save_log(event)
         log_file = self._get_log_file_path()
-        
         with open(log_file, "a", encoding="utf-8") as f:
             f.write(f"{str(event)}\n") 

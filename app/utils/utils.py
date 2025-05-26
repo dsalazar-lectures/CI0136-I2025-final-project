@@ -1,5 +1,24 @@
 import re
 
+def validate_name(name):
+    """
+    Validates a name against a specific regex pattern.
+
+    The name must:
+    - Start with an uppercase letter.
+    - Contain only letters, spaces, and hyphens.
+    - Be between 2 and 50 characters long.
+
+    Args:
+        name (str): The name string to validate.
+
+    Returns:
+        re.Match or None: A match object if the name meets the criteria,
+                          or None if it does not.
+    """
+    name_regex = r'^[A-Z][a-zA-Z\s-]{1,49}$'
+    return re.match(name_regex, name)
+
 def validate_email(email):
     """
     Validates an email address against a specific regex pattern.
@@ -38,3 +57,27 @@ def validate_password(password):
     """
     password_regex = r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$'
     return re.match(password_regex, password)
+
+def validate_new_password(password, confirm_password):
+    """
+    Validates a new password and its confirmation.
+
+    The password must:
+    - Be at least 8 characters long.
+    - Match the confirmation password.
+
+    Args:
+        password (str): The new password string to validate.
+        confirm_password (str): The confirmation password string to validate.
+
+    Returns:
+        bool: True if the password is valid and matches the confirmation,
+              False otherwise.
+    """
+    if len(password) < 8:
+        return False
+    if not validate_password(password):
+        return False
+    if password != confirm_password:
+        return False
+    return True
