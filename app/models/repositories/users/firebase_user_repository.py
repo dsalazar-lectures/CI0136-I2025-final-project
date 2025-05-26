@@ -73,3 +73,28 @@ class FirebaseUserRepository(IUserRepository):
             return True
 
         return safe_execute(operation, fallback=False, context="[update_user_status]")
+    
+    def get_user_by_id(self, id):
+        def operation():
+                users_ref = db.collection(self.collection_name)
+                all_users = users_ref.stream()
+
+                for user_doc in all_users:
+                    data = user_doc.to_dict()
+                    if data and data.get("id") == id:
+                        return data
+                return None
+
+        return safe_execute(operation, fallback=None, context="[get_user_by_id]")
+
+    def update_user_password(self, email, new_password):
+        def operation():
+            user_ref = db.collection(self.collection_name).document(email)
+
+            if not user_ref.get().exists:
+                return False  # User doesn't exist
+
+            user_ref.update({"password": new_password})
+            return True  # update succesfully
+
+        return safe_execute(operation, fallback=False, context="[update_user_password]")

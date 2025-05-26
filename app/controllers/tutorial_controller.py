@@ -2,6 +2,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 from ..utils.auth import login_or_role_required
+from app.services.notification import send_email_notification
+from app.services.audit import log_audit, AuditActionType
+
 #from flask_login import login_required
 tutorial = Blueprint('tutorial', __name__)
 
@@ -39,6 +42,19 @@ def create_tutorial():
         new_tutorial = repo.create_tutorial(
             title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
         )
+        # Send a notification email
+        # (TODO) Replace with actual user name and email 
+        email_data = {
+            "username": "default_user",  # Replace with actual user name
+            "emailTo": "tutorialsflaskmail@gmail.com", # Replace with actual user email
+            "tutorial": title_tutoring,
+        }
+        if not send_email_notification("newTutorial", email_data):
+            log_audit(
+                user="default_user",  # Replace with actual user name
+                action_type=AuditActionType.CONTENT_CREATE,
+                details = "Failed to send email notification for new tutorial creation: " + title_tutoring,
+            )
         return redirect(url_for('tutorial.listTutorTutorials'))
     return render_template('tutorial_form.html', tutoring=None, edit_mode=False)
 
