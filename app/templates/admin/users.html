@@ -1,85 +1,131 @@
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Status</th>
-      <th>Acciones</th> 
-    </tr>
-  </thead>
-  <tbody>
-    {% for user in users %}
-    <tr>
-      <td>{{ user.id }}</td>
-      <td>{{ user.name }}</td>
-      <td>{{ user.email }}</td>
-      <td>{{ user.role }}</td>
-      <td>
-        <input type="checkbox" class="status-toggle" data-email="{{ user.email }}" {% if user.status %}checked{% endif %}>
-      </td>
-      <td>
-        <button class="send-email-btn" data-email="{{ user.email }}">Enviar corrreo de baneo</button>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Admin Dashboard</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-speedometer2 me-2"></i>Overview
+                    </a>
+                    <a href="{{ url_for('admin.users') }}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-people me-2"></i>User Management
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">User Management</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        <span class="badge {% if user.role == 'Admin' %}bg-danger{% elif user.role == 'Tutor' %}bg-primary{% else %}bg-success{% endif %}">
+                                            {{ user.role }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input type="checkbox" class="form-check-input status-toggle" 
+                                                   data-email="{{ user.email }}" 
+                                                   {% if user.status %}checked{% endif %}>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger send-email-btn" 
+                                                data-email="{{ user.email }}">
+                                            <i class="bi bi-envelope"></i> Send Ban Email
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-  
-  document.querySelectorAll('.status-toggle').forEach(function(checkbox) {
+document.querySelectorAll('.status-toggle').forEach(function(checkbox) {
     checkbox.addEventListener('change', function() {
-      const email = this.dataset.email;
-      const status = this.checked;
+        const email = this.dataset.email;
+        const status = this.checked;
 
-      fetch('/admin/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ email: email, status: status })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.success) {
-          alert('Failed to update status: ' + (data.error || 'Unknown error'));
-          checkbox.checked = !status;
-        }
-      })
-      .catch(error => {
-        alert('Error updating status: ' + error);
-        checkbox.checked = !status;
-      });
+        fetch('/admin/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ email: email, status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                alert('Failed to update status: ' + (data.error || 'Unknown error'));
+                checkbox.checked = !status;
+            }
+        })
+        .catch(error => {
+            alert('Error updating status: ' + error);
+            checkbox.checked = !status;
+        });
     });
-  });
+});
 
-  
-  document.querySelectorAll('.send-email-btn').forEach(function(button) {
+document.querySelectorAll('.send-email-btn').forEach(function(button) {
     button.addEventListener('click', function() {
-      const email = this.dataset.email;
+        const email = this.dataset.email;
 
-      fetch('/admin/send-ban-email', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ email: email })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert('Correo enviado a ' + email);
-        } else {
-          alert('No se pudo enviar el correo: ' + (data.error || 'Error desconocido'));
-        }
-      })
-      .catch(error => {
-        alert('Error al enviar el correo: ' + error);
-      });
+        fetch('/admin/send-ban-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Email sent to ' + email);
+            } else {
+                alert('Failed to send email: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            alert('Error sending email: ' + error);
+        });
     });
-  });
+});
 </script>
+{% endblock %}
