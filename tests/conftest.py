@@ -1,5 +1,16 @@
 import pytest
 from app import app as flask_app
+from unittest.mock import MagicMock
+
+@pytest.fixture(autouse=True)
+def mock_db(monkeypatch):
+    mock = MagicMock()
+    # Patch db in all modules where it's imported at the top level
+    monkeypatch.setattr("app.firebase_config.db", mock)
+    monkeypatch.setattr("app.services.audit.file_audit_observer.db", mock, raising=False)
+    monkeypatch.setattr("app.models.repositories.firebase_log_repository.db", mock, raising=False)
+    monkeypatch.setattr("app.models.repositories.tutorial.firebase_tutorings_repository.db", mock, raising=False)
+    # Add more if you import db elsewhere
 
 # Set up the Flask app for testing (enables test mode)
 @pytest.fixture

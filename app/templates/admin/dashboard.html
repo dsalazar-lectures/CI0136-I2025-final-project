@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% include 'navbar.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Admin Dashboard</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-speedometer2 me-2"></i>Overview
+                    </a>
+                    <a href="{{ url_for('admin.users', page_number=0, logs_per_page=10) }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-people me-2"></i>User Management
+                    </a>
+                    <a href="{{ url_for('admin.logs', page_number=0, logs_per_page=10) }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-stack me-2"></i>Logs
+                    </a>
+                    <!-- <a href="{{ url_for('admin.tutorials') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-book me-2"></i>Tutorial Management
+                    </a>
+                    <a href="{{ url_for('admin.reviews') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-star me-2"></i>Review Management
+                    </a> -->
+                    <!-- <a href="{{ url_for('admin.settings') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-gear me-2"></i>Settings
+                    </a> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Dashboard Overview</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
