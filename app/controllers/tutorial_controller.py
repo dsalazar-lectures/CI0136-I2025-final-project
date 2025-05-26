@@ -109,7 +109,8 @@ def register_tutoria():
 @tutorial.route('/tutorial/tutor_tutorials')
 @login_or_role_required('Tutor')
 def listTutorTutorials():
-    tutor_id = 2
+    tutor_id = 2  # This should be replaced with the actual tutor ID from DB
+
     if not tutor_id:
         flash("No se pudo obtener el ID del tutor.", "danger")
         return redirect(url_for('tutorial.getListTutorials'))
@@ -117,16 +118,7 @@ def listTutorTutorials():
     search = request.args.get('search', '').lower()
     sort = request.args.get('sort')
 
-    tutorias = repo.get_tutorias_by_tutor(tutor_id)
-
-    if search:
-        tutorias = [
-            t for t in tutorias if search in t.title.lower() or search in t.subject.lower()
-        ]
-
-    if sort == 'asc':
-        tutorias.sort(key=lambda t: t.date)
-    elif sort == 'desc':
-        tutorias.sort(key=lambda t: t.date, reverse=True)
+    tutorias = repo.list_tutor_tutorials(tutor_id, search=search, sort=sort)
 
     return render_template('tutor_tutorials.html', tutorias=tutorias)
+
