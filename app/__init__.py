@@ -43,6 +43,7 @@ app.register_blueprint(tutorial_blueprint)      # Tutoring routes
 app.register_blueprint(comments_bp)
 app.register_blueprint(ratings_bp, url_prefix='/comments')
 app.register_blueprint(profile_blueprint, url_prefix="/profile")
+
 app.register_blueprint(tutor_bp, url_prefix='/tutor')  # Tutor profile routes
 app.register_blueprint(student_bp, url_prefix='/student')  # Student profile routes
 app.register_blueprint(change_pass)
