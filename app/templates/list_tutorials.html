@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Tutorías</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='tutoring_style.css') }}" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+    <section class="content">
+        <div class="flash">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {{ messages[0] }}
+              {% endif %}
+            {% endwith %}
+          </div>
+
+        <div class="container">
+            <h1>Lista de Tutorías</h1>
+            <div class="divider"></div>
+
+            <div class="tutory-list">
+                {% if tutorias %}
+                    {% for tutoria in tutorias %}
+                    <div class="tutory-tab">
+                        <h2 class="tab-title">{{ tutoria.title }}</h2>
+
+                        <div class="tutory-card">
+                            <div class="column">
+                                <p><strong>Tutor:</strong> {{ tutoria.tutor }}</p>
+                                <p><strong>Curso:</strong> {{ tutoria.subject }}</p>
+                            </div>
+                            <div class="column">
+                            </div>
+                        </div>
+
+                        <div class="tutory-actions">
+                            <a href="/tutorial/{{ tutoria.id }}" class="button-edit">Ver detalles</a>
+
+                            {% if tutoria.capacity - tutoria.student_list|length > 0 %}
+                            <form action="{{ url_for('tutorial.register_tutoria') }}" method="POST" style="display: inline; ">
+                                <input type="hidden" name="id_tutoria" value="{{ tutoria.id }}">
+                                <input type="hidden" name="id_student" value="{{ session.user_id }}">
+                                <input type="hidden" name="name_student" value="{{ session.user_name }}">
+                                <button type="submit" class="button-edit">Inscribirme</button>
+                            </form>
+                            {% else %}
+                            <p class="no-capacity">Tutoría sin cupo</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-capacity" style="text-align: center; font-size: 1em;">No hay tutorías disponibles.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</body>
+</html>
