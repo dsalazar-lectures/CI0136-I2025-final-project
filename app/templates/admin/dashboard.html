@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% include 'navbar.html' %}
 {% block content %}
 <div class="container">
     <div class="row">
@@ -15,6 +15,9 @@
                     </a>
                     <a href="{{ url_for('admin.users') }}" class="list-group-item list-group-item-action">
                         <i class="bi bi-people me-2"></i>User Management
+                    </a>
+                    <a href="{{ url_for('admin.logs') }}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-stack me-2"></i>Logs
                     </a>
                     <!-- <a href="{{ url_for('admin.tutorials') }}" class="list-group-item list-group-item-action">
                         <i class="bi bi-book me-2"></i>Tutorial Management
