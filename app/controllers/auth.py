@@ -7,6 +7,7 @@ from flask import Blueprint, flash, redirect, render_template, request, session,
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
 # from app.models.repositories.users.mock_user_repository import MockUserRepository
 from ..models.services.registration_service import validate_registration_data, validate_login_data
+from app.services.notification import send_email_notification
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__)
@@ -54,6 +55,18 @@ def login():
         session["name"] = user.get("name", email)
         session["role"] = user["role"]
         session["email"] = email 
+
+        # Send a login notification email
+        # Prepare email data for notification
+        email_data = {
+            "username": session["name"],
+            "emailTo": session["email"],
+        }
+        
+        # Attempt to send the email notification
+        if not send_email_notification("login", email_data):
+            # (TODO) If email sending fails, log the error
+            pass
 
         return redirect(url_for("home.home"))
 

@@ -4,6 +4,7 @@ from email.message import EmailMessage
 
 from .i_notification_type import INotificationService
 
+
 # Clase que envía un correo electrónico usando smtp
 class SMTPEmailService(INotificationService):
   """
@@ -41,7 +42,7 @@ class SMTPEmailService(INotificationService):
     email["From"] = self.emailSender
     email["To"] = data["to"]
     email["Subject"] = data["subject"]
-    email.set_content(data["message"])
+    email.set_content(data["body"])
 
     # Envío del email con smtp
     try:

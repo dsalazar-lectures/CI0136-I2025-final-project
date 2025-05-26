@@ -38,7 +38,7 @@ def change_pass():
         user = repo.get_user_by_id(session["user_id"])
 
         service = password_service.ChangePasswordService()
-        notifier = email_notifier.SMTPNotifier()
+        # notifier = email_notifier.SMTPNotifier()
 
         valid_password = service.validate_password(new_password_input)
 
