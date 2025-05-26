@@ -53,7 +53,8 @@ def send_review():
 
     # Utilizar la estrategia de presentación configurada por el momento
     DEFAULT_PRESENTER.present_review(review)
-
+    
+    flash("Reseña enviada correctamente", "success")
     return redirect("/comments")
 
 def delete_review(review_id):
