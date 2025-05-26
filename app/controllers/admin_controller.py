@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, jsonify
+from app.models.repositories.firebase_log_repository import FirebaseLogRepository
+from app.services.audit.log_querying_service import LogQueryingService
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 # from flask_login import login_required
 from functools import wraps
 # from app.models.user import User
@@ -79,6 +81,21 @@ def logs():
 def settings():
     return "<h1>Settings</h1>"
 
+@admin_bp.route('/logs')
+@admin_required
+def logs_redirect():
+    LOGS_PER_PAGE = 10
+    return redirect(url_for('admin.logs', page_number=0, logs_per_page=LOGS_PER_PAGE))
+
+@admin_bp.route('/logs/page_number=<page_number>&logs_per_page=<logs_per_page>')
+@admin_required
+def logs(page_number, logs_per_page):
+    page_number = int(page_number)
+    logs_per_page = int(logs_per_page)
+    log_service = LogQueryingService(FirebaseLogRepository())
+    logs = log_service.get_log_page(page_number, logs_per_page)
+    log_count = int(log_service.get_log_count())
+    return render_template("admin/log_list.html", logs=logs, log_count=log_count)
 
 @admin_bp.route('/send-ban-email', methods=['POST'])
 @admin_required

@@ -175,6 +175,8 @@ cython_debug/
 
 # VS Code files for those working on multiple tools
 .vscode/*
+.vscode
+.vs
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -183,3 +185,4 @@ cython_debug/
 
 # secrets
 firebaseAccountKey.json
+env.txt
