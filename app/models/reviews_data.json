@@ -1,11 +1,19 @@
 [
   {
-    "student_id": "EstudianteTest",
-    "tutor_id": "TutorTest",
+    "student_id": "EstudiantePrueba",
+    "tutor_id": "Tutor Tutor",
     "session_id": "Sesion de Python",
-    "review_id": 99999,
-    "rating": 3,
-    "comment": "Comentario original.",
-    "date": "19/05/2025"
+    "rating": 2,
+    "review_id": 49851,
+    "comment": "Comentario editado 2",
+    "date": "10/06/2025",
+    "reply": null,
+    "replies": [
+      {
+        "tutor_id": "Tutor Tutor",
+        "date": "10/06/2025",
+        "comment": "Respuesta"
+      }
+    ]
   }
 ]
