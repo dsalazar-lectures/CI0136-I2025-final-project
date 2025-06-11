@@ -116,3 +116,25 @@ class FirebaseTutoringRepository:
             return False
 
         return safe_execute(operation, fallback=False, context="[register_in_tutoria]")
+    
+    def create_tutorial(self, title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity):
+        def operation():
+            new_id = max(t.id for t in self.tutorias) + 1
+            new_tutoring = {
+                "id": new_id,
+                "title": title_tutoring,
+                "tutor_id": tutor_id,
+                "tutor": tutor,
+                "subject": subject,
+                "date": date,
+                "start_time": start_time,
+                "description": description,
+                "method": method,
+                "capacity": capacity,
+                "student_list": []
+            }
+
+            db.collection(self.collection_name).document(new_id).set(new_tutoring)
+            return new_tutoring
+
+        return safe_execute(operation, fallback=None, context="[create_tutorial]")
