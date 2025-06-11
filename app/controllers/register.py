@@ -11,6 +11,7 @@ from app.models.repositories.users.firebase_user_repository import FirebaseUserR
 from ..models.services.registration_service import validate_registration_data
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
+import bcrypt
 
 # Create a Blueprint for registration-related routes
 register_bp = Blueprint('register', __name__, url_prefix='/register')
@@ -54,8 +55,9 @@ def register():
         if error_message:
             flash(error_message, error_category)
             return redirect(url_for('register.register'))
-        # Create new user and clear session data
-        user_repo.add_user(name, email, password, role)
+        # Hash the password before storing
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        user_repo.add_user(name, email, hashed_password, role)
         # Send a registration notification email
         email_data = {
             "username": name,

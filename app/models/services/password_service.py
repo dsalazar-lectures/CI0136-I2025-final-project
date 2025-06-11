@@ -74,10 +74,8 @@ class ChangePasswordService(PasswordService):
 
         if (self.verify_password(current_pass_input, hashed_password)):
             salt = bcrypt.gensalt()
-            new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt)
-            #self.store_new_pass_to_db(new_hash_password, user)  
-            #we  don't pass the hash yet, since passwords are stored in plain text for the moment
-            pass_change_successfully = self.store_new_pass_to_db(new_pass_input, user) 
+            new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt).decode('utf-8')
+            pass_change_successfully = self.store_new_pass_to_db(new_hash_password, user)
         return pass_change_successfully
     
 class ResetPasswordService(PasswordService):
