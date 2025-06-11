@@ -54,10 +54,16 @@
         <span class="badge {{ badge_class }} px-3 py-1 text-white">{{ role }}</span>
       </div>
     </div>
-    <!-- Button to open modal -->
-    <button class="btn profile-btn-primary text-white px-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-      <i class="bi bi-pencil"></i> Edit
-    </button>
+    <div>
+      <!-- Button to open modal -->
+      <button class="btn profile-btn-primary text-white px-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+        <i class="bi bi-pencil"></i> Edit
+      </button>
+      <!-- Button to logout -->
+      <form action="{{ url_for('auth.logout') }}" method="post">
+        <button type="submit" class="btn logout-btn text-white mt-4">Log out</button>
+      </form>
+    </div>
   </div>
 
   <!-- Additional information -->
@@ -79,10 +85,37 @@
     {% endif %}
   </div>
 
-  <form action="{{ url_for('auth.logout') }}" method="post">
-    <button type="submit" class="btn logout-btn text-white mt-4">Log out</button>
-  </form>
-</div>
+  <!-- My tutorings section -->
+  <h4 class="mt-4 mb-4 fw-bold">My Tutorings</h4>
+  {% if role == "Tutor" %}
+    <div class="row">
+      {% for tutoria in tutorias %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ tutoria.title }}</h5>
+            <p class="card-text">
+              <strong>Materia:</strong> {{ tutoria.subject }}<br>
+              <strong>Fecha:</strong> {{ tutoria.date }}<br>
+              <strong>Estudiantes inscritos:</strong> {{ tutoria.student_list|length }}
+            </p>
+            <a href="{{ url_for('tutorial.getTutoriaById', id=tutoria.id) }}" class="btn btn-primary">
+              Ver Detalles
+            </a>
+          </div>
+        </div>
+      </div>
+      {% else %}
+        <div class="col-12">
+          <div class="alert alert-info">
+            No tienes tutorías programadas.
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div></div>
+  {% endif %}
 {% endblock %}
 
 {% block extra_content %}
