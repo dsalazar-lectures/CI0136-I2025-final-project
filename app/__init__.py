@@ -31,8 +31,6 @@ from .controllers.auth import auth_bp as auth_blueprint
 from .controllers.tutorial_controller import tutorial as tutorial_blueprint
 from .controllers.comments import comments_bp
 from .controllers.ratings import ratings_bp
-from .controllers.tutor_profile import tutor_bp
-from .controllers.student_profile import student_bp
 from .routes.review_routes import review_bp
 from .controllers.profile_controller import profile_bp as profile_blueprint
 from .controllers.admin_controller import admin_bp as admin_blueprint
