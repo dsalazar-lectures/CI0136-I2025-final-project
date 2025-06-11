@@ -74,11 +74,7 @@
       <div>{{ email }}</div>
     </div>
 
-    {% if role == 'Tutor' %}
-      <!-- <a href="{{ url_for('tutor.tutor_profile') }}" class="btn btn-success px-4">
-        My Tutorings
-      </a> -->
-    {% elif role == 'Student' %}
+    {% if role == 'Student' %}
       <a href="{{ url_for('subscriptions.get_subscriptions') }}" class="btn btn-success px-4">
         Subscriptions
       </a>
@@ -102,6 +98,13 @@
             <a href="{{ url_for('tutorial.getTutoriaById', id=tutoria.id) }}" class="btn btn-primary">
               Ver Detalles
             </a>
+            <a href="{{ url_for('tutorial.edit_tutorial', id=tutoria.id) }}" class="btn btn-secondary">
+              Editar
+            </a>
+            <form action="{{ url_for('tutorial.cancel_tutorial', id=tutoria.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('¿Está seguro que desea cancelar esta tutoría?');">
+              <input type="hidden" name="confirm" value="true">
+              <button type="submit" class="btn logout-btn text-white">Cancelar</button>
+            </form>
           </div>
         </div>
       </div>

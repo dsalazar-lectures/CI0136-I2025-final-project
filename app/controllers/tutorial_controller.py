@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
+
 from ..utils.auth import login_or_role_required
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
@@ -9,13 +10,13 @@ from app.services.audit import log_audit, AuditActionType
 tutorial = Blueprint('tutorial', __name__)
 
 repo = Tutorial_mock_repo()
-repo1 = FirebaseTutoringRepository()
+firebase_repo = FirebaseTutoringRepository()
 
 @tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
     tutoring = repo.get_tutorial_by_id(id)
-    #tutoring = repo1.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
+    #tutoring = firebase_repo.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     user_role = request.args.get('user_role', 'student')
     if tutoring is None:
         print("Tutorial not found")
@@ -84,7 +85,7 @@ def edit_tutorial(id):
 
 @tutorial.route('/tutorial/list')
 def getListTutorials():
-    #tutorials = repo1.get_list_tutorials()
+    #tutorials = firebase_repo.get_list_tutorials()
     tutorials = repo.list_tutorials()
     print("TUTORIAS:", tutorials) 
     if tutorials is None:
@@ -102,7 +103,7 @@ def register_tutoria():
     name_student = session.get("name", "usuario anonimo") 
     print(f"ID del estudiante: {id_student}")
     print(name_student)
-    #tutoria = repo1.get_tutoria_by_id(id_tutoria)
+    #tutoria = firebase_repo.get_tutoria_by_id(id_tutoria)
     tutoria = repo.get_tutorial_by_id(id_tutoria) 
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
@@ -110,7 +111,7 @@ def register_tutoria():
         elif any(str(student["id"]) == str(id_student) for student in tutoria.student_list):
             flash("Ya estás registrado en esta tutoría.", "info")
         else:
-            #exito = repo1.register_in_tutoria(id_student, name_student, id_tutoria)
+            #exito = firebase_repo.register_in_tutoria(id_student, name_student, id_tutoria)
             exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)  
             if exito:
                 flash("Te has registrado exitosamente.", "success")
@@ -137,4 +138,39 @@ def listTutorTutorials():
     tutorias = repo.list_tutor_tutorials(tutor_id, search=search, sort=sort)
 
     return render_template('tutor_tutorials.html', tutorias=tutorias)
+
+@tutorial.route('/tutorial/<id>/cancel', methods=['POST'])
+@login_or_role_required('Tutor')
+def cancel_tutorial(id):
+    tutorial = firebase_repo.get_tutoria_by_id(id)  # Get tutorial from Firebase
+    if not tutorial:
+        flash("Tutoría no encontrada.", "danger")
+        return redirect(url_for('tutorial.listTutorTutorials'))
+    
+    # Get confirmation from the request
+    if request.form.get('confirm') != 'true':
+        flash("Por favor confirme la cancelación de la tutoría.", "warning")
+        return redirect(url_for('tutorial.getTutoriaById', id=id, user_role='tutor'))
+    
+    # Cancel the tutorial in Firebase
+    if firebase_repo.cancel_tutorial(id):
+        # Notify all enrolled students
+        for student in tutorial.student_list:
+            email_data = {
+                "username": student["name"],
+                "emailTo": "sebasbose@gmail.com",  # TODO: Replace with actual student email
+                "tutorial": tutorial.title,
+            }
+            if not send_email_notification("tutorialCancelled", email_data):
+                log_audit(
+                    user=student["name"],
+                    action_type=AuditActionType.CONTENT_UPDATE,
+                    details=f"Failed to send cancellation notification for tutorial: {tutorial.title}",
+                )
+        
+        flash("Tutoría cancelada exitosamente.", "success")
+    else:
+        flash("Error al cancelar la tutoría.", "danger")
+    
+    return redirect(url_for('tutorial.listTutorTutorials'))
 
