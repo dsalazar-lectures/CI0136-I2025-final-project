@@ -34,27 +34,31 @@ def create_tutorial():
         method = request.form['method']
         capacity = int(request.form['capacity'])
 
-        tutor_id = 2 # This should be replaced with the actual tutor ID from DB
-        tutor = "Ana Gómez" # This should be replaced with the actual tutor name from the DB
+        tutor_id = session.get('user_id')
+        tutor = session.get('name', 'Tutor Anónimo')  # Default to 'Tutor Anónimo' if name is not set
 
-        #TODO: Get the tutor ID and name from DB
+        # tutor_id = 2
+        # tutor = "Ana Gómez"
 
-        new_tutorial = repo.create_tutorial(
+        new_tutorial = repo1.create_tutorial(
             title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
         )
-        # Send a notification email
-        # (TODO) Replace with actual user name and email 
-        email_data = {
-            "username": "default_user",  # Replace with actual user name
-            "emailTo": "tutorialsflaskmail@gmail.com", # Replace with actual user email
-            "tutorial": title_tutoring,
-        }
-        if not send_email_notification("newTutorial", email_data):
-            log_audit(
-                user="default_user",  # Replace with actual user name
-                action_type=AuditActionType.CONTENT_CREATE,
-                details = "Failed to send email notification for new tutorial creation: " + title_tutoring,
-            )
+        if new_tutorial:
+            # Send a notification email
+            email_data = {
+                "username": tutor,
+                "emailTo": session.get("email", "tutorialsflaskmail@gmail.com"),
+                "tutorial": title_tutoring,
+            }
+            if not send_email_notification("newTutorial", email_data):
+                log_audit(
+                    user = tutor,
+                    action_type=AuditActionType.CONTENT_CREATE,
+                    details = "Failed to send email notification for new tutorial creation: " + title_tutoring,
+                )
+            flash("Tutoría creada exitosamente.", "success")
+        else:
+            flash("Error al crear la tutoría. Por favor, inténtalo de nuevo.", "danger")
         return redirect(url_for('tutorial.listTutorTutorials'))
     return render_template('tutorial_form.html', tutoring=None, edit_mode=False)
 
