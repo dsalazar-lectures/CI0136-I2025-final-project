@@ -69,6 +69,33 @@
       margin-top: 30px;
       margin-bottom: 20px;
     }
+
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    font-weight: bold;
+    font-size: 14px;
+    color: #444;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .google-btn:hover {
+    background-color: #e6e6e6;
+  }
+
+  .google-icon {
+    height: 18px;
+    width: 18px;
+    margin-right: 10px;
+  }
   </style>
 
   <div class="login-wrapper">
@@ -109,8 +136,11 @@
     </div>
 
     <!-- Botón de Google -->
-    <button id="googleBtn" type="button">
-      <i class="bi bi-google me-2"></i> Login with Google
+    <button type="button" class="google-btn">
+      <img src="{{ url_for('static', filename='logo.png') }}" 
+        alt="Google logo" 
+        class="google-icon">
+      <span>Log in with Google</span>
     </button>
 
     <p class="mt-3">

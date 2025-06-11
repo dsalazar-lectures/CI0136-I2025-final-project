@@ -98,12 +98,11 @@ def google_login():
         print("📨 ID Token recibido:", id_token)
 
         decoded_token = firebase_auth.verify_id_token(id_token)
-        uid = decoded_token.get("uid")
         email = decoded_token.get("email")
         name = decoded_token.get("name", email)
 
         user_repo = FirebaseUserRepository()
-        existing_user = user_repo.get_user_by_id(uid)
+        existing_user = user_repo.get_user_by_email(email)
 
         if not existing_user:
             print("📢 Usuario no existe, creando...")
@@ -111,11 +110,11 @@ def google_login():
                 name=name,
                 email=email,
                 password=None,
-                role="student",
+                role="student"
             )
 
         session.clear()
-        session["user_id"] = uid
+        session["user_id"] = existing_user["id"] if existing_user else 0  # o un valor por defecto
         session["email"] = email
         session["name"] = name
         session["role"] = existing_user["role"] if existing_user else "student"
@@ -125,5 +124,5 @@ def google_login():
 
     except Exception as e:
         print("❌ Error en login con Google:")
-        traceback.print_exc()  # 🔍 ESTO muestra el error exacto
+        traceback.print_exc()
         return {"error": str(e)}, 500
