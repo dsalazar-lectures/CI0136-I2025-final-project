@@ -75,19 +75,19 @@
     </div>
 
     {% if role == 'Tutor' %}
-      <a href="{{ url_for('tutor.tutor_profile') }}" class="btn btn-success px-4">
-        Sessions
-      </a>
+      <!-- <a href="{{ url_for('tutor.tutor_profile') }}" class="btn btn-success px-4">
+        My Tutorings
+      </a> -->
     {% elif role == 'Student' %}
-      <a href="{{ url_for('student.student_profile') }}" class="btn btn-success px-4">
-        Sessions
+      <a href="{{ url_for('subscriptions.get_subscriptions') }}" class="btn btn-success px-4">
+        Subscriptions
       </a>
     {% endif %}
   </div>
 
   <!-- My tutorings section -->
-  <h4 class="mt-4 mb-4 fw-bold">My Tutorings</h4>
   {% if role == "Tutor" %}
+    <h4 class="mt-4 mb-4 fw-bold">My Tutorings</h4>
     <div class="row">
       {% for tutoria in tutorias %}
       <div class="col-md-4 mb-4">
