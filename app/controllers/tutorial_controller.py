@@ -14,8 +14,8 @@ repo1 = FirebaseTutoringRepository()
 @tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
-    tutoring = repo.get_tutorial_by_id(id)
-    #tutoring = repo1.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
+    # tutoring = repo.get_tutorial_by_id(id)
+    tutoring = repo1.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     user_role = request.args.get('user_role', 'student')
     if tutoring is None:
         print("Tutorial not found")
@@ -24,6 +24,7 @@ def getTutoriaById(id):
         return render_template('tutorial.html',tutoring=tutoring, user_role=user_role)
     
 @tutorial.route('/tutorial/create', methods=['GET', 'POST'])
+@login_or_role_required('Tutor')
 def create_tutorial():
     if request.method == 'POST':
         title_tutoring = request.form['title_tutoring']
@@ -63,8 +64,9 @@ def create_tutorial():
     return render_template('tutorial_form.html', tutoring=None, edit_mode=False)
 
 @tutorial.route('/tutorial/<id>/edit', methods=['GET', 'POST'])
+@login_or_role_required('Tutor')
 def edit_tutorial(id):
-    tutoring = repo.get_tutorial_by_id(id)
+    tutoring = repo1.get_tutoria_by_id(id)
 
     if tutoring is None:
         return render_template('404.html'), 404
@@ -80,7 +82,7 @@ def edit_tutorial(id):
             'capacity': int(request.form['capacity']),
         }
 
-        repo.update_tutorial(id, updated_data)
+        repo1.update_tutorial(id, updated_data)
         return redirect(url_for('tutorial.listTutorTutorials'))
 
     return render_template('tutorial_form.html', tutoring=tutoring, edit_mode=True)
@@ -129,7 +131,7 @@ def register_tutoria():
 @tutorial.route('/tutorial/tutor_tutorials')
 @login_or_role_required('Tutor')
 def listTutorTutorials():
-    tutor_id = 2  # This should be replaced with the actual tutor ID from DB
+    tutor_id = session.get('user_id')
 
     if not tutor_id:
         flash("No se pudo obtener el ID del tutor.", "danger")
@@ -138,7 +140,7 @@ def listTutorTutorials():
     search = request.args.get('search', '').lower()
     sort = request.args.get('sort')
 
-    tutorias = repo.list_tutor_tutorials(tutor_id, search=search, sort=sort)
+    tutorias = repo1.get_tutorias_by_tutor(tutor_id)
 
     return render_template('tutor_tutorials.html', tutorias=tutorias)
 
