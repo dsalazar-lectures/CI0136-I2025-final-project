@@ -5,6 +5,7 @@ This module provides functions to validate user registration data
 and authenticate user login credentials.
 """
 from ...utils.utils import validate_name, validate_email, validate_password
+import bcrypt
 
 def validate_registration_data(name, email, password, role, user_repo):
     """
@@ -62,7 +63,14 @@ def validate_login_data(email, password, user_repo):
     """
     user = user_repo.get_user_by_email(email)
 
-    if user is None or user["password"] != password:
+    if user is None or not user.get("password"):
         return None, "Invalid credentials."
 
-    return user, None
+    # Check hashed password
+    try:
+        if bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
+            return user, None
+        else:
+            return None, "Invalid credentials."
+    except Exception:
+        return None, "Invalid credentials."

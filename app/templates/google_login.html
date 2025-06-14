@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login con Google</title>
+</head>
+<body style="text-align: center; margin-top: 100px;">
+  <h1>Iniciar sesión con Google</h1>
+  <button id="login-btn">Login con Google</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB_Qx_ISFaN1-SzjRoKxyvoNU741ONhNek",
+      authDomain: "tutoringfirebase-b7ecc.firebaseapp.com",
+      projectId: "tutoringfirebase-b7ecc",
+      storageBucket: "tutoringfirebase-b7ecc.firebasestorage.app",
+      messagingSenderId: "670516501895",
+      appId: "1:670516501895:web:ca0cfa9beff340d968c722"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    document.getElementById("login-btn").addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const token = await user.getIdToken();
+
+        console.log("User:", user.displayName);
+        console.log("ID Token:", token);
+
+        await fetch("/auth/google-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        });
+
+        alert("Login successful. Welcome " + user.displayName);
+        window.location.href = "/";
+
+      } catch (error) {
+        console.error("Error during login:", error);
+        alert("Error during login.");
+      }
+    });
+  </script>
+</body>
+</html>
