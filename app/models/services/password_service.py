@@ -5,6 +5,8 @@ import bcrypt
 #module requiered for regular expressions
 import re
 from app.models.repositories.users import firebase_user_repository
+from app.models.services.password_exeptions.password_exceptions import PasswordUpdateError, PasswordValidationError
+
 
 repo = firebase_user_repository.FirebaseUserRepository()
 
@@ -68,17 +70,19 @@ class ChangePasswordService(PasswordService):
 
     def change_password(self, current_pass_input:str, new_pass_input:str, user):
 
-        pass_change_successfully = False
-
         hashed_password = self.get_stored_hash_password(user)
-
+ 
         if (self.verify_password(current_pass_input, hashed_password)):
             salt = bcrypt.gensalt()
             new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt)
             #self.store_new_pass_to_db(new_hash_password, user)  
             #we  don't pass the hash yet, since passwords are stored in plain text for the moment
-            pass_change_successfully = self.store_new_pass_to_db(new_pass_input, user) 
-        return pass_change_successfully
+
+            if not self.store_new_pass_to_db(new_pass_input, user):
+                raise PasswordUpdateError("Error al guardar la nueva contraseña")
+            
+        else:
+            raise PasswordValidationError("Contraseña actual incorrecta") 
     
 class ResetPasswordService(PasswordService):
     pass

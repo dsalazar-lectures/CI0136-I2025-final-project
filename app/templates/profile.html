@@ -52,6 +52,11 @@
           "bg-dark" if role == "Admin" else "bg-secondary"
         %}
         <span class="badge {{ badge_class }} px-3 py-1 text-white">{{ role }}</span>
+        <div class="mt-3">
+          <a href="{{ url_for('cpassword.index') }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-key"></i> Cambiar Contraseña
+          </a>
+        </div>
       </div>
     </div>
     <div>
@@ -63,7 +68,7 @@
       <form action="{{ url_for('auth.logout') }}" method="post">
         <button type="submit" class="btn logout-btn text-white mt-4">Log out</button>
       </form>
-    </div>
+    </div> 
   </div>
 
   <!-- Additional information -->
