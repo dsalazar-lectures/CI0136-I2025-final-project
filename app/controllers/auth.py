@@ -105,7 +105,7 @@ def google_login():
         existing_user = user_repo.get_user_by_email(email)
 
         if not existing_user:
-            print("📢 Usuario no existe, creando...")
+            print("Creating new user...")
             user_repo.add_user(
                 name=name,
                 email=email,
@@ -114,15 +114,15 @@ def google_login():
             )
 
         session.clear()
-        session["user_id"] = existing_user["id"] if existing_user else 0  # o un valor por defecto
+        session["user_id"] = existing_user["id"] if existing_user else 0
         session["email"] = email
         session["name"] = name
         session["role"] = existing_user["role"] if existing_user else "student"
 
-        print("✅ Usuario autenticado con Google:", session["email"])
-        return {"message": "Login con Google exitoso"}, 200
+        print("User authenticated with Google:", session["email"])
+        return {"message": "Login with Google successful"}, 200
 
     except Exception as e:
-        print("❌ Error en login con Google:")
+        print("Error in Google login:")
         traceback.print_exc()
         return {"error": str(e)}, 500

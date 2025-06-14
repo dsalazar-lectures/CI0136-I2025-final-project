@@ -32,8 +32,8 @@
         const user = result.user;
         const token = await user.getIdToken();
 
-        console.log("✅ Usuario:", user.displayName);
-        console.log("🔐 ID Token:", token);
+        console.log("User:", user.displayName);
+        console.log("ID Token:", token);
 
         await fetch("/auth/google-login", {
           method: "POST",
@@ -41,12 +41,12 @@
           body: JSON.stringify({ token })
         });
 
-        alert("Login exitoso. Bienvenido " + user.displayName);
-        window.location.href = "/"; // Redirigir a home si querés
+        alert("Login successful. Welcome " + user.displayName);
+        window.location.href = "/";
 
       } catch (error) {
-        console.error("❌ Error durante el login:", error);
-        alert("Error durante el login.");
+        console.error("Error during login:", error);
+        alert("Error during login.");
       }
     });
   </script>

@@ -5,7 +5,7 @@ db = None
 def initialize_firebase():
     global db
     if not firebase_admin._apps:
-        cred = credentials.Certificate("firebaseAccountKey.json")  # 🔒 archivo correcto
+        cred = credentials.Certificate("firebaseAccountKey.json")
         firebase_admin.initialize_app(cred)
     db = firestore.client()
 
