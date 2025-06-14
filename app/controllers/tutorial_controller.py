@@ -35,6 +35,7 @@ def create_tutorial():
         method = request.form['method']
         capacity = int(request.form['capacity'])
 
+        
         tutor_id = 2 # This should be replaced with the actual tutor ID from DB
         tutor = "Ana Gómez" # This should be replaced with the actual tutor name from the DB
 
