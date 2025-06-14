@@ -1,12 +1,13 @@
 import pytest
-from datetime import datetime, timedelta
-from app.app import app as flask_app
+from datetime import datetime
+from app.__init__ import app
 from app.models.review_model import save_reviews, _load_reviews
 
 @pytest.fixture
 def client():
-    flask_app.config['TESTING'] = True
-    return flask_app.test_client()
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
 
 @pytest.fixture
 def setup_review():
@@ -22,24 +23,37 @@ def setup_review():
     save_reviews([review])
     return review
 
-# def test_can_edit_existing_review(client, setup_review):
-#     """Dado que ya dejé un comentario, puedo editarlo y se muestra actualizado"""
-#     rv_id = setup_review['review_id']
-#     response = client.post(f"/edit-review/{rv_id}", data={
-#         'comment': "Comentario actualizado.",
-#         'rating': 4
-#     }, follow_redirects=True)
+def test_can_edit_existing_review(client, setup_review):
+    rv_id = setup_review['review_id']
+    response = client.post(f"/edit-review/{rv_id}", data={
+        'comment': "Comentario actualizado.",
+        'rating': 4
+    }, follow_redirects=True)
 
-#     assert response.status_code == 200
-#     assert b"Comentario actualizado." in response.data
+    assert response.status_code == 200
+    assert b"Comentario actualizado." in response.data
 
-#     reviews = _load_reviews()
-#     updated = next(r for r in reviews if r["review_id"] == rv_id)
-#     assert updated["comment"] == "Comentario actualizado."
-#     assert updated["rating"] == 4
+    reviews = _load_reviews()
+    updated = next(r for r in reviews if r["review_id"] == rv_id)
+    assert updated["comment"] == "Comentario actualizado."
+    assert updated["rating"] == 4
 
-# def test_edit_button_visible(client, setup_review):
-#     """Dado que publiqué un comentario, puedo ver el botón Editar en el perfil"""
-#     response = client.get("/")
-#     assert b"Editar" in response.data
+def test_edit_button_visible(client, setup_review):
+    response = client.get("/comments")
+    assert b"Editar" in response.data
 
+def test_can_change_rating(client, setup_review):
+    rv_id = setup_review['review_id']
+    new_rating = 5
+
+    response = client.post(f"/edit-review/{rv_id}", data={
+        'comment': setup_review['comment'],  # dejamos el comentario igual
+        'rating': new_rating
+    }, follow_redirects=True)
+
+    assert response.status_code == 200
+    assert str(new_rating).encode() in response.data  # Verificamos que la nueva calificación aparece en la respuesta
+
+    reviews = _load_reviews()
+    updated = next(r for r in reviews if r["review_id"] == rv_id)
+    assert updated["rating"] == new_rating
