@@ -29,6 +29,7 @@
                 <i class="fa-solid fa-clock"></i>
                 <input type="time" name="start_time" required value="{{ tutoring.start_time if tutoring else '' }}">
             </div>
+
             <div class="detail-item">
                 <i class="fa-solid fa-pen-to-square"></i>
                 <input type="text" name="description" placeholder="Descripción" required value="{{ tutoring.description if tutoring else '' }}">
@@ -40,10 +41,16 @@
                     <option value="Presencial" {% if tutoring and tutoring.method == 'Presencial' %}selected{% endif %}>Presencial</option>
                 </select>
             </div>
+            
             <div class="detail-item">
                 <i class="fa-solid fa-user-group"></i>
                 <input type="number" name="capacity" min="1" placeholder="Capacidad" required value="{{ tutoring.capacity if tutoring else '' }}">
             </div>
+            <div class="detail-item">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <input type="text" name="meeting_link" placeholder="Enlace" required value="{{ tutoring.meeting_link if tutoring else '' }}">
+            </div>
+            
     </div>
     <div class="form-buttons">
         <button type="submit">Guardar cambios</button>

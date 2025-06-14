@@ -133,7 +133,7 @@ class FirebaseTutoringRepository:
 
         return safe_execute(operation, fallback=False, context="[cancel_tutorial]")
     
-    def create_tutorial(self, title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity):
+    def create_tutorial(self, title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity, meeting_link):
         def operation():
             new_id = str(uuid.uuid4())
             new_tutoring = {
@@ -147,6 +147,7 @@ class FirebaseTutoringRepository:
                 "description": description,
                 "method": method,
                 "capacity": capacity,
+                "meeting_link": meeting_link,
                 "student_list": []
             }
 

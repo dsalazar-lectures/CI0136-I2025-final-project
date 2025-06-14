@@ -35,7 +35,8 @@ def create_tutorial():
         description = request.form['description']
         method = request.form['method']
         capacity = int(request.form['capacity'])
-
+        is_virtual = method.lower() == 'virtual'  # Variable booleana para determinar si es virtual
+        meeting_link = request.form['meeting_link'] if is_virtual else None
         tutor_id = session.get('user_id')
         tutor = session.get('name', 'Tutor Anónimo')  # Default to 'Tutor Anónimo' if name is not set
 
@@ -43,7 +44,7 @@ def create_tutorial():
         # tutor = "Ana Gómez"
 
         new_tutorial = firebase_repo.create_tutorial(
-            title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
+            title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity, meeting_link
         )
         if new_tutorial:
             # Send a notification email
@@ -81,7 +82,10 @@ def edit_tutorial(id):
             'description': request.form['description'],
             'method': request.form['method'],
             'capacity': int(request.form['capacity']),
+            'meeting_link': request.form['meeting_link'] 
         }
+            # Agregar solo si es virtual
+        
 
         firebase_repo.update_tutorial(id, updated_data)
         return redirect(url_for('tutorial.listTutorTutorials'))
