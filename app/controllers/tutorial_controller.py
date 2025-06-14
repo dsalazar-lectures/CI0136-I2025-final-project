@@ -25,6 +25,7 @@ def getTutoriaById(id):
         return render_template('tutorial.html',tutoring=tutoring, user_role=user_role)
     
 @tutorial.route('/tutorial/create', methods=['GET', 'POST'])
+@login_or_role_required('Tutor')
 def create_tutorial():
     if request.method == 'POST':
         title_tutoring = request.form['title_tutoring']
@@ -35,34 +36,38 @@ def create_tutorial():
         method = request.form['method']
         capacity = int(request.form['capacity'])
 
-        
-        tutor_id = 2 # This should be replaced with the actual tutor ID from DB
-        tutor = "Ana Gómez" # This should be replaced with the actual tutor name from the DB
+        tutor_id = session.get('user_id')
+        tutor = session.get('name', 'Tutor Anónimo')  # Default to 'Tutor Anónimo' if name is not set
 
-        #TODO: Get the tutor ID and name from DB
+        # tutor_id = 2
+        # tutor = "Ana Gómez"
 
-        new_tutorial = repo.create_tutorial(
+        new_tutorial = firebase_repo.create_tutorial(
             title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
         )
-        # Send a notification email
-        # (TODO) Replace with actual user name and email 
-        email_data = {
-            "username": "default_user",  # Replace with actual user name
-            "emailTo": "tutorialsflaskmail@gmail.com", # Replace with actual user email
-            "tutorial": title_tutoring,
-        }
-        if not send_email_notification("newTutorial", email_data):
-            log_audit(
-                user="default_user",  # Replace with actual user name
-                action_type=AuditActionType.CONTENT_CREATE,
-                details = "Failed to send email notification for new tutorial creation: " + title_tutoring,
-            )
+        if new_tutorial:
+            # Send a notification email
+            email_data = {
+                "username": tutor,
+                "emailTo": session.get("email", "tutorialsflaskmail@gmail.com"),
+                "tutorial": title_tutoring,
+            }
+            if not send_email_notification("newTutorial", email_data):
+                log_audit(
+                    user = tutor,
+                    action_type=AuditActionType.CONTENT_CREATE,
+                    details = "Failed to send email notification for new tutorial creation: " + title_tutoring,
+                )
+            flash("Tutoría creada exitosamente.", "success")
+        else:
+            flash("Error al crear la tutoría. Por favor, inténtalo de nuevo.", "danger")
         return redirect(url_for('tutorial.listTutorTutorials'))
     return render_template('tutorial_form.html', tutoring=None, edit_mode=False)
 
 @tutorial.route('/tutorial/<id>/edit', methods=['GET', 'POST'])
+@login_or_role_required('Tutor')
 def edit_tutorial(id):
-    tutoring = repo.get_tutorial_by_id(id)
+    tutoring = firebase_repo.get_tutoria_by_id(id)
 
     if tutoring is None:
         return render_template('404.html'), 404
@@ -78,7 +83,7 @@ def edit_tutorial(id):
             'capacity': int(request.form['capacity']),
         }
 
-        repo.update_tutorial(id, updated_data)
+        firebase_repo.update_tutorial(id, updated_data)
         return redirect(url_for('tutorial.listTutorTutorials'))
 
     return render_template('tutorial_form.html', tutoring=tutoring, edit_mode=True)
@@ -127,7 +132,7 @@ def register_tutoria():
 @tutorial.route('/tutorial/tutor_tutorials')
 @login_or_role_required('Tutor')
 def listTutorTutorials():
-    tutor_id = 2  # This should be replaced with the actual tutor ID from DB
+    tutor_id = session.get('user_id')
 
     if not tutor_id:
         flash("No se pudo obtener el ID del tutor.", "danger")
@@ -136,7 +141,7 @@ def listTutorTutorials():
     search = request.args.get('search', '').lower()
     sort = request.args.get('sort')
 
-    tutorias = repo.list_tutor_tutorials(tutor_id, search=search, sort=sort)
+    tutorias = firebase_repo.get_tutorias_by_tutor(tutor_id)
 
     return render_template('tutor_tutorials.html', tutorias=tutorias)
 

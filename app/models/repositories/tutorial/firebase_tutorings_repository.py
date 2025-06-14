@@ -1,5 +1,6 @@
 from app.firebase_config import db
 from ..repository_helper import safe_execute
+import uuid
 
 class FirebaseTutoringRepository:
     def __init__(self):
@@ -131,3 +132,38 @@ class FirebaseTutoringRepository:
             return False
 
         return safe_execute(operation, fallback=False, context="[cancel_tutorial]")
+    
+    def create_tutorial(self, title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity):
+        def operation():
+            new_id = str(uuid.uuid4())
+            new_tutoring = {
+                "id": new_id,
+                "title": title_tutoring,
+                "tutor_id": tutor_id,
+                "tutor": tutor,
+                "subject": subject,
+                "date": date,
+                "start_time": start_time,
+                "description": description,
+                "method": method,
+                "capacity": capacity,
+                "student_list": []
+            }
+
+            db.collection(self.collection_name).document(new_id).set(new_tutoring)
+            return new_tutoring
+
+        return safe_execute(operation, fallback=None, context="[create_tutorial]")
+
+    def update_tutorial(self, id, updated_data):
+            def operation():
+                # Buscar el documento por el campo 'id'
+                query = db.collection(self.collection_name).where("id", "==", id).limit(1)
+                docs = query.stream()
+                for doc in docs:
+                    doc_id = doc.id  # ID interno de Firestore
+                    db.collection(self.collection_name).document(doc_id).update(updated_data)
+                    return True
+                return False  # No encontrado
+
+            return safe_execute(operation, fallback=False, context="[update_tutorial]")
