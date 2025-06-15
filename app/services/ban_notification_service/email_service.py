@@ -40,12 +40,3 @@ class SMTPEmailService(EmailService):
     except Exception as e:
       print(f"Error: {e}")
       return False
-
-class Ban(SMTPEmailService):
-  def __init__(self):
-    super().__init__()
-    self.subject = "Ban Notification"
-    self.message = "Yoyu made a mistake so you are going to get a ban"
-  
-  def notify(self,to):
-    return self.send_email(to,self.subject,self.message)

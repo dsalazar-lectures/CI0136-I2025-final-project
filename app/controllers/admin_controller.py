@@ -13,7 +13,7 @@ from app.models.repositories.users.firebase_user_repository import FirebaseUserR
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 user_repo = FirebaseUserRepository()
-# from app.models.services.email_service import SMTPEmailService
+from app.services.ban_notification_service.ban_notification_types import *
 
 
 @admin_bp.route('/')
@@ -95,10 +95,9 @@ def ban_notification_emai():
     email = data.get('email')
     if not email:
         return jsonify(success=False, error='Email no proporcionado')
-    subject = "Banneo temporal"
-    message = "Usted ha incumplido las reglas de este servicio, por lo tanto será baneado"
-    #SendBanEmail = SMTPEmailService()
-    #success = SendBanEmail.send_email(email,subject,message)
+    type = "behavior"
+    notification = BanNotificationFactory.create_ban_notification(type)
+    notification.notify(email)
     if(True):
      return jsonify(success=True, message='Usuario notificado con éxito')
     else:

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from email_service import SMTPEmailService
+from .email_service import SMTPEmailService
 
 class BanNotification(SMTPEmailService):
   def __init__(self):
