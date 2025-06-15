@@ -9,15 +9,12 @@ from ..models.repositories.users.firebase_user_repository import FirebaseUserRep
 from ..models.services.registration_service import validate_registration_data, validate_login_data
 from app.services.notification import send_email_notification
 from firebase_admin import auth as firebase_auth
-from app.models.repositories.users.firebase_user_repository import FirebaseUserRepository
-from firebase_admin import auth as firebase_auth
 import traceback
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 # Repository for retrieving and storing user data
 user_repo = FirebaseUserRepository()
-# user_repo = MockUserRepository()
 
 
 @auth_bp.route("/login", methods=("GET", "POST"))
@@ -59,6 +56,7 @@ def login():
         session["user_id"] = user["id"]
         session["name"] = user.get("name", email)
         session["role"] = user["role"]
+        session["status"] = user.get("status", email)
         session["email"] = email 
 
         # Send a login notification email
@@ -107,22 +105,35 @@ def google_login():
         if not existing_user:
             print("Creating new user...")
             user_repo.add_user(
+            print(f"Creando nuevo usuario para {email}")
+            new_user = user_repo.add_user(
                 name=name,
                 email=email,
                 password=None,
-                role="student"
+                role="Student"
             )
+            
+            if not new_user:
+                print(f"Error creando usuario, intentando recuperar de nuevo: {email}")
+                existing_user = user_repo.get_user_by_email(email)
+                if not existing_user:
+                    return {"error": "Error al crear/recuperar usuario"}, 400
+            else:
+                existing_user = new_user
+        else:
+            print(f"Usuario existente encontrado para {email}")
 
         session.clear()
-        session["user_id"] = existing_user["id"] if existing_user else 0
+        session["user_id"] = existing_user["id"]
         session["email"] = email
-        session["name"] = name
-        session["role"] = existing_user["role"] if existing_user else "student"
+        session["name"] = existing_user.get("name", name)
+        session["role"] = existing_user["role"]
+        session["status"] = existing_user["status"]
 
-        print("User authenticated with Google:", session["email"])
-        return {"message": "Login with Google successful"}, 200
+        print("Usuario autenticado con Google:", session["email"])
+        return {"message": "Login con Google exitoso"}, 200
 
     except Exception as e:
-        print("Error in Google login:")
+        print("Error en login con Google:")
         traceback.print_exc()
         return {"error": str(e)}, 500

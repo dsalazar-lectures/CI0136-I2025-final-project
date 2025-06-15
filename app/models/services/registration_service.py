@@ -4,7 +4,7 @@ User registration and authentication services.
 This module provides functions to validate user registration data
 and authenticate user login credentials.
 """
-from ...utils.utils import validate_name, validate_email, validate_password
+from ...utils.utils import validate_name, validate_email, validate_password, validate_max_length
 import bcrypt
 
 def validate_registration_data(name, email, password, role, user_repo):
@@ -26,6 +26,18 @@ def validate_registration_data(name, email, password, role, user_repo):
     if not name or not email or not password:
         return 'All fields are required.', 'danger'
     
+    
+    MAX_LENGTH = 100
+    
+    if not validate_max_length(name, MAX_LENGTH):
+        return f'Name cannot exceed {MAX_LENGTH} characters.', 'danger'
+        
+    if not validate_max_length(email, MAX_LENGTH):
+        return f'Email cannot exceed {MAX_LENGTH} characters.', 'danger'
+        
+    if not validate_max_length(password, MAX_LENGTH):
+        return f'Password cannot exceed {MAX_LENGTH} characters.', 'danger'
+    
     if not validate_name(name):
         return 'Invalid name.', 'danger'
 
@@ -42,8 +54,14 @@ def validate_registration_data(name, email, password, role, user_repo):
     if role not in VALID_ROLES:
         return "Invalid role selected. Must be Student, Administrator, or Tutor.", "danger"
 
-    if user_repo.user_exists(email):
-        return 'This email is already registered.', 'danger'
+    
+    existing_user = user_repo.get_user_by_email(email)
+    if existing_user:
+        
+        if existing_user.get('auth_provider') == 'google':
+            return 'Este email ya está registrado mediante Google. Por favor inicia sesión con Google.', 'danger'
+        else:
+            return 'Este email ya está registrado. Por favor inicia sesión o utiliza otro email.', 'danger'
 
     return None, None
 
@@ -61,12 +79,20 @@ def validate_login_data(email, password, user_repo):
             - user (dict): User object if authentication successful, None otherwise
             - error_message (str): Error description if authentication failed, None otherwise
     """
+    
+    MAX_LENGTH = 100
+    
+    if not validate_max_length(email, MAX_LENGTH) or not validate_max_length(password, MAX_LENGTH):
+        return None, "Input fields exceed maximum allowed length of 100 characters."
+    
     user = user_repo.get_user_by_email(email)
 
     if user is None or not user.get("password"):
+        
+        if user and user.get("auth_provider") == "google":
+            return None, "Esta cuenta está registrada con Google. Por favor usa el botón 'Iniciar sesión con Google'."
         return None, "Invalid credentials."
 
-    # Check hashed password
     try:
         if bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
             return user, None

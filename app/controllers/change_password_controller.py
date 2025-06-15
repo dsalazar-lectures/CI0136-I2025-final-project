@@ -6,7 +6,7 @@ from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 
 ####################################################
-# THIS ONLY WORKS IF THERE'S AN ACTIVA SESSION
+# THIS ONLY WORKS IF THERE'S AN ACTIVE SESSION
 ####################################################
 
 
