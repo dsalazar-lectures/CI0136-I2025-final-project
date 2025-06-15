@@ -4,27 +4,27 @@
 {% block content %}
 <div class="container my-4">
     {% if tutorias %}
-        <h4 class="mb-3">Recommended Tutorials</h4>
+        <h4 class="mb-3">Tutorías recomendadas</h4>
         <div class="d-flex flex-row overflow-auto gap-3 pb-3">
             {% for tutoria in tutorias %}
-                <div class="card" style="min-width: 300px; flex: 0 0 auto;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ tutoria.title }}</h5>
-                        <div class="card-text">
-                            <p><strong>Tutor:</strong> {{ tutoria.tutor }}</p>
-                            <p><strong>Method:</strong> {{ tutoria.method }}</p>
-                            <p><strong>Date:</strong> {{ tutoria.date }}</p>
-                            <p class="text-muted">
-                                {{ tutoria.student_list|length }} enrolled students
-                            </p>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <a href="{{ url_for('tutorial.getTutoriaById', id=tutoria.id) }}" class="btn btn-outline-primary">
-                                View Details
-                            </a>
+                {% if tutoria.capacity - tutoria.student_list|length > 0 %}
+                    <div class="card" style="min-width: 300px; flex: 0 0 auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ tutoria.title }}</h5>
+                            <div class="card-text">
+                                <p><strong>Materia:</strong> {{ tutoria.subject }}</p>
+                                <p><strong>Tutor:</strong> {{ tutoria.tutor }}</p>
+                                <p><strong>Modalidad:</strong> {{ tutoria.method }}</p>
+                                <p><strong>Fecha:</strong> {{ tutoria.date }}</p>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('tutorial.getTutoriaById', id=tutoria.id) }}" class="btn btn-outline-primary">
+                                    Ver detalles
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             {% endfor %}
         </div>
     {% endif %}
