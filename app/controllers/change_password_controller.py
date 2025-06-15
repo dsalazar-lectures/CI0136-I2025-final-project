@@ -6,6 +6,9 @@ from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.models.services.password_exeptions.password_exceptions import PasswordUpdateError, PasswordValidationError
 
+####################################################
+# THIS ONLY WORKS IF THERE'S AN ACTIVE SESSION
+####################################################
 
 from flask import Blueprint, render_template
 

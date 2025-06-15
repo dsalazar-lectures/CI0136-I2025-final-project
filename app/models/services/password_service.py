@@ -68,22 +68,22 @@ class ChangePasswordService(PasswordService):
         return bcrypt.checkpw(current_pass_input.encode('utf-8'), mocked_hashed_pass)
 
 
-    def change_password(self, current_pass_input:str, new_pass_input:str, user):
-
+    def change_password(self, current_pass_input: str, new_pass_input: str, user):
         hashed_password = self.get_stored_hash_password(user)
- 
-        if (self.verify_password(current_pass_input, hashed_password)):
-            salt = bcrypt.gensalt()
-            new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt)
-            #self.store_new_pass_to_db(new_hash_password, user)  
-            #we  don't pass the hash yet, since passwords are stored in plain text for the moment
 
-            if not self.store_new_pass_to_db(new_pass_input, user):
+        if self.verify_password(current_pass_input, hashed_password):
+            salt = bcrypt.gensalt()
+            new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt).decode('utf-8')
+
+            if not self.store_new_pass_to_db(new_hash_password, user):
                 raise PasswordUpdateError("Error al guardar la nueva contraseña")
-            
+
         else:
-            raise PasswordValidationError("Contraseña actual incorrecta") 
-    
+            raise PasswordValidationError("Contraseña actual incorrecta")
+
+
+
+
 class ResetPasswordService(PasswordService):
     pass
 

@@ -11,12 +11,13 @@ from app.models.repositories.users.firebase_user_repository import FirebaseUserR
 from ..models.services.registration_service import validate_registration_data
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
+import bcrypt
 
 # Create a Blueprint for registration-related routes
 register_bp = Blueprint('register', __name__, url_prefix='/register')
 # Repository for retrieving and storing user data
-# user_repo = MockUserRepository() 
 user_repo = FirebaseUserRepository()
+
 @register_bp.route('/', methods=['GET', 'POST'])
 def register():
     """
@@ -42,6 +43,13 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         role = request.form.get('role')
+        
+        # Validate that all required fields are present
+        existing_user = user_repo.get_user_by_email(email)
+        if existing_user and existing_user.get('auth_provider') == 'google':
+            flash("Este email ya está registrado mediante Google. Por favor inicia sesión con Google.", "danger")
+            return redirect(url_for('register.register'))
+        
         # Store form data in session for form repopulation in case of errors
         session['form_data'] = {
             'name': name,
@@ -55,8 +63,17 @@ def register():
         if error_message:
             flash(error_message, error_category)
             return redirect(url_for('register.register'))
-        # Create new user and clear session data
-        user_repo.add_user(name, email, password, role)
+        # Hash the password before storing
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        # Create the new user in the repository
+        new_user = user_repo.add_user(name, email, hashed_password, role)
+        
+        # If user creation fails, flash an error message and redirect back to registration
+        if not new_user:
+            flash("No se pudo crear el usuario. Es posible que ya exista con este email.", "danger")
+            return redirect(url_for('register.register'))
+            
         # Send a registration notification email
         email_data = {
             "username": name,

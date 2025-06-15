@@ -10,9 +10,14 @@ The solution is designed following modular design principles and best developmen
 
 ## Activity Diagram: User Registration and Login Flow
 
-Below is the UML diagram that describes the system's structure:
+UML diagram that describes the system's structure:
 
 ![UML Diagram](diagrams\UML-GrupoFront-Tera.svg)
+
+
+Diagram that describes Google authentication flow.
+
+![Diagram](diagrams\GoogleAuth-GTT.svg)
 
 ## Components
 
