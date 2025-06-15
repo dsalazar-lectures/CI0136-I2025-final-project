@@ -119,6 +119,37 @@
   {% else %}
     <div></div>
   {% endif %}
+
+  <!--Settings Section-->
+  <h4 class="mt-4 mb-4 fw-bold">Configuración</h4>
+  <!-- User preferences subsection -->
+  <div class="mt-4 p-4 profile-container d-flex flex-column gap-4">
+    <h6 class="fw-bold mb-2">Preferencias de usuario</h6>
+    <!-- Enable/disable email notifications -->
+    <div class="form-check form-switch">
+      <!-- Toggle -->
+      <input class="form-check-input me-3"
+        type="checkbox"
+        id="email_notification_status"
+        name="email_notification_status"
+        {% if not notification_enabled %}checked{% endif %}>
+      <label class="form-check-label me-3" for="email_notification_status">Notificaciones desactivadas</label>
+      <!-- Icon helper -->
+      <i class="bi bi-info-circle text-primary" 
+        data-bs-toggle="tooltip" 
+        data-bs-placement="right" 
+        title="Al activar esta opción, dejarás de recibir notificaciones por correo electrónico, exceptuando las relacionadas a cambios de contraseña."
+        style="cursor: pointer;">
+      </i>
+    </div>
+    
+    <!-- Account security subsection -->
+    <div>
+      <h6 class="fw-bold mb-2">Seguridad de la cuenta</h6>
+      <!-- Change password -->
+      <div class="mb-1 text-muted">Cambiar contraseña</div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra_content %}
@@ -179,6 +210,21 @@
       var editModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
       editModal.show();
     {% endif %}
+  });
+</script>
+
+<!-- Call function to update notification status-->
+<script>
+  // Get the email_notification_status (toggle) value if a change is detected
+  document.getElementById("email_notification_status").addEventListener("change", function () {
+    // Invertimos para que coincida el toggle activado con false
+    const status = !this.checked;
+    // Petición a la función
+    fetch("/update_notification_status", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `status=${status}`
+    });
   });
 </script>
 {% endblock %}
