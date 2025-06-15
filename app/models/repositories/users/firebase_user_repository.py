@@ -1,3 +1,4 @@
+from asyncio.log import logger
 from app.models.services.user_repository_interface import IUserRepository
 from app.firebase_config import db
 from ..repository_helper import safe_execute
@@ -12,18 +13,18 @@ class FirebaseUserRepository(IUserRepository):
             
             doc = db.collection(self.collection_name).document(clean_email).get()
             if doc.exists:
-                print(f"Usuario encontrado por ID exacto: {clean_email}")
+                logger.info(f"Usuario encontrado por ID exacto: {clean_email}")
                 return doc.to_dict()
-            
-            print(f"🔍 Buscando usuario por campo email: {clean_email}")
+
+            logger.info(f"Buscando usuario por campo email: {clean_email}")
             query = db.collection(self.collection_name).where("email", "==", clean_email).get()
             docs = list(query)
             
             if docs:
-                print(f"📝 Usuario encontrado por campo email: {clean_email}, doc_id={docs[0].id}")
+                logger.info(f"Usuario encontrado por campo email: {clean_email}, doc_id={docs[0].id}")
                 return docs[0].to_dict()
-            
-            print(f"Usuario no encontrado para email: {clean_email}")
+
+            logger.info(f"Usuario no encontrado para email: {clean_email}")
             return None
 
         return safe_execute(operation, fallback=None, context="[get_user_by_email]")
@@ -34,12 +35,12 @@ class FirebaseUserRepository(IUserRepository):
             
             doc = db.collection(self.collection_name).document(clean_email).get()
             if doc.exists:
-                print(f"Usuario ya existe como documento: {clean_email}")
+                logger.info(f"Usuario ya existe como documento: {clean_email}")
                 return None
             
             query = db.collection(self.collection_name).where("email", "==", clean_email).get()
             if list(query):
-                print(f"Usuario ya existe con campo email: {clean_email}")
+                logger.info(f"Usuario ya existe con campo email: {clean_email}")
                 return None
             
             users_ref = db.collection(self.collection_name)
