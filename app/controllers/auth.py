@@ -54,7 +54,8 @@ def login():
         session["user_id"] = user["id"]
         session["name"] = user.get("name", email)
         session["role"] = user["role"]
-        session["email"] = email 
+        session["email"] = email
+        session["notification_enabled"] = user["notification_enabled"]
 
         # Send a login notification email
         # Prepare email data for notification

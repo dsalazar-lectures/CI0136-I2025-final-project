@@ -31,7 +31,8 @@ class FirebaseUserRepository(IUserRepository):
                 "name": name,
                 "password": password,
                 "id": max_id,
-                "role": role
+                "role": role,
+                "notification_enabled": True  # Notifications enable by default
             }
 
             # TODO: Check if the user already exists before adding?
@@ -98,3 +99,18 @@ class FirebaseUserRepository(IUserRepository):
             return True  # update succesfully
 
         return safe_execute(operation, fallback=False, context="[update_user_password]")
+
+    def update_user_notification_status(self, email, notificationStatus):
+        """
+        Updates the 'notification_enabled' field for a specific user.
+
+        :param email: The user's email address, for identification.
+        :param notification_status: A Boolean representing the new status.
+        :return: True if the update was successful, False if an error occurred.
+        """
+        def operation():
+            doc_ref = db.collection(self.collection_name).document(email)
+            doc_ref.update({"notification_enabled": notificationStatus})
+            return True
+
+        return safe_execute(operation, fallback=False, context="[update_user_notification_status]")

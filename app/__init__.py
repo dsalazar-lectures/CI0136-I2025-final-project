@@ -37,6 +37,7 @@ from .controllers.profile_controller import profile_bp as profile_blueprint
 from .controllers.admin_controller import admin_bp as admin_blueprint
 from .controllers.change_password_controller import c_password_bp as change_pass
 from .controllers.recovery_password_controller import rec_password_bp as recovery_pass
+from.controllers.user_preferences_controller import userPreferencesSetting as preferencesSettings
 
 
 # redirect / to /home
@@ -58,3 +59,4 @@ app.register_blueprint(admin_blueprint)         # Admin routes
 app.register_blueprint(subscriptions_bp, url_prefix='/subscriptions')  # Student profile routes
 app.register_blueprint(change_pass)
 app.register_blueprint(recovery_pass)
+app.register_blueprint(preferencesSettings)
