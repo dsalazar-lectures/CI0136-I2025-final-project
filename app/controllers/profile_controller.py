@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
+from ..utils.utils import validate_max_length  # Importamos la función de validación
 
 profile_bp = Blueprint("profile", __name__, url_prefix="/profile")
 user_repo = FirebaseUserRepository()
@@ -29,6 +30,29 @@ def edit_profile():
 
     if not new_name or not new_role:
         flash("Name and role are required.", "danger")
+        return render_template(
+            "profile.html",
+            name=session["name"],
+            role=session["role"],
+            email=session.get("email", ""),
+            show_modal=True  
+        )
+    
+    MAX_LENGTH = 100
+    
+    if not validate_max_length(new_name, MAX_LENGTH):
+        flash(f"Name cannot exceed {MAX_LENGTH} characters.", "danger")
+        return render_template(
+            "profile.html",
+            name=session["name"],
+            role=session["role"],
+            email=session.get("email", ""),
+            show_modal=True  
+        )
+    
+    VALID_ROLES = {"Student", "Administrator", "Tutor"}
+    if new_role not in VALID_ROLES:
+        flash("Invalid role selected. Must be Student, Administrator, or Tutor.", "danger")
         return render_template(
             "profile.html",
             name=session["name"],
