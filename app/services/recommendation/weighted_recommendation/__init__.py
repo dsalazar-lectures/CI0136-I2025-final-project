@@ -1,0 +1,2 @@
+from .recommendations_weights import RecommendationWeights
+from .weighted_recommendation_strategy import WeightedRecommendationStrategy
