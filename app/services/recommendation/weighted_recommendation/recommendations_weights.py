@@ -15,3 +15,5 @@ class RecommendationWeights:
     capacity_penalty_step: int = 5
     # capacity_penalty_limit is the limit for the capacity penalty, which is applied based on the capacity of the tutoring
     capacity_penalty_limit: int = 5 
+    # subject_match is the weight for matching the tutoring subject with the most common subject of registered tutorings
+    subject_match: int = 5

@@ -17,6 +17,8 @@ class WeightedRecommendationStrategy(RecommendationStrategy):
         preferred_tutors = {t.tutor_id for t in registered}
         # Get the IDs of registered tutorings to exclude them from recommendations
         registered_ids = {t.id for t in registered}
+        # Get subjects from registered tutorings, if needed for future use
+        subjects = [t.subject for t in registered]
 
         # scored contains tuples of (score, tutoring)
         scored = []
@@ -27,6 +29,9 @@ class WeightedRecommendationStrategy(RecommendationStrategy):
                 continue
             
             score = 0
+            # Check if subject matches the most common subject of registered tutorings
+            if t.subject in subjects:
+                score += self.weights.subject_match
             # Check if the tutoring method matches the preferred method
             if t.method == preferred_method:
                 score += self.weights.method_match
