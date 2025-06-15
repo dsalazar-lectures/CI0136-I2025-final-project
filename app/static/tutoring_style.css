@@ -1,7 +1,10 @@
 * {
     font-family: 'Poppins', sans-serif;
 }
-
+.navbar{
+    width: 100vw;
+    margin: -1.30% 0px 0px -0.95%;
+}
 body {
     background-color: linear-gradient(to bottom, #eef2f7, #ffffff);
     color: #34495e;
@@ -196,6 +199,16 @@ input[type="text"], select {
     justify-content: center;
     padding: 0 16px;
     font-size: 0.9em;
+    border: none;
+}
+.button-delete{
+    background-color: #e41515;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
     border: none;
 }
 
