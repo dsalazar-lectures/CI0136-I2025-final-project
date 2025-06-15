@@ -60,7 +60,6 @@ def get_all_reviews():
 def add_review(review):
     reviews = _load_reviews()
     review["date"] = datetime.now().strftime('%d/%m/%Y')
-    review["reply"] = None
     reviews.append(review)
 
     save_reviews(reviews)             # Guarda en archivo local
