@@ -2,6 +2,15 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+# Inicialización de Firebase
+if not firebase_admin._apps:
+    cred = credentials.Certificate("firebase_credentials.json")
+    firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 # Configuración de archivo JSON
 JSON_FILE = "reviews_data.json"
@@ -41,6 +50,15 @@ def _load_reviews():
     save_reviews(default_reviews)
     return default_reviews
 
+def save_review_to_firestore(review):
+    """Guarda una review individual en Firestore"""
+    try:
+        # Convertir nombre de documento (review_id) a int
+        review_id_str = str(review['review_id'])
+        db.collection('reviews').document(review_id_str).set(review)
+    except Exception as e:
+        print(f"Error al guardar en Firestore: {e}")
+
 def save_reviews(reviews):
     """Guarda las reviews en el archivo JSON"""
     with open(JSON_PATH, 'w', encoding='utf-8') as f:
@@ -54,7 +72,9 @@ def add_review(review):
     review["date"] = datetime.now().strftime('%d/%m/%Y')
     review["reply"] = None
     reviews.append(review)
-    save_reviews(reviews)
+
+    save_reviews(reviews)             # Guarda en archivo local
+    save_review_to_firestore(review)  # Guarda en Firebase
 
 def add_reply_to_review(review_id, tutor_id, comment):
     """Añade una respuesta (permite múltiples respuestas)"""
