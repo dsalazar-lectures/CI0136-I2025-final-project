@@ -72,10 +72,10 @@ class FirebaseTutoringRepository:
 
             for snapshot in query:
                 tutorial_data = snapshot.to_dict()
-                print("Datos recuperados de Firebase:", tutorial_data)
+                # print("Datos recuperados de Firebase:", tutorial_data)
 
                 tutoring_obj = self._dict_to_tutoring(tutorial_data)
-                print("Resultado de _dict_to_tutoring:", tutoring_obj)
+                # print("Resultado de _dict_to_tutoring:", tutoring_obj)
 
                 if tutoring_obj:
                     tutorials.append(tutoring_obj)
