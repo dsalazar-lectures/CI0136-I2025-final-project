@@ -46,15 +46,32 @@
                 <i class="fa-solid fa-user-group"></i>
                 <input type="number" name="capacity" min="1" placeholder="Capacidad" required value="{{ tutoring.capacity if tutoring else '' }}">
             </div>
-            <div class="detail-item">
+            <div class="detail-item" id="meeting-link-field">
                 <i class="fa-solid fa-pen-to-square"></i>
                 <input type="text" name="meeting_link" placeholder="Enlace" required value="{{ tutoring.meeting_link if tutoring else '' }}">
             </div>
+            
             
     </div>
     <div class="form-buttons">
         <button type="submit">Guardar cambios</button>
         <a href="/tutorial/tutor_tutorials" class="button-back button-cancel">Cancelar</a>
     </div>
+    <script>
+        const methodSelect = document.querySelector('select[name="method"]');
+        const meetingLinkField = document.getElementById('meeting-link-field');
+    
+        function toggleMeetingLinkField() {
+            if (methodSelect.value === 'Virtual') {
+                meetingLinkField.style.display = 'flex';
+            } else {
+                meetingLinkField.style.display = 'none';
+            }
+        }
+    
+        methodSelect.addEventListener('change', toggleMeetingLinkField);
+        window.addEventListener('DOMContentLoaded', toggleMeetingLinkField);
+    </script>
+    
 </body>
 </html>
