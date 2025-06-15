@@ -120,9 +120,8 @@ form .detail-item {
 }
 
 .form-buttons > a.button-cancel {
-    background-color: transparent;
-    color: #3498db;
-    border: 2px solid #3498db;
+    background-color: grey;
+    color: white;
 }
 
 .form-buttons > a.button-cancel:hover {

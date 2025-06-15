@@ -108,7 +108,35 @@ def getListTutorials():
         print("Tutoring not found")
         return render_template('404.html'), 404
     else:
-        return render_template('list_tutorials.html', tutorias=tutorials, len=len)
+        search = request.args.get('search', '').lower()
+        sort = request.args.get('sort')
+        subject_filter = request.args.get('subject')
+
+        all_subjects = sorted(list(set(t.subject for t in tutorials if hasattr(t, 'subject'))))
+        if search:
+            tutorials = [
+                t for t in tutorials
+                if search in t.title.lower()
+                or search in t.subject.lower()
+                or search in t.description.lower()
+            ]
+        if subject_filter:
+            tutorials = [t for t in tutorials if t.subject == subject_filter]
+
+        if sort == "asc":
+            tutorials.sort(key=lambda t: t.date)
+        elif sort == "desc":
+            tutorials.sort(key=lambda t: t.date, reverse=True)
+
+        return render_template(
+            'list_tutorials.html',
+            tutorias=tutorials,
+            len=len,
+            all_subjects=all_subjects,
+            current_subject=subject_filter,
+            current_sort=sort,
+            current_search=search
+        )
 
 @tutorial.route('/tutorial/register_tutoria', methods=["POST"])
 @login_or_role_required ('Student')
@@ -152,6 +180,19 @@ def listTutorTutorials():
     sort = request.args.get('sort')
 
     tutorias = firebase_repo.get_tutorias_by_tutor(tutor_id)
+
+    if search:
+        tutorias = [
+            t for t in tutorias
+            if search in t.title.lower()
+            or search in t.subject.lower()
+            or search in t.description.lower()
+        ]
+    
+    if sort == "asc":
+        tutorias.sort(key=lambda t:  t.date)
+    elif sort == "desc":
+        tutorias.sort(key=lambda t:  t.date, reverse=True)
 
     return render_template('tutor_tutorials.html', tutorias=tutorias)
 
