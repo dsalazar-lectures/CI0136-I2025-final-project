@@ -103,8 +103,6 @@ def google_login():
         existing_user = user_repo.get_user_by_email(email)
 
         if not existing_user:
-            print("Creating new user...")
-            user_repo.add_user(
             print(f"Creando nuevo usuario para {email}")
             new_user = user_repo.add_user(
                 name=name,
