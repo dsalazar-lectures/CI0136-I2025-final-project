@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
-
+from ..models.builders.button_factory.button_factory import button_factory
 from ..utils.auth import login_or_role_required
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
@@ -20,11 +20,15 @@ def getTutoriaById(id):
     tutoring = firebase_repo.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     
     user_role = request.args.get('user_role', 'student')
+    # Factory pattern to create the button
+    factory = button_factory("zoom")
+    button = factory.create_button(tutoring.meeting_link)
+    
     if tutoring is None:
         print("Tutorial not found")
         return render_template('404.html'), 404
     else:
-        return render_template('tutorial.html',tutoring=tutoring, user_role=user_role)
+        return render_template('tutorial.html',tutoring=tutoring, user_role=user_role, button=button)
     
 @tutorial.route('/tutorial/create', methods=['GET', 'POST'])
 @login_or_role_required('Tutor')
