@@ -122,30 +122,32 @@
 
   <!--Settings Section-->
   <h4 class="mt-4 mb-4 fw-bold">Configuración</h4>
-  <!-- User preferences subsection -->
-  <div class="mt-4 p-4 profile-container d-flex flex-column gap-4">
+  <div class="mt-4 p-4 profile-container d-flex flex-column gap-3">
+    <!-- User preferences subsection -->
     <h6 class="fw-bold mb-2">Preferencias de usuario</h6>
-    <!-- Enable/disable email notifications -->
-    <div class="form-check form-switch">
-      <!-- Toggle -->
-      <input class="form-check-input me-3"
-        type="checkbox"
-        id="email_notification_status"
-        name="email_notification_status"
-        {% if not notification_enabled %}checked{% endif %}>
-      <label class="form-check-label me-3" for="email_notification_status">Notificaciones desactivadas</label>
-      <!-- Icon helper -->
-      <i class="bi bi-info-circle text-primary" 
-        data-bs-toggle="tooltip" 
-        data-bs-placement="right" 
-        title="Al activar esta opción, dejarás de recibir notificaciones por correo electrónico, exceptuando las relacionadas a cambios de contraseña."
-        style="cursor: pointer;">
-      </i>
-    </div>
-    
-    <!-- Account security subsection -->
     <div>
-      <h6 class="fw-bold mb-2">Seguridad de la cuenta</h6>
+      <!-- Enable/disable email notifications -->
+      <div class="form-check form-switch">
+        <!-- Toggle -->
+        <input class="form-check-input me-3"
+          type="checkbox"
+          id="email_notification_status"
+          name="email_notification_status"
+          {% if not notification_enabled %}checked{% endif %}>
+        <label class="form-check-label me-3" for="email_notification_status">Notificaciones desactivadas</label>
+        <!-- Icon helper -->
+        <i class="bi bi-info-circle text-primary" 
+          data-bs-toggle="tooltip" 
+          data-bs-placement="right" 
+          title="Al activar esta opción, dejarás de recibir notificaciones por correo electrónico, exceptuando las relacionadas a cambios de contraseña."
+          style="cursor: pointer;">
+        </i>
+      </div>
+    </div>
+
+    <!-- Account security subsection -->
+    <h6 class="fw-bold mb-2">Seguridad de la cuenta</h6>
+    <div>
       <!-- Change password -->
       <div class="mb-1 text-muted">Cambiar contraseña</div>
     </div>
