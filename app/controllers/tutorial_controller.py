@@ -5,7 +5,8 @@ from ..models.builders.button_factory.button_factory import button_factory
 from ..utils.auth import login_or_role_required
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
-
+from app.utils.date_utils import get_current_datetime
+from datetime import datetime
 #from flask_login import login_required
 tutorial = Blueprint('tutorial', __name__)
 
@@ -21,9 +22,13 @@ def getTutoriaById(id):
     
     user_role = request.args.get('user_role', 'student')
     current_user = session.get("name", "usuario anonimo") 
-    print(f"Current user: {current_user}, User role: {user_role}")
     
-    if user_role == "student" and tutoring.student_list and any(student.get("name") == current_user for student in tutoring.student_list):
+    if (
+        user_role == "student" and
+        tutoring.student_list and
+        any(student.get("name") == current_user for student in tutoring.student_list) and
+        -15 < measure_time_to_tutorial(id) <= 30
+    ):
         factory = button_factory("zoom")
         button = factory.create_button(tutoring.meeting_link)
     else:
@@ -235,4 +240,14 @@ def cancel_tutorial(id):
         flash("Error al cancelar la tutoría.", "danger")
     
     return redirect(url_for('tutorial.listTutorTutorials'))
+
+def measure_time_to_tutorial(id):
+    tutorial = firebase_repo.get_tutoria_by_id(id)
+    present = get_current_datetime()
+    # cast tutorial.date and tutorial.start_time to datetime object
+    future = datetime.strptime(f"{tutorial.date} {tutorial.start_time}", "%Y-%m-%d %H:%M")
+    
+    time_difference = future - present
+    
+    return time_difference.total_seconds() / 60
 
