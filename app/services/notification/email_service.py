@@ -22,8 +22,9 @@ class EmailService():
         data: diccionario que se debe pasar para poder crear el cuerpo de la notificación,
             depende del tipo de notificación,ver la documentación.
         """
-
-        notification_enabled = session["notification_enabled"]
+        
+        # Necesario retornar False en caso de que no exista session, exclusivo del caso de recuperar pass. 
+        notification_enabled = session.get("notification_enabled", False)
 
         # Crea un builder utilizando un factory
         try:
