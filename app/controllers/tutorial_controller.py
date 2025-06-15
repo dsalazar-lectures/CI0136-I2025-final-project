@@ -20,9 +20,14 @@ def getTutoriaById(id):
     tutoring = firebase_repo.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     
     user_role = request.args.get('user_role', 'student')
-    # Factory pattern to create the button
-    factory = button_factory("zoom")
-    button = factory.create_button(tutoring.meeting_link)
+    current_user = session.get("name", "usuario anonimo") 
+    print(f"Current user: {current_user}, User role: {user_role}")
+    
+    if user_role == "student" and tutoring.student_list and any(student.get("name") == current_user for student in tutoring.student_list):
+        factory = button_factory("zoom")
+        button = factory.create_button(tutoring.meeting_link)
+    else:
+        button = None
     
     if tutoring is None:
         print("Tutorial not found")
