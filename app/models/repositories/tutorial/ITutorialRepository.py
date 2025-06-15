@@ -32,3 +32,7 @@ class ITutorialRepository(ABC):
     @abstractmethod
     def list_tutor_tutorials(self, tutor_id, search=None, sort=None):
         pass
+
+    @abstractmethod
+    def cancel_tutorial(self, tutorial_id):
+        pass

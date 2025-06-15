@@ -1,9 +1,8 @@
 from flask import request, redirect, flash, abort
-from app.models.review_model import add_review, get_all_reviews, add_reply_to_review, save_reviews, get_review_by_id
+from app.models.review_model import add_review, get_all_reviews, add_reply_to_review, save_reviews, get_review_by_id, update_review, delete_review as delete_review_model
 import logging
 from datetime import datetime
 from app.controllers.review_presenter_controller import ConsoleReviewPresenter ## Si queremos agregar en un futuro LogFileReviewPresenter, EmailReviewPresenter
-
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
@@ -53,19 +52,16 @@ def send_review():
 
     # Utilizar la estrategia de presentación configurada por el momento
     DEFAULT_PRESENTER.present_review(review)
-
+    
+    flash("Reseña enviada correctamente", "success")
     return redirect("/comments")
 
 def delete_review(review_id):
-    reviews = get_all_reviews()
-    updated_reviews = [r for r in reviews if r['review_id'] != review_id]
-    
-    if len(updated_reviews) < len(reviews):
-        save_reviews(updated_reviews)
+    if delete_review_model(review_id):
         flash("Reseña eliminada exitosamente.", "success")
     else:
         flash("No se encontró la reseña a eliminar.", "warning")
-    
+
     return redirect("/comments")
 
 def add_reply(review_id):

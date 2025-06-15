@@ -6,3 +6,6 @@ class IBuilder(ABC):
   @abstractmethod
   def build_body(self, data: dict) -> dict:
     pass
+  @abstractmethod
+  def get_bypass_priority(self) -> bool:
+    pass

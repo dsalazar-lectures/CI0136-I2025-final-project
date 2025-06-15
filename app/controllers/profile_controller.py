@@ -1,9 +1,12 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
+from ..utils.auth import login_or_role_required
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
+from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 from ..utils.utils import validate_max_length  # Importamos la función de validación
 
 profile_bp = Blueprint("profile", __name__, url_prefix="/profile")
 user_repo = FirebaseUserRepository()
+tutoring_repo = FirebaseTutoringRepository()
 
 @profile_bp.route("/", methods=["GET"])
 def view_profile():
@@ -17,8 +20,14 @@ def view_profile():
     role = session["role"]
     name = session.get("name", "Usuario")
     email = session.get("email", f"{user_id}@example.com")
+    notification_enabled = session.get("notification_enabled")
+    tutorias = []
 
-    return render_template("profile.html", name=name, role=role, email=email)
+    if session.get('role') == 'Tutor':
+        tutor_id = session.get('user_id')
+        tutorias = tutoring_repo.get_tutorias_by_tutor(tutor_id)
+
+    return render_template("profile.html", name=name, role=role, email=email, tutorias=tutorias, notification_enabled=notification_enabled)
 
 @profile_bp.route("/edit", methods=["POST"])
 def edit_profile():

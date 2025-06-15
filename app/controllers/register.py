@@ -55,7 +55,8 @@ def register():
             'name': name,
             'email': email,
             'password': password,
-            'role': role
+            'role': role,
+            'notification_enabled' : True
         }
         error_message, error_category = validate_registration_data(name, email, password, role, user_repo)
 

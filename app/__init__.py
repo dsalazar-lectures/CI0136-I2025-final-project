@@ -31,13 +31,13 @@ from .controllers.auth import auth_bp as auth_blueprint
 from .controllers.tutorial_controller import tutorial as tutorial_blueprint
 from .controllers.comments import comments_bp
 from .controllers.ratings import ratings_bp
-from .controllers.tutor_profile import tutor_bp
-from .controllers.student_profile import student_bp
+from .controllers.subscriptions import subscriptions_bp
 from .routes.review_routes import review_bp
 from .controllers.profile_controller import profile_bp as profile_blueprint
 from .controllers.admin_controller import admin_bp as admin_blueprint
 from .controllers.change_password_controller import c_password_bp as change_pass
 from .controllers.recovery_password_controller import rec_password_bp as recovery_pass
+from.controllers.user_preferences_controller import userPreferencesSetting as preferencesSettings
 
 
 # redirect / to /home
@@ -56,7 +56,7 @@ app.register_blueprint(comments_bp)
 app.register_blueprint(ratings_bp, url_prefix='/comments')
 app.register_blueprint(profile_blueprint, url_prefix="/profile")
 app.register_blueprint(admin_blueprint)         # Admin routes
-app.register_blueprint(tutor_bp, url_prefix='/tutor')  # Tutor profile routes
-app.register_blueprint(student_bp, url_prefix='/student')  # Student profile routes
+app.register_blueprint(subscriptions_bp, url_prefix='/subscriptions')  # Student profile routes
 app.register_blueprint(change_pass)
 app.register_blueprint(recovery_pass)
+app.register_blueprint(preferencesSettings)
