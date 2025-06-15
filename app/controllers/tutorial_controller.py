@@ -15,8 +15,10 @@ firebase_repo = FirebaseTutoringRepository()
 @tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
-    #tutoring = repo.get_tutorial_by_id(id)
+
+    # tutoring = repo.get_tutorial_by_id(id)
     tutoring = firebase_repo.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
+    
     user_role = request.args.get('user_role', 'student')
     if tutoring is None:
         print("Tutorial not found")

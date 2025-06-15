@@ -118,21 +118,6 @@ class FirebaseTutoringRepository:
             return False
 
         return safe_execute(operation, fallback=False, context="[register_in_tutoria]")
-
-    def cancel_tutorial(self, tutorial_id):
-        def operation():
-            # Find the tutorial document by ID
-            query = db.collection(self.collection_name).where("id", "==", tutorial_id).limit(1)
-            docs = query.stream()
-            
-            for doc in docs:
-                # Delete the document
-                db.collection(self.collection_name).document(doc.id).delete()
-                return True
-            
-            return False
-
-        return safe_execute(operation, fallback=False, context="[cancel_tutorial]")
     
     def create_tutorial(self, title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity, meeting_link):
         def operation():
@@ -169,3 +154,18 @@ class FirebaseTutoringRepository:
                 return False  # No encontrado
 
             return safe_execute(operation, fallback=False, context="[update_tutorial]")
+
+    def cancel_tutorial(self, tutorial_id):
+        def operation():
+            # Find the tutorial document by ID
+            query = db.collection(self.collection_name).where("id", "==", tutorial_id).limit(1)
+            docs = query.stream()
+            
+            for doc in docs:
+                # Delete the document
+                db.collection(self.collection_name).document(doc.id).delete()
+                return True
+            
+            return False
+
+        return safe_execute(operation, fallback=False, context="[cancel_tutorial]")
