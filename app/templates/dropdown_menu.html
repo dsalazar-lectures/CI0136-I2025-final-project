@@ -23,45 +23,17 @@
 
 <script>
 function showReplyPrompt(reviewId, tutorId) {
-    const replyText = prompt("Escribe tu respuesta:");
-    if (replyText && replyText.trim() !== '') {
-        fetch(`/reply-review/${reviewId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `tutor_id=${encodeURIComponent(tutorId)}&comment=${encodeURIComponent(replyText)}`
-        })
-        .then(response => {
-            if (response.redirected) {
-                window.location.href = response.url;
-            }
-        });
-    }
+
+    const form = document.getElementById('reviewForm');
+    form.action = `/reply-review/${reviewId}`;
+    openReviewPopup('Responde al comentario', 0, '', false);
 }
 
 function showEditPrompt(reviewId, currentComment, currentRating) {
-    const newComment = prompt("Edita tu comentario:", currentComment);
-    if (newComment === null) return;
-
-    const newRating = prompt("Edita la calificación (1-5):", currentRating);
-    if (newRating === null || isNaN(newRating) || newRating < 1 || newRating > 5) {
-        alert("Calificación inválida.");
-        return;
-    }
-
-    fetch(`/edit-review/${reviewId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `comment=${encodeURIComponent(newComment)}&rating=${encodeURIComponent(newRating)}`
-    })
-    .then(response => {
-        if (response.redirected) {
-            window.location.href = response.url;
-        }
-    });
+    
+    const form = document.getElementById('reviewForm');
+    form.action = `/edit-review/${reviewId}`;
+    openReviewPopup('Edita tu resena', currentRating, currentComment);
 }
 </script>
 
