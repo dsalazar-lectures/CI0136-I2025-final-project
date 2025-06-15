@@ -3,6 +3,7 @@ import datetime
 
 # Clase que estructura un correo de tipo login
 class LoginEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase LoginEmailBuilder
   Se encarga de construir el cuerpo del correo a la hora de iniciar sesión
@@ -39,9 +40,13 @@ class LoginEmailBuilder(IBuilder):
       "body": "Bienvenido de nuevo " + username + ", ha iniciado sesión exitosamente "
           + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
+  
+  def get_bypass_priority(self):
+    return self.always_notify
 
 # Clase que estructura un correo de tipo reminder
 class ReminderEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase ReminderEmailBuilder
   Se encarga de construir el cuerpo del correo de recordatorio de una tutoría.
@@ -80,9 +85,13 @@ class ReminderEmailBuilder(IBuilder):
       "subject": "Recordatorio de tutoría",
       "body": "¡" + username + "!, recuerde que su tutoría de " + tutorial + ", inicia en 1 hora"
     }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
 
 # Clase que estructura un correo de recuperación de contraseña
 class PasswordRecoveryEmailBuilder(IBuilder):
+  always_notify = True
   """
   Clase PasswordRecoveryEmailBuilder
   Se encarga de construir el cuerpo del correo de recuperación de contraseña.
@@ -128,7 +137,11 @@ class PasswordRecoveryEmailBuilder(IBuilder):
       + "Si no solicitó este cambio, ignore este correo.\n"
     }
   
+  def get_bypass_priority(self):
+      return self.always_notify
+  
 class SuccessPasswordChangeEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase SuccessPasswordChangeEmailBuilder
   Se encarga de construir el cuerpo del correo de cambio de contraseña exitoso.
@@ -167,8 +180,12 @@ class SuccessPasswordChangeEmailBuilder(IBuilder):
           + "Si usted no realizó ese cambio, por favor comuníquese con soporte al cliente, soporteFlask@gmail.com.\n"
           + "Gracias por usar nuestro servicio.\n"
     }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
 
 class SuccessRegisterEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase SuccessRegisterEmailBuilder
   Se encarga de construir el cuerpo del correo de registro exitoso.
@@ -207,8 +224,12 @@ class SuccessRegisterEmailBuilder(IBuilder):
           + "Gracias por usar nuestro servicio.\n"
     }
   
+  def get_bypass_priority(self):
+      return self.always_notify
+  
 
 class NewTutorialEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase NewTutorialEmailBuilder
   Se encarga de construir el cuerpo del correo de nueva tutoría.
@@ -250,8 +271,12 @@ class NewTutorialEmailBuilder(IBuilder):
       "body": "Hola " + username + ", se ha creado una nueva tutoría: " + tutorial + "\n"
           + "Gracias por usar nuestro servicio.\n"
     }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
 
 class TutorialCancelledEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase TutorialCancelledEmailBuilder
   Se encarga de construir el cuerpo del correo de cancelación de tutoría.
@@ -295,3 +320,6 @@ class TutorialCancelledEmailBuilder(IBuilder):
           + "Te sugerimos revisar otras tutorías disponibles en el sistema.\n\n"
           + "Gracias por tu comprensión.\n"
     }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
