@@ -2,6 +2,7 @@ from app.models.repositories.firebase_log_repository import FirebaseLogRepositor
 from app.services.audit.log_querying_service import LogQueryingService
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 from ..utils.auth import login_or_role_required
+from app.services.admin.admin_metrics_service import get_admin_metrics
 
 # from flask_login import login_required
 from functools import wraps
@@ -19,7 +20,8 @@ from app.services.ban_notification_service.ban_notification_types import *
 @admin_bp.route('/')
 @login_or_role_required('Admin')
 def dashboard():
-  return render_template('admin/dashboard.html')
+    metrics = get_admin_metrics()
+    return render_template('admin/dashboard.html', metrics=metrics)
 
 # @admin_bp.route('/users')
 # @admin_required
@@ -103,4 +105,4 @@ def ban_notification_emai():
     else:
      return jsonify(success=True, message='Usuario notificado con éxito')
 
-    
+
