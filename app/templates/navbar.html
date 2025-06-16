@@ -10,13 +10,23 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="#">Example</a>
+          <a class="nav-link {% if request.path.startswith('/home')%}active{% endif %}" href="/">Inicio</a>
         </li>
         {% if session.get("role") == 'Student' %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('subscriptions.get_subscriptions') }}">Subscriptions</a>
         </li>
         {% endif %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.path.startswith('/tutorial') or request.path.startswith('/tutorial/tutor_tutorials') or request.path.startswith('/tutorial/student_tutorials') %}active{% endif %}" 
+             href="{% if session.get('role') == 'Tutor' %}
+                      {{ url_for('tutorial.listTutorTutorials') }}
+                    {% else %}
+                      {{ url_for('tutorial.getListTutorials') }}
+                    {% endif %}">
+            Tutorias
+          </a>
+        </li>
       </ul>
 
       <ul class="navbar-nav mb-2 mb-lg-0">

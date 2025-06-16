@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
-
+from ..models.builders.button_factory.button_factory import button_factory
 from ..utils.auth import login_or_role_required
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
-
+from app.utils.date_utils import get_current_datetime
+from datetime import datetime
 #from flask_login import login_required
 tutorial = Blueprint('tutorial', __name__)
 
@@ -20,11 +21,24 @@ def getTutoriaById(id):
     tutoring = firebase_repo.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     
     user_role = request.args.get('user_role', 'student')
+    current_user = session.get("name", "usuario anonimo") 
+
+    if (
+         user_role == "student" and
+        tutoring.student_list and
+        any(student.get("name") == current_user for student in tutoring.student_list) and
+        -20 < measure_time_to_tutorial(id) <= 30
+    ):
+        factory = button_factory("zoom")
+        button = factory.create_button(tutoring.meeting_link)
+    else:
+        button = None
+    
     if tutoring is None:
         print("Tutorial not found")
         return render_template('404.html'), 404
     else:
-        return render_template('tutorial.html',tutoring=tutoring, user_role=user_role)
+        return render_template('tutorial.html',tutoring=tutoring, user_role=user_role, button=button)
     
 @tutorial.route('/tutorial/create', methods=['GET', 'POST'])
 @login_or_role_required('Tutor')
@@ -37,7 +51,8 @@ def create_tutorial():
         description = request.form['description']
         method = request.form['method']
         capacity = int(request.form['capacity'])
-
+        is_virtual = method.lower() == 'virtual'  # Variable booleana para determinar si es virtual
+        meeting_link = request.form['meeting_link'] if is_virtual else None
         tutor_id = session.get('user_id')
         tutor = session.get('name', 'Tutor Anónimo')  # Default to 'Tutor Anónimo' if name is not set
 
@@ -45,7 +60,7 @@ def create_tutorial():
         # tutor = "Ana Gómez"
 
         new_tutorial = firebase_repo.create_tutorial(
-            title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity
+            title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity, meeting_link
         )
         if new_tutorial:
             # Send a notification email
@@ -83,7 +98,10 @@ def edit_tutorial(id):
             'description': request.form['description'],
             'method': request.form['method'],
             'capacity': int(request.form['capacity']),
+            'meeting_link': request.form['meeting_link'] 
         }
+            # Agregar solo si es virtual
+        
 
         firebase_repo.update_tutorial(id, updated_data)
         return redirect(url_for('tutorial.listTutorTutorials'))
@@ -100,7 +118,35 @@ def getListTutorials():
         print("Tutoring not found")
         return render_template('404.html'), 404
     else:
-        return render_template('list_tutorials.html', tutorias=tutorials, len=len)
+        search = request.args.get('search', '').lower()
+        sort = request.args.get('sort')
+        subject_filter = request.args.get('subject')
+
+        all_subjects = sorted(list(set(t.subject for t in tutorials if hasattr(t, 'subject'))))
+        if search:
+            tutorials = [
+                t for t in tutorials
+                if search in t.title.lower()
+                or search in t.subject.lower()
+                or search in t.description.lower()
+            ]
+        if subject_filter:
+            tutorials = [t for t in tutorials if t.subject == subject_filter]
+
+        if sort == "asc":
+            tutorials.sort(key=lambda t: t.date)
+        elif sort == "desc":
+            tutorials.sort(key=lambda t: t.date, reverse=True)
+
+        return render_template(
+            'list_tutorials.html',
+            tutorias=tutorials,
+            len=len,
+            all_subjects=all_subjects,
+            current_subject=subject_filter,
+            current_sort=sort,
+            current_search=search
+        )
 
 @tutorial.route('/tutorial/register_tutoria', methods=["POST"])
 @login_or_role_required ('Student')
@@ -145,6 +191,19 @@ def listTutorTutorials():
 
     tutorias = firebase_repo.get_tutorias_by_tutor(tutor_id)
 
+    if search:
+        tutorias = [
+            t for t in tutorias
+            if search in t.title.lower()
+            or search in t.subject.lower()
+            or search in t.description.lower()
+        ]
+    
+    if sort == "asc":
+        tutorias.sort(key=lambda t:  t.date)
+    elif sort == "desc":
+        tutorias.sort(key=lambda t:  t.date, reverse=True)
+
     return render_template('tutor_tutorials.html', tutorias=tutorias)
 
 @tutorial.route('/tutorial/<id>/cancel', methods=['POST'])
@@ -181,4 +240,15 @@ def cancel_tutorial(id):
         flash("Error al cancelar la tutoría.", "danger")
     
     return redirect(url_for('tutorial.listTutorTutorials'))
+
+def measure_time_to_tutorial(id):
+    tutorial = firebase_repo.get_tutoria_by_id(id)
+    present = get_current_datetime()
+
+    date_str = tutorial.date.strip()
+    time_str = tutorial.start_time.strip()[:5] 
+    
+    future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+    time_difference = future - present
+    return time_difference.total_seconds()/60  # minutes
 
