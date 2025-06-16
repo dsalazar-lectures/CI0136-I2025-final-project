@@ -19,7 +19,7 @@
             <!-- Comments Section -->
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0">Comentarios</h5>
+                    <h5 class="mb-0">Comentarios{% if session_id %} - {{ session_id }}{% endif %}</h5>
                     <a href="{{ url_for('ratings.review') }}" class="btn btn-primary btn-sm">Calificar tutor</a>
                 </div>
                 

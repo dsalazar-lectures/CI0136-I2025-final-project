@@ -29,7 +29,8 @@
                     <h4 class="mb-0">Califica a tu Tutor</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/send-review">
+                    <form method="POST" action="{{ url_for('review_bp.create_review_with_session', session_id=session_id) }}">
+
                         <div class="mb-4 text-center">
                             <div class="rating-stars mb-2">
                                 <i class="far fa-star" data-rating="1"></i>
