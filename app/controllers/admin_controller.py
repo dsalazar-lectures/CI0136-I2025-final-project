@@ -3,6 +3,7 @@ from app.services.audit.log_querying_service import LogQueryingService
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for
 from ..utils.auth import login_or_role_required
 from app.services.admin.admin_metrics_service import get_admin_metrics
+from app.models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 
 # from flask_login import login_required
 from functools import wraps
@@ -21,7 +22,11 @@ from app.services.ban_notification_service.ban_notification_types import *
 @login_or_role_required('Admin')
 def dashboard():
     metrics = get_admin_metrics()
-    return render_template('admin/dashboard.html', metrics=metrics)
+    # Top 3 most popular tutorials by enrollments
+    tutorial_repo = FirebaseTutoringRepository()
+    tutorials = tutorial_repo.get_list_tutorials()
+    top_tutorials = sorted(tutorials, key=lambda t: len(t.student_list), reverse=True)[:3]
+    return render_template('admin/dashboard.html', metrics=metrics, top_tutorials=top_tutorials)
 
 # @admin_bp.route('/users')
 # @admin_required
