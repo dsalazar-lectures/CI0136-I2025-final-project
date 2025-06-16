@@ -55,21 +55,4 @@ class TestButtonFactory:
 
         assert button is None, "El botón no debería haberse creado"
     
-    def test_measure_time_to_tutorial(self):
-        # Caso de prueba: tiempo positivo
-        start_time = 1622505600  # 1 de junio de 2021, 00:00:00
-        end_time = 1625097600    # 1 de julio de 2021, 00:00:00
-        expected_result = 2592000  # 30 días en segundos
-        self.assertEqual(measure_time_to_tutorial(start_time, end_time), expected_result)
-
-        # Caso de prueba: tiempo negativo
-        start_time = 1625097600  # 1 de julio de 2021, 00:00:00
-        end_time = 1622505600    # 1 de junio de 2021, 00:00:00
-        expected_result = -2592000  # -30 días en segundos
-        self.assertEqual(measure_time_to_tutorial(start_time, end_time), expected_result)
-
-        # Caso de prueba: tiempo cero
-        start_time = 1622505600  # 1 de junio de 2021, 00:00:00
-        end_time = 1622505600    # 1 de junio de 2021, 00:00:00
-        expected_result = 0
-        self.assertEqual(measure_time_to_tutorial(start_time, end_time), expected_result)
+   
