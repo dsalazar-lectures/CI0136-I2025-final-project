@@ -76,32 +76,95 @@
             </div>
         </div>
     </div>
+
+<!-- Ban/Unban Confirmation Modal -->
+<div class="modal fade" id="statusConfirmModal" tabindex="-1" aria-labelledby="statusConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusConfirmModalLabel">Confirm Action</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to <strong id="modalStatusAction"></strong> this user: <span id="modalStatusEmail"></span>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmStatusBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script>
-document.querySelectorAll('.status-toggle').forEach(function(checkbox) {
-    checkbox.addEventListener('change', function() {
-        const email = this.dataset.email;
-        const status = this.checked;
+</div>
 
-        fetch('/admin/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({ email: email, status: status })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                alert('Failed to update status: ' + (data.error || 'Unknown error'));
-                checkbox.checked = !status;
-            }
-        })
-        .catch(error => {
-            alert('Error updating status: ' + error);
-            checkbox.checked = !status;
+
+<script>
+
+
+document.querySelectorAll('.status-toggle').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function(event) {
+        event.preventDefault();
+
+        const originalCheckbox = this;
+        const email = this.dataset.email;
+        const newStatus = !this.checked;
+
+        // Store the previous state to revert if needed
+        const previousStatus = newStatus;
+
+        // Show modal with dynamic content
+        const modal = new bootstrap.Modal(document.getElementById('statusConfirmModal'));
+        document.getElementById('modalStatusAction').textContent = newStatus ? 'ban' : 'un-ban';
+        document.getElementById('modalStatusEmail').textContent = email;
+
+        // Show the modal
+        modal.show();
+
+        // Confirm button handler
+        const confirmBtn = document.getElementById('confirmStatusBtn');
+
+        // Remove any previous event listeners to avoid duplicates
+        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+        const newConfirmBtn = document.getElementById('confirmStatusBtn');
+
+        newConfirmBtn.addEventListener('click', function() {
+            // Send update request to server
+            fetch('/admin/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ email: email, status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Failed to update status: ' + (data.error || 'Unknown error'));
+                    // Revert checkbox state on failure
+                    originalCheckbox.checked = previousStatus;
+                }
+            })
+            .catch(error => {
+                alert('Error updating status: ' + error);
+                originalCheckbox.checked = previousStatus;
+            })
+            .finally(() => {
+                modal.hide();
+            });
+        });
+
+        // Cancel button handler: revert checkbox state
+        const cancelBtn = document.querySelector('#statusConfirmModal .btn-secondary');
+        cancelBtn.addEventListener('click', function() {
+            originalCheckbox.checked = previousStatus;
+        });
+
+        // Also handle modal close button (X) to revert checkbox state
+        const modalCloseBtn = document.querySelector('#statusConfirmModal .btn-close');
+        modalCloseBtn.addEventListener('click', function() {
+            originalCheckbox.checked = previousStatus;
         });
     });
 });
@@ -131,5 +194,7 @@ document.querySelectorAll('.send-email-btn').forEach(function(button) {
         });
     });
 });
+
+
 </script>
 {% endblock %}
