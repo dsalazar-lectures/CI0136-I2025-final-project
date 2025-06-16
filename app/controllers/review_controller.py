@@ -69,6 +69,7 @@ def delete_review(review_id):
 
     session_id = review['session_id']
     updated_reviews = [r for r in reviews if r['review_id'] != review_id]
+    delete_review_model(review_id)
     save_reviews(updated_reviews)
 
     flash("Reseña eliminada exitosamente.", "success")
