@@ -60,12 +60,15 @@
     <script>
         const methodSelect = document.querySelector('select[name="method"]');
         const meetingLinkField = document.getElementById('meeting-link-field');
+        const meetingLinkInput = meetingLinkField.querySelector('input');
     
         function toggleMeetingLinkField() {
             if (methodSelect.value === 'Virtual') {
                 meetingLinkField.style.display = 'flex';
+                meetingLinkInput.required = true;
             } else {
                 meetingLinkField.style.display = 'none';
+                meetingLinkInput.required = false;
             }
         }
     
