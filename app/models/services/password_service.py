@@ -18,10 +18,10 @@ class PasswordService(ABC):
     def get_stored_hash_password(self, user):
 
         #The line belows must be the productive code. The DB must store a hash, right now it's storing the password in plain text
-        #return user["password"]
+        return user["password"]
 
         #we hash the password since it's currently stored in plain text in the DB
-        return self.get_mock_hash_password(user["password"])
+        #return self.get_mock_hash_password(user["password"])
 
     #the new hash password must be store to the DB
     #@abstractmethod
@@ -65,7 +65,7 @@ class PasswordService(ABC):
 class ChangePasswordService(PasswordService):
 
     def verify_password(self, current_pass_input: str, mocked_hashed_pass):
-        return bcrypt.checkpw(current_pass_input.encode('utf-8'), mocked_hashed_pass)
+        return bcrypt.checkpw(current_pass_input.encode('utf-8'), mocked_hashed_pass.encode('utf-8'))
 
 
     def change_password(self, current_pass_input: str, new_pass_input: str, user):
