@@ -22,12 +22,12 @@ def getTutoriaById(id):
     
     user_role = request.args.get('user_role', 'student')
     current_user = session.get("name", "usuario anonimo") 
-    
+
     if (
-        user_role == "student" and
+         user_role == "student" and
         tutoring.student_list and
         any(student.get("name") == current_user for student in tutoring.student_list) and
-        -15 < measure_time_to_tutorial(id) <= 30
+        -20 < measure_time_to_tutorial(id) <= 30
     ):
         factory = button_factory("zoom")
         button = factory.create_button(tutoring.meeting_link)
@@ -244,10 +244,11 @@ def cancel_tutorial(id):
 def measure_time_to_tutorial(id):
     tutorial = firebase_repo.get_tutoria_by_id(id)
     present = get_current_datetime()
-    # cast tutorial.date and tutorial.start_time to datetime object
-    future = datetime.strptime(f"{tutorial.date} {tutorial.start_time}", "%Y-%m-%d %H:%M")
+
+    date_str = tutorial.date.strip()
+    time_str = tutorial.start_time.strip()[:5] 
     
+    future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
     time_difference = future - present
-    
-    return time_difference.total_seconds() / 60
+    return time_difference.total_seconds()/60  # minutes
 
