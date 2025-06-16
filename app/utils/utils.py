@@ -81,3 +81,19 @@ def validate_new_password(password, confirm_password):
     if password != confirm_password:
         return False
     return True
+
+def validate_max_length(text, max_length=100):
+    """
+    Validates that a string does not exceed a maximum length.
+    
+    Args:
+        text (str): The string to validate
+        max_length (int, optional): Maximum allowed length. Defaults to 100.
+        
+    Returns:
+        bool: True if the string length is valid, False otherwise
+    """
+    if not text:
+        return True
+    
+    return len(text) <= max_length

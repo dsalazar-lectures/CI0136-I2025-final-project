@@ -50,7 +50,7 @@ def recover():
                 flash("Failed to send recovery email. Please try again later.", "danger")
                 return redirect(url_for("recoveryPassword.recoveryPasswordView"))
             
-            flash("Recovery email sent successfully. Please check your inbox.", "success")
+            flash("If email exists, recovery email sent successfully. Please check your inbox.", "success")
             log_audit(
                 user = user.get("name", "Usuario"),
                 action_type = AuditActionType.USER_PASSWORD_RESET,
@@ -58,11 +58,11 @@ def recover():
             )
             return redirect(url_for("recoveryPassword.recoveryPasswordView"))
         else:
-            flash("Invalid email address.", "danger")
+            flash("If email exists, recovery email sent successfully. Please check your inbox.", "success")
             log_audit(
-                user = userEmail,
+                user= userEmail,
                 action_type = AuditActionType.USER_PASSWORD_RESET,
-                detailts = "Attempted password recovery with invalid email",
+                details = "Attempted password recovery with invalid email",
             )
             return redirect(url_for("recoveryPassword.recoveryPasswordView"))
     else:

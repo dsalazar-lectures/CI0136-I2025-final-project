@@ -5,6 +5,8 @@ import bcrypt
 #module requiered for regular expressions
 import re
 from app.models.repositories.users import firebase_user_repository
+from app.models.services.password_exeptions.password_exceptions import PasswordUpdateError, PasswordValidationError
+
 
 repo = firebase_user_repository.FirebaseUserRepository()
 
@@ -16,10 +18,10 @@ class PasswordService(ABC):
     def get_stored_hash_password(self, user):
 
         #The line belows must be the productive code. The DB must store a hash, right now it's storing the password in plain text
-        #return user["password"]
+        return user["password"]
 
         #we hash the password since it's currently stored in plain text in the DB
-        return self.get_mock_hash_password(user["password"])
+        #return self.get_mock_hash_password(user["password"])
 
     #the new hash password must be store to the DB
     #@abstractmethod
@@ -63,23 +65,25 @@ class PasswordService(ABC):
 class ChangePasswordService(PasswordService):
 
     def verify_password(self, current_pass_input: str, mocked_hashed_pass):
-        return bcrypt.checkpw(current_pass_input.encode('utf-8'), mocked_hashed_pass)
+        return bcrypt.checkpw(current_pass_input.encode('utf-8'), mocked_hashed_pass.encode('utf-8'))
 
 
-    def change_password(self, current_pass_input:str, new_pass_input:str, user):
-
-        pass_change_successfully = False
-
+    def change_password(self, current_pass_input: str, new_pass_input: str, user):
         hashed_password = self.get_stored_hash_password(user)
 
-        if (self.verify_password(current_pass_input, hashed_password)):
+        if self.verify_password(current_pass_input, hashed_password):
             salt = bcrypt.gensalt()
-            new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt)
-            #self.store_new_pass_to_db(new_hash_password, user)  
-            #we  don't pass the hash yet, since passwords are stored in plain text for the moment
-            pass_change_successfully = self.store_new_pass_to_db(new_pass_input, user) 
-        return pass_change_successfully
-    
+            new_hash_password = bcrypt.hashpw(new_pass_input.encode('utf-8'), salt).decode('utf-8')
+
+            if not self.store_new_pass_to_db(new_hash_password, user):
+                raise PasswordUpdateError("Error al guardar la nueva contraseña")
+
+        else:
+            raise PasswordValidationError("Contraseña actual incorrecta")
+
+
+
+
 class ResetPasswordService(PasswordService):
     pass
 

@@ -2,9 +2,9 @@
 
 <div class="row justify-content-center">
     <div class="col-12 col-md-8 col-lg-6">
-
+        
         <div id="modalOverlay" style=
-            "display:none; 
+        "display:none; 
             position: fixed; 
             top: 0; 
             left: 0; 
@@ -15,7 +15,7 @@
         </div>
 
         <div id="reviewModal" class="modal-custom" style=
-            "display:none; 
+        "display:none; 
             position: fixed; 
             top: 50%; 
             left: 50%; 
@@ -24,14 +24,16 @@
             width: 90%; 
             max-width: 500px;">
         
-            <div class="card shadow">
-                <div class="card-header text-center py-3">
-                    <h4 class="mb-0">Califica a tu Tutor</h4>
-                </div>
+        <div class="card shadow">
+            <div class="card-header text-center py-3">
+                <h4 id="popup_title" class="mb-0">Titulo del Pop-up</h4>
+            </div>
                 <div class="card-body">
+
                     <form method="POST" action="{{ url_for('review_bp.create_review_with_session', session_id=session_id) }}">
 
                         <div class="mb-4 text-center">
+
                             <div class="rating-stars mb-2">
                                 <i class="far fa-star" data-rating="1"></i>
                                 <i class="far fa-star" data-rating="2"></i>
@@ -42,7 +44,7 @@
                             <input type="hidden" name="rating" id="selected-rating" value="">
                             <p class="text-muted small">Haz clic en una estrella para calificar</p>
                         </div>
-            
+                        
                         <div class="mb-3">
                             <label for="comment" class="form-label">Deja un comentario</label>
                             <textarea class="form-control" id="comment" name="comment" rows="4" placeholder="Escribe tu opinión aquí..."></textarea>
@@ -52,7 +54,7 @@
                         <input type="hidden" name="tutor_id" value="Tutor Tutor">
                         <input type="hidden" name="session_id" value="Sesion de Python">
                         <input type="hidden" name="review_id">
-            
+                        
                         <div class="d-flex justify-content-between mt-4">
                             <button type="button" class="btn btn-outline-secondary" onclick="closeReviewPopup()">Cancelar</button>
                             <button type="submit" class="btn btn-primary">Aceptar</button>
@@ -69,24 +71,32 @@
 
 {% block scripts %}
 <script>
+
+
+    const stars = document.querySelectorAll('.rating-stars .fa-star');
+    const ratingInput = document.getElementById('selected-rating');
+
+    function updateStars(selectedRating) {
+        stars.forEach(star => {
+            const rating = parseInt(star.getAttribute('data-rating'));
+            if (rating <= selectedRating) {
+                star.classList.remove('far');
+                star.classList.add('fas', 'star-filled');
+            } else {
+                star.classList.remove('fas', 'star-filled');
+                star.classList.add('far');
+            }
+        });
+        ratingInput.value = selectedRating;
+    }
+
+
     document.addEventListener('DOMContentLoaded', function() {
         const stars = document.querySelectorAll('.rating-stars .fa-star');
         const ratingInput = document.getElementById('selected-rating');
-
-        function updateStars(selectedRating) {
-            stars.forEach(star => {
-                const rating = parseInt(star.getAttribute('data-rating'));
-                if (rating <= selectedRating) {
-                    star.classList.remove('far');
-                    star.classList.add('fas', 'star-filled');
-                } else {
-                    star.classList.remove('fas', 'star-filled');
-                    star.classList.add('far');
-                }
-            });
-            ratingInput.value = selectedRating;
-        }
-
+        
+        
+        
         stars.forEach(star => {
             star.addEventListener('click', function() {
                 const rating = parseInt(this.getAttribute('data-rating'));
@@ -115,16 +125,38 @@
         });
     });
 
+
     document.querySelector('input[name="review_id"]').value = Math.floor(Math.random() * 99999) + 10000;
 
     function closeReviewPopup() {
         document.getElementById('reviewModal').style.display = 'none';
         document.getElementById('modalOverlay').style.display = 'none';
+
+        updateStars(0);
+        document.getElementById('comment').value = '';
+        
+        document.getElementById('reviewForm').action = '';
+
     }
 
-    function openReviewPopup() {
+    function openReviewPopup(titleText, stars = 0, comment = '', showStars = true) {
         document.getElementById('reviewModal').style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
+        
+        document.getElementById('popup_title').textContent = 'Califica a tu tutor';
+        if (titleText) {
+            document.getElementById('popup_title').textContent = titleText;
+        }
+
+        if (showStars) {
+            document.getElementById('starRatingSection').style.display = 'block';
+            updateStars(stars);
+        } else {
+            document.getElementById('starRatingSection').style.display = 'none';
+            updateStars(0);
+            ratingInput.value = '';
+        }
+        document.getElementById('comment').value = comment;
     }
 </script>
 {% endblock %}
