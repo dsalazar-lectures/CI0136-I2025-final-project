@@ -10,6 +10,8 @@ from app.services.audit import log_audit, AuditActionType
 
 from app.utils.utils import validate_password
 
+import bcrypt
+
 repo = FirebaseUserRepository()
 
 rec_password_bp = Blueprint('recoveryPassword', __name__)
@@ -98,7 +100,8 @@ def reset_password_form(token):
             return redirect(url_for("recoveryPassword.reset_password_form", token=token))
         
         # Actualizar la contraseña en Firebase
-        repo.update_user_password(email, new_password)
+        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        repo.update_user_password(email, hashed_password)
         user = repo.get_user_by_email(email)
         
         flash("Password updated successfully", "success")
