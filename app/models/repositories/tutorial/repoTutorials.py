@@ -99,3 +99,10 @@ class Tutorial_mock_repo(ITutorialRepository):
                 tutorias.sort(key=lambda t: t.date, reverse=True)
             
             return tutorias
+
+    def cancel_tutorial(self, tutorial_id):
+        tutorial = self.get_tutorial_by_id(tutorial_id)
+        if tutorial:
+            self.tutorias.remove(tutorial)
+            return True
+        return False

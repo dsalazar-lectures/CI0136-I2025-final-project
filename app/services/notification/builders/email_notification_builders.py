@@ -3,6 +3,7 @@ import datetime
 
 # Clase que estructura un correo de tipo login
 class LoginEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase LoginEmailBuilder
   Se encarga de construir el cuerpo del correo a la hora de iniciar sesión
@@ -39,9 +40,13 @@ class LoginEmailBuilder(IBuilder):
       "body": "Bienvenido de nuevo " + username + ", ha iniciado sesión exitosamente "
           + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
+  
+  def get_bypass_priority(self):
+    return self.always_notify
 
 # Clase que estructura un correo de tipo reminder
 class ReminderEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase ReminderEmailBuilder
   Se encarga de construir el cuerpo del correo de recordatorio de una tutoría.
@@ -80,9 +85,13 @@ class ReminderEmailBuilder(IBuilder):
       "subject": "Recordatorio de tutoría",
       "body": "¡" + username + "!, recuerde que su tutoría de " + tutorial + ", inicia en 1 hora"
     }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
 
 # Clase que estructura un correo de recuperación de contraseña
 class PasswordRecoveryEmailBuilder(IBuilder):
+  always_notify = True
   """
   Clase PasswordRecoveryEmailBuilder
   Se encarga de construir el cuerpo del correo de recuperación de contraseña.
@@ -128,7 +137,11 @@ class PasswordRecoveryEmailBuilder(IBuilder):
       + "Si no solicitó este cambio, ignore este correo.\n"
     }
   
+  def get_bypass_priority(self):
+      return self.always_notify
+  
 class SuccessPasswordChangeEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase SuccessPasswordChangeEmailBuilder
   Se encarga de construir el cuerpo del correo de cambio de contraseña exitoso.
@@ -167,8 +180,12 @@ class SuccessPasswordChangeEmailBuilder(IBuilder):
           + "Si usted no realizó ese cambio, por favor comuníquese con soporte al cliente, soporteFlask@gmail.com.\n"
           + "Gracias por usar nuestro servicio.\n"
     }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
 
 class SuccessRegisterEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase SuccessRegisterEmailBuilder
   Se encarga de construir el cuerpo del correo de registro exitoso.
@@ -207,8 +224,12 @@ class SuccessRegisterEmailBuilder(IBuilder):
           + "Gracias por usar nuestro servicio.\n"
     }
   
+  def get_bypass_priority(self):
+      return self.always_notify
+  
 
 class NewTutorialEmailBuilder(IBuilder):
+  always_notify = False
   """
   Clase NewTutorialEmailBuilder
   Se encarga de construir el cuerpo del correo de nueva tutoría.
@@ -250,3 +271,55 @@ class NewTutorialEmailBuilder(IBuilder):
       "body": "Hola " + username + ", se ha creado una nueva tutoría: " + tutorial + "\n"
           + "Gracias por usar nuestro servicio.\n"
     }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
+
+class TutorialCancelledEmailBuilder(IBuilder):
+  always_notify = False
+  """
+  Clase TutorialCancelledEmailBuilder
+  Se encarga de construir el cuerpo del correo de cancelación de tutoría.
+  """
+  def build_body(self, data: dict) -> dict:
+    """
+    Construye el cuerpo del correo de cancelación de tutoría.
+
+    Args:
+      data (dict): Diccionario con la información necesaria para el correo.
+        - username (str): Nombre de usuario del destinatario.
+        - emailTo (str): Correo electrónico del destinatario.
+        - tutorial (str): Tutoría que ha sido cancelada.
+
+    Returns:
+      dict: Diccionario con la información del correo a enviar.
+        - to (str): Correo electrónico del destinatario.
+        - subject (str): Asunto del correo electrónico.
+        - body (str): Cuerpo del mensaje del correo.
+
+    Raises:
+      ValueError: Si el nombre de usuario, correo electrónico o tutoría son nulos.
+    """
+    username = data.get("username")
+    if username is None:
+      raise ValueError("El nombre de usuario no puede ser nulo")
+    
+    email_to = data.get("emailTo")
+    if email_to is None:
+      raise ValueError("El correo electrónico no puede ser nulo")
+    
+    tutorial = data.get("tutorial")
+    if tutorial is None:
+      raise ValueError("La tutoría no puede ser nula")
+
+    return {
+      "to": email_to,
+      "subject": "Tutoría Cancelada",
+      "body": f"Hola {username},\n\n"
+          + f"La tutoría '{tutorial}' ha sido cancelada.\n"
+          + "Te sugerimos revisar otras tutorías disponibles en el sistema.\n\n"
+          + "Gracias por tu comprensión.\n"
+    }
+  
+  def get_bypass_priority(self):
+      return self.always_notify
