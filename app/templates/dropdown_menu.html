@@ -1,3 +1,5 @@
+{% include 'review_popup.html' %}
+
 <div class="dropdown">
     <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuBtn{{ comment_id }}" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-ellipsis-v"></i>
@@ -23,17 +25,17 @@
 
 <script>
 function showReplyPrompt(reviewId, tutorId) {
-
+    console.log('showReplyPrompt called:', {reviewId, tutorId});
     const form = document.getElementById('reviewForm');
     form.action = `/reply-review/${reviewId}`;
     openReviewPopup('Responde al comentario', 0, '', false);
 }
 
 function showEditPrompt(reviewId, currentComment, currentRating) {
-    
+    console.log('showEditPrompt called:', {reviewId, currentComment, currentRating});
     const form = document.getElementById('reviewForm');
     form.action = `/edit-review/${reviewId}`;
-    openReviewPopup('Edita tu resena', currentRating, currentComment);
+    openReviewPopup('Edita tu reseña', currentRating, currentComment);
 }
 </script>
 

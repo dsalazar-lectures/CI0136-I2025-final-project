@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "comments/layout.html" %}
 
 {% block title %}Califica a tu Tutor{% endblock %}
 
@@ -29,7 +29,6 @@
                     </div>
                     
                     <div class="d-flex justify-content-between mt-4">
-                        <form method="POST" action="{{ url_for('ratings.review') }}">
                         <a href="{{ url_for('comments.index') }}" class="btn btn-outline-secondary">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Aceptar</button>
                     </div>
@@ -43,7 +42,7 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const stars = document.querySelectorAll('.rating-stars .fa-star');
+        const stars = document.querySelectorAll('.rating-stars .far'); // Updated selector
         const ratingInput = document.getElementById('selected-rating');
         
         // Update stars function
