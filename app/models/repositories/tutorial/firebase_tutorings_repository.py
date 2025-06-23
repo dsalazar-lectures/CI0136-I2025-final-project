@@ -1,8 +1,9 @@
 from app.firebase_config import db
 from ..repository_helper import safe_execute
+from .ITutorialRepository import ITutorialRepository
 import uuid
 
-class FirebaseTutoringRepository:
+class FirebaseTutoringRepository(ITutorialRepository):
     def __init__(self):
         self.collection_name = "tutorings"
     
@@ -26,7 +27,7 @@ class FirebaseTutoringRepository:
             meeting_link=data.get("meeting_link")  
         )
 
-    def get_tutoria_by_id(self, id):
+    def get_tutorial_by_id(self, id):
         def operation():
             # Buscar en Firebase donde el campo 'id' sea igual al parámetro
             query = db.collection(self.collection_name).where("id", "==", id).limit(1)
@@ -38,7 +39,7 @@ class FirebaseTutoringRepository:
 
         return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
     
-    def get_tutorias_by_tutor(self, tutor_id):
+    def get_tutorials_by_tutor(self, tutor_id):
         def operation():
             query = db.collection(self.collection_name).where("tutor_id", "==", tutor_id).get()
             tutorias = []
@@ -50,7 +51,7 @@ class FirebaseTutoringRepository:
 
         return safe_execute(operation, fallback=None, context="[get_tutoria_by_id]")
     
-    def get_tutorias_by_student(self, student_id):
+    def get_tutorials_by_student(self, student_id):
         def operation():
             query = db.collection(self.collection_name)
             docs = query.stream()
