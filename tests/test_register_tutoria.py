@@ -4,7 +4,7 @@ from app.models.repositories.tutorial.firebase_tutorings_repository import Fireb
 
 def test_register_tutoria_success(client, mocker):
     # Mock the method get_tutoria_by_id to simulate a valid response.
-    mocker.patch.object(FirebaseTutoringRepository, 'get_tutoria_by_id', return_value=Tutorial(
+    mocker.patch.object(FirebaseTutoringRepository, 'get_tutorial_by_id', return_value=Tutorial(
         id_tutoring="2",
         title_tutoring="Tutoria de C++",
         tutor_id="t1",
@@ -65,7 +65,7 @@ def test_register_tutoria_already_registered(client, mocker):
     
     mocker.patch.object(FirebaseTutoringRepository, 'register_in_tutoria', return_value=False)
 
-    mocker.patch.object(FirebaseTutoringRepository, 'get_tutoria_by_id', return_value=Tutorial(
+    mocker.patch.object(FirebaseTutoringRepository, 'get_tutorial_by_id', return_value=Tutorial(
         id_tutoring="3",
         title_tutoring="Tutoria de Java",
         tutor_id="t2",
@@ -113,7 +113,7 @@ def test_view_tutorial_slots(client, mocker):
                       {"id": "estudiante_456", "name": "María López"}]
     )
 
-    mocker.patch.object(FirebaseTutoringRepository, 'get_tutoria_by_id', return_value=tutoria_mock)
+    mocker.patch.object(FirebaseTutoringRepository, 'get_tutorial_by_id', return_value=tutoria_mock)
 
     response = client.get('/tutorial/1')
     html = response.get_data(as_text=True)
