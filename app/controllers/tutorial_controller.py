@@ -63,7 +63,6 @@ def create_tutorial():
         new_tutorial = firebase_repo.create_tutorial(
             title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity, meeting_link
         )
-        
         # if is_virtual:
 
         if new_tutorial:
@@ -256,7 +255,16 @@ def measure_time_to_tutorial(id):
     time_difference = future - present
     return time_difference.total_seconds()/60  # minutes
 
-
+def get_meeting_data_from_firebase(id):
+    tutoring = firebase_repo.get_tutoria_by_id(id)
+    if tutoring and tutoring.meeting_link:
+        return {
+            "topic": tutoring.title,
+            "start_time": f"{tutoring.date}T{tutoring.start_time}:00Z",  # Formato ISO 8601
+            "duration": 60,  # Duración en minutos, puedes ajustarlo según sea necesario
+            "meeting_link": tutoring.meeting_link
+        }
+    return None
 
 
 

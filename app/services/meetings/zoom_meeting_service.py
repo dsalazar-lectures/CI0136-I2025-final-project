@@ -10,9 +10,30 @@ class zoom_meeting_service(MeetingService):
         self.REDIRECT_URI = 'http://localhost:5000/zoom/callback'
         
     
-    def create_meeting(self, meeting_data):
-        
-        pass
+    def create_meeting(self, access_token, meeting_data):
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json"
+        }
+
+        body = {
+            "topic": meeting_data.get("topic", "Tutoría"),
+            "type": 2,
+            "start_time": meeting_data["start_time"],  # en formato ISO
+            "duration": meeting_data.get("duration", 60),
+            "timezone": "America/Costa_Rica",
+            "settings": {
+                "join_before_host": True,
+                "waiting_room": False
+            }
+        }
+
+        response = requests.post("https://api.zoom.us/v2/users/me/meetings", headers=headers, json=body)
+
+        if response.status_code == 201:
+            return response.json()
+        else:
+            raise Exception(f"Error al crear reunión: {response.text}")
 
     def update_meeting(self, meeting_id, updated_data):
         # Implementation for updating a Zoom meeting
