@@ -7,7 +7,7 @@ from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.utils.date_utils import get_current_datetime
 from datetime import datetime
-#from flask_login import login_required
+import base64
 tutorial = Blueprint('tutorial', __name__)
 
 repo = Tutorial_mock_repo()
@@ -113,7 +113,7 @@ def edit_tutorial(id):
 def getListTutorials():
     tutorials = firebase_repo.get_list_tutorials()
     #tutorials = repo.list_tutorials()
-    print("TUTORIAS:", tutorials) 
+    # print("TUTORIAS:", tutorials) 
     if tutorials is None:
         print("Tutoring not found")
         return render_template('404.html'), 404
@@ -251,4 +251,8 @@ def measure_time_to_tutorial(id):
     future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
     time_difference = future - present
     return time_difference.total_seconds()/60  # minutes
+
+@login_or_role_required('Tutor')
+def zoom_controller():
+    
 
