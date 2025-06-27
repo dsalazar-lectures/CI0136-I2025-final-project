@@ -7,6 +7,8 @@ from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.utils.date_utils import get_current_datetime
 from datetime import datetime
+from app.services.meetings.meeting_service import MeetingService
+from app.services.meetings.zoom_meeting_service import zoom_meeting_service
 import base64
 tutorial = Blueprint('tutorial', __name__)
 
@@ -56,12 +58,14 @@ def create_tutorial():
         tutor_id = session.get('user_id')
         tutor = session.get('name', 'Tutor Anónimo')  # Default to 'Tutor Anónimo' if name is not set
 
-        # tutor_id = 2
-        # tutor = "Ana Gómez"
+        
 
         new_tutorial = firebase_repo.create_tutorial(
             title_tutoring, tutor_id, tutor, subject, date, start_time, description, method, capacity, meeting_link
         )
+        
+        # if is_virtual:
+
         if new_tutorial:
             # Send a notification email
             email_data = {
@@ -252,7 +256,7 @@ def measure_time_to_tutorial(id):
     time_difference = future - present
     return time_difference.total_seconds()/60  # minutes
 
-@login_or_role_required('Tutor')
-def zoom_controller():
-    
+
+
+
 
