@@ -5,12 +5,9 @@ This module defines routes and handlers for authentication-related functionality
 """
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for, make_response
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
-# from app.models.repositories.users.mock_user_repository import MockUserRepository
-from ..models.services.registration_service import validate_registration_data, validate_login_data
 from app.services.notification import send_email_notification
-from firebase_admin import auth as firebase_auth
 import traceback
-from ..auth_strategies.auth_strategy_factory import AuthStrategyFactory
+from ..auth_states.auth_state import AuthStateContext
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -47,15 +44,15 @@ def login():
             'password': password,
         }
         
-        # Get the local auth strategy
-        auth_strategy = AuthStrategyFactory.create_strategy("local")
+        # Get the appropriate auth state based on environment configuration
+        auth_state = AuthStateContext.get_state()
         credentials = {
             'email': email,
             'password': password
         }
         
         # Authenticate the user
-        user, error = auth_strategy.authenticate(credentials, user_repo)
+        user, error = auth_state.login(credentials, user_repo)
         
         # If any error occurs during validation, flash the error message and redirect to login page
         if error:
@@ -64,7 +61,7 @@ def login():
             
         # Set up the session with user data
         session.pop('form_data', None)
-        auth_strategy.setup_session(user, session)
+        auth_state.setup_session(user, session)
 
         return redirect(url_for("home.home"))
 
@@ -82,14 +79,11 @@ def google_login():
         data = request.get_json()
         id_token = data.get("token")
         
-        # Get the Google auth strategy
-        auth_strategy = AuthStrategyFactory.create_strategy("google")
-        credentials = {
-            'token': id_token
-        }
+        # Get the appropriate auth state based on environment configuration
+        auth_state = AuthStateContext.get_state()
         
-        # Authenticate the user
-        user, error = auth_strategy.authenticate(credentials, user_repo)
+        # Authenticate the user with Google
+        user, error = auth_state.google_login(id_token, user_repo)
         
         # If any error occurs during authentication
         if error:
@@ -97,7 +91,7 @@ def google_login():
             return {"error": error}, 400
             
         # Set up the session with user data
-        auth_strategy.setup_session(user, session)
+        auth_state.setup_session(user, session)
 
         print("Usuario autenticado con Google:", session["email"])
         return {"message": "Login con Google exitoso"}, 200
