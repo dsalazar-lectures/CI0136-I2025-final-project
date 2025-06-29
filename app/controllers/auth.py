@@ -7,7 +7,7 @@ from flask import Blueprint, flash, redirect, render_template, request, session,
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
 from app.services.notification import send_email_notification
 import traceback
-from ..auth_states.auth_state import AuthStateContext
+from ..auth_states.auth_state_context import AuthStateContext
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
