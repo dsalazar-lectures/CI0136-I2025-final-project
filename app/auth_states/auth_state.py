@@ -10,17 +10,33 @@ from flask import session
 from ..auth_strategies.auth_strategy_factory import AuthStrategyFactory
 from ..models.services.registration_service import validate_login_data
 import os
-import dotenv
+import pathlib
 
-# Load environment variables
-dotenv.load_dotenv()
-
-# Print the current configuration
-use_patterns = os.getenv('FLASK_USE_PATTERNS', 'False').lower() == 'true'
-print(f"\n{'='*70}")
-print(f"🔧 CONFIGURACIÓN ACTUAL: FLASK_USE_PATTERNS = {os.getenv('FLASK_USE_PATTERNS', 'False')}")
-print(f"🔧 MODO ACTUAL: {'Usando patrones de diseño (Strategy, Factory)' if use_patterns else 'Usando código original'}")
-print(f"{'='*70}\n")
+def get_use_patterns():
+    """
+    Lee directamente la configuración del archivo .env.
+    
+    Esta función ignora el mecanismo de variables de entorno y lee
+    directamente del archivo para evitar problemas de caché.
+    
+    Returns:
+        bool: True si FLASK_USE_PATTERNS=True, False en caso contrario
+    """
+    try:
+        # Obtener la ruta absoluta del proyecto
+        project_root = pathlib.Path(__file__).parent.parent.parent
+        env_path = project_root / '.env'
+        
+        # Leer el archivo .env
+        with open(env_path, 'r') as f:
+            for line in f:
+                if line.strip().startswith('FLASK_USE_PATTERNS='):
+                    value = line.strip().split('=')[1]
+                    return value.lower() == 'true'
+    except Exception as e:
+        print(f"Error leyendo .env: {e}")
+    
+    return False  # valor por defecto
 
 class AuthState(ABC):
     """
@@ -77,7 +93,7 @@ class PatternState(AuthState):
         """
         Use the refactored authentication strategy pattern.
         """
-        print("🔑 DEBUG: PatternState - Login usando Strategy Pattern")
+        print("DEBUG: PatternState - Login usando Strategy Pattern")
         auth_strategy = AuthStrategyFactory.create_strategy("local")
         return auth_strategy.authenticate(credentials, user_repo)
     
@@ -85,7 +101,7 @@ class PatternState(AuthState):
         """
         Use the refactored session setup from auth strategy.
         """
-        print("🔐 DEBUG: PatternState - Setup session usando Strategy Pattern")
+        print("DEBUG: PatternState - Setup session usando Strategy Pattern")
         auth_strategy = AuthStrategyFactory.create_strategy("local")
         auth_strategy.setup_session(user, session_obj)
     
@@ -93,7 +109,7 @@ class PatternState(AuthState):
         """
         Use the refactored Google authentication strategy.
         """
-        print("🔑 DEBUG: PatternState - Google login usando Strategy Pattern")
+        print("DEBUG: PatternState - Google login usando Strategy Pattern")
         auth_strategy = AuthStrategyFactory.create_strategy("google")
         credentials = {'token': token}
         return auth_strategy.authenticate(credentials, user_repo)
@@ -107,7 +123,7 @@ class LegacyState(AuthState):
         """
         Use the original login validation.
         """
-        print("🔑 DEBUG: LegacyState - Login usando código original")
+        print("DEBUG: LegacyState - Login usando código original")
         email = credentials.get('email')
         password = credentials.get('password')
         return validate_login_data(email, password, user_repo)
@@ -116,7 +132,7 @@ class LegacyState(AuthState):
         """
         Use the original session setup logic.
         """
-        print("🔐 DEBUG: LegacyState - Setup session usando código original")
+        print("DEBUG: LegacyState - Setup session usando código original")
         session_obj.clear()
         session_obj["user_id"] = user["id"]
         session_obj["name"] = user.get("name", user.get("email"))
@@ -129,7 +145,7 @@ class LegacyState(AuthState):
         """
         Use the original Google login logic.
         """
-        print("🔑 DEBUG: LegacyState - Google login usando código original")
+        print("DEBUG: LegacyState - Google login usando código original")
         from firebase_admin import auth as firebase_auth
         
         try:
@@ -171,11 +187,16 @@ class AuthStateContext:
         Returns:
             An instance of the appropriate AuthState implementation.
         """
-        use_patterns = os.getenv('FLASK_USE_PATTERNS', 'False').lower() == 'true'
+        # Usamos la función get_use_patterns() para leer directamente del archivo .env
+        use_patterns = get_use_patterns()
+        
+        # Print simple para validar el estado actual
+        current_state = "PatternState (usando Strategy Pattern)" if use_patterns else "LegacyState (usando código original)"
+        print("\n==================================================")
+        print(f"ESTADO ACTUAL: {current_state}")
+        print("==================================================\n")
         
         if use_patterns:
-            print("🔄 DEBUG: Usando PatternState (con Strategy Pattern)")
             return PatternState()
         else:
-            print("🔄 DEBUG: Usando LegacyState (código original)")
             return LegacyState()
