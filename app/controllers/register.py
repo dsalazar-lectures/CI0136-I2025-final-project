@@ -85,6 +85,11 @@ def register():
                 action_type=AuditActionType.USER_REGISTER,
                 details=f"Failed to send registration email to {email}"
             )
+        log_audit(
+                user=name,
+                action_type=AuditActionType.USER_REGISTER,
+                details=f"User registered successfully"
+            )
         session.pop('form_data', None)
         session.clear()
         # Notify user of successful registration and redirect to login

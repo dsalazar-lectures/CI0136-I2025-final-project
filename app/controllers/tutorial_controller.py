@@ -169,6 +169,11 @@ def register_tutoria():
             #exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)  
             if exito:
                 flash("Te has registrado exitosamente.", "success")
+                log_audit(
+                    user=name_student,
+                    action_type=AuditActionType.TUTORY_ADQUIRED,
+                    details=f"Tutory {tutoria.title} adquired from tutor {tutoria.tutor}"
+                )
             else:
                 flash("No fue posible registrarte.", "danger")
     else:
