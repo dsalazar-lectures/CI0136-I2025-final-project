@@ -25,11 +25,11 @@ def reply_review(review_id):
 def edit_review_route(review_id):
     return edit_review(review_id)
 
-@review_bp.route('/comments/<session_id>')
-def comments_by_session(session_id):
+@review_bp.route('/comments/<tutor_id>/<session_id>')
+def comments_by_session(tutor_id, session_id):
     all_reviews = get_all_reviews()
     filtered = [r for r in all_reviews if r['session_id'] == session_id]
-    return render_template("index.html", comments=filtered, session_id=session_id)
+    return render_template("index.html", comments=filtered, tutor_name=tutor_id)
 
 @review_bp.route('/send-review/<session_id>', methods=['POST'])
 def create_review_with_session(session_id):
