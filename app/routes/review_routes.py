@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from app.models.review_model import get_all_reviews
-from app.controllers.review_controller import send_review, delete_review, add_reply, edit_review
+from app.controllers.review_controller import (send_review, delete_review, add_reply, edit_review, edit_reply, delete_reply)
 
 review_bp = Blueprint('review_bp', __name__)
 
@@ -29,8 +29,20 @@ def edit_review_route(review_id):
 def comments_by_session(session_id):
     all_reviews = get_all_reviews()
     filtered = [r for r in all_reviews if r['session_id'] == session_id]
+
+    for c in filtered:
+        print("REVIEW:", c)
+
     return render_template("index.html", comments=filtered, session_id=session_id)
 
 @review_bp.route('/send-review/<session_id>', methods=['POST'])
 def create_review_with_session(session_id):
     return send_review(session_id=session_id)
+
+@review_bp.route("/edit-reply/<int:review_id>/<int:reply_index>", methods=["POST"])
+def edit_reply_route(review_id, reply_index):
+    return edit_reply(review_id, reply_index)
+
+@review_bp.route("/delete-reply/<int:review_id>/<int:reply_index>", methods=["POST"])
+def delete_reply_route(review_id, reply_index):
+    return delete_reply(review_id, reply_index)

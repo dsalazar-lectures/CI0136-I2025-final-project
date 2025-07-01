@@ -10,7 +10,6 @@ class ReviewPresenterStrategy(ABC):
         pass
 
 class ConsoleReviewPresenter(ReviewPresenterStrategy):
-    
     def present_review(self, review):
         print("\n--- Nueva Reseña Recibida ---")
         print(f"\tEstudiante: {review['student_id']}")
@@ -19,6 +18,8 @@ class ConsoleReviewPresenter(ReviewPresenterStrategy):
         print(f"\tReview ID: {review['review_id']}")
         print(f"\tEstrellas: {review['rating']}")
         print(f"\tComentario: {review['comment']}")
+        if review.get('drive_link'):
+            print(f"\tLink de Drive: {review['drive_link']}")
         print("------------------------------\n")
 
 class LogFileReviewPresenter(ReviewPresenterStrategy):
