@@ -78,6 +78,7 @@
               <div class="actions">
                 <a href="{{ url_for('tutorial.getTutoriaById', id=tutoria.id, user_role= ('tutor')) }}" class="button-edit">Ver detalles</a>
                 <a href="{{ url_for('tutorial.edit_tutorial', id=tutoria.id) }}" class="button-edit">Editar</a>
+                <a href="{{ url_for('review_bp.comments_by_session', tutoria_id=tutoria.id) }}" class="button-edit">Retroalimentaciones</a>
                 <form action="{{ url_for('tutorial.cancel_tutorial', id=tutoria.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('¿Está seguro que desea cancelar esta tutoría?');">
                   <input type="hidden" name="confirm" value="true">
                   <button type="submit" class="button-delete">Cancelar Tutoría</button>

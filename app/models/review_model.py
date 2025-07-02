@@ -45,6 +45,7 @@ class ReviewManager:
             reviews = []
             for doc in docs:
                 data = doc.to_dict()
+                print("REVIEW DATA:", data)
                 if 'review_id' in data:
                     data['review_id'] = int(data['review_id'])
                 reviews.append(data)
@@ -56,12 +57,16 @@ class ReviewManager:
     def add_review(self, review):
         reviews = self._load_reviews()
         review["date"] = datetime.now().strftime('%d/%m/%Y')
+
+        if "drive_link" not in review:
+            review["drive_link"] = ""
+
         reviews.append(review)
 
         self.save_reviews(reviews)
         self.save_review_to_firestore(review)
 
-    def add_reply_to_review(self, review_id, tutor_id, comment):
+    def add_reply_to_review(self, review_id, tutor_id, comment, drive_link=""):
         """Añade una respuesta a una review y la sincroniza con Firestore"""
         reviews = self._load_reviews()
         for review in reviews:
@@ -72,7 +77,8 @@ class ReviewManager:
                 new_reply = {
                     'tutor_id': tutor_id,
                     'date': datetime.now().strftime('%d/%m/%Y'),
-                    'comment': comment
+                    'comment': comment,
+                    'drive_link': drive_link
                 }
 
                 review['replies'].append(new_reply)
@@ -104,7 +110,7 @@ class ReviewManager:
             print(f"Error al obtener review {review_id} desde Firestore: {e}")
             return None
 
-    def update_review(self, review_id, new_rating, new_comment):
+    def update_review(self, review_id, new_rating, new_comment, new_drive_link=""):
         reviews = self._load_reviews()
         updated = False
 
@@ -112,6 +118,7 @@ class ReviewManager:
             if review['review_id'] == review_id:
                 review['rating'] = new_rating
                 review['comment'] = new_comment
+                review['drive_link'] = new_drive_link
                 review['date'] = datetime.now().strftime('%d/%m/%Y')
                 updated = True
 
@@ -122,6 +129,7 @@ class ReviewManager:
                     self.db.collection('reviews').document(review_id_str).update({
                         'rating': new_rating,
                         'comment': new_comment,
+                        'drive_link': new_drive_link,
                         'date': review['date']
                     })
                 except Exception as e:
@@ -163,14 +171,14 @@ def get_all_reviews():
 def add_review(review):
     return review_manager.add_review(review)
 
-def add_reply_to_review(review_id, tutor_id, comment):
-    return review_manager.add_reply_to_review(review_id, tutor_id, comment)
+def add_reply_to_review(review_id, tutor_id, comment, drive_link=""):
+    return review_manager.add_reply_to_review(review_id, tutor_id, comment, drive_link)
 
 def get_review_by_id(review_id):
     return review_manager.get_review_by_id(review_id)
 
-def update_review(review_id, new_rating, new_comment):
-    return review_manager.update_review(review_id, new_rating, new_comment)
+def update_review(review_id, new_rating, new_comment, new_drive_link=""):
+    return review_manager.update_review(review_id, new_rating, new_comment, new_drive_link)
 
 def delete_review(review_id):
     return review_manager.delete_review(review_id)

@@ -18,7 +18,7 @@ firebase_repo = FirebaseTutoringRepository()
 def getTutoriaById(id):
 
     # tutoring = repo.get_tutorial_by_id(id)
-    tutoring = firebase_repo.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
+    tutoring = firebase_repo.get_tutorial_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     
     user_role = request.args.get('user_role', 'student')
     current_user = session.get("name", "usuario anonimo") 
@@ -84,7 +84,7 @@ def create_tutorial():
 @tutorial.route('/tutorial/<id>/edit', methods=['GET', 'POST'])
 @login_or_role_required('Tutor')
 def edit_tutorial(id):
-    tutoring = firebase_repo.get_tutoria_by_id(id)
+    tutoring = firebase_repo.get_tutorial_by_id(id)
 
     if tutoring is None:
         return render_template('404.html'), 404
@@ -157,7 +157,7 @@ def register_tutoria():
     name_student = session.get("name", "usuario anonimo") 
     print(f"ID del estudiante: {id_student}")
     print(name_student)
-    tutoria = firebase_repo.get_tutoria_by_id(id_tutoria)
+    tutoria = firebase_repo.get_tutorial_by_id(id_tutoria)
     #tutoria = repo.get_tutorial_by_id(id_tutoria) 
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
@@ -189,7 +189,7 @@ def listTutorTutorials():
     search = request.args.get('search', '').lower()
     sort = request.args.get('sort')
 
-    tutorias = firebase_repo.get_tutorias_by_tutor(tutor_id)
+    tutorias = firebase_repo.get_tutorials_by_tutor(tutor_id)
 
     if search:
         tutorias = [
@@ -209,7 +209,7 @@ def listTutorTutorials():
 @tutorial.route('/tutorial/<id>/cancel', methods=['POST'])
 @login_or_role_required('Tutor')
 def cancel_tutorial(id):
-    tutorial = firebase_repo.get_tutoria_by_id(id)  # Get tutorial from Firebase
+    tutorial = firebase_repo.get_tutorial_by_id(id)  # Get tutorial from Firebase
     if not tutorial:
         flash("Tutoría no encontrada.", "danger")
         return redirect(url_for('tutorial.listTutorTutorials'))
@@ -242,7 +242,7 @@ def cancel_tutorial(id):
     return redirect(url_for('tutorial.listTutorTutorials'))
 
 def measure_time_to_tutorial(id):
-    tutorial = firebase_repo.get_tutoria_by_id(id)
+    tutorial = firebase_repo.get_tutorial_by_id(id)
     present = get_current_datetime()
 
     date_str = tutorial.date.strip()
@@ -252,3 +252,17 @@ def measure_time_to_tutorial(id):
     time_difference = future - present
     return time_difference.total_seconds()/60  # minutes
 
+@tutorial.route('/tutorial/<id>/unsubscribe', methods=['POST'])
+@login_or_role_required('Student')
+def unsubscribe_tutorial(id):
+    student_id = session.get('user_id')
+    if not student_id:
+        flash("Debe iniciar sesión para realizar esta acción", "danger")
+        return redirect(url_for('auth.login'))
+    
+    if firebase_repo.unregister_from_tutoria(student_id, id):
+        flash("Te has desinscrito exitosamente de la tutoría", "success")
+    else:
+        flash("No fue posible desinscribirte. Verifica que estés inscrito en esta tutoría", "danger")
+    
+    return redirect(url_for('subscriptions.get_subscriptions'))

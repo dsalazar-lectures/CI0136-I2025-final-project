@@ -26,10 +26,10 @@ class Tutorial_mock_repo(ITutorialRepository):
                 return t
         return None
     
-    def get_tutorias_by_tutor(self, tutor_id):
+    def get_tutorials_by_tutor(self, tutor_id):
         return [t for t in self.tutorias if t.tutor_id == tutor_id]
     
-    def get_tutorias_by_student(self, student_id):
+    def get_tutorials_by_student(self, student_id):
         return [t for t in self.tutorias 
                 if any(s['id'] == student_id for s in t.student_list)]
     
@@ -63,7 +63,7 @@ class Tutorial_mock_repo(ITutorialRepository):
             return True
         return False
     
-    def list_tutorials(self):
+    def get_list_tutorials(self):
         return self.tutorias
     
     def register_in_tutoria(self, id_student, name_student, id_tutoria):
