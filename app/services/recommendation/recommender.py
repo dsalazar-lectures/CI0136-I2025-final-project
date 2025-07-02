@@ -28,5 +28,5 @@ class TutoringRecommender:
             t for t in self.repo.get_list_tutorials()
             if datetime.strptime(t.date, "%Y-%m-%d") > datetime.now()
         ]
-        registered = self.repo.get_tutorias_by_student(student_id)
+        registered = self.repo.get_tutorials_by_student(student_id)
         return self.strategy.recommend(future_tutorings, registered)
