@@ -7,9 +7,7 @@ from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.utils.date_utils import get_current_datetime
 from datetime import datetime
-from app.services.meetings.meeting_service import MeetingService
-from app.services.meetings.zoom_meeting_service import zoom_meeting_service
-import base64
+
 tutorial = Blueprint('tutorial', __name__)
 
 repo = Tutorial_mock_repo()
