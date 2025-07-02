@@ -36,6 +36,7 @@ def comments_by_session(tutoria_id):
     
     all_reviews = get_all_reviews()
     filtered = [r for r in all_reviews if r['session_id'] == session_id]
+
     return render_template("index.html", session_id=session_id, comments=filtered, tutor_name=tutor_id, tutoria_id=tutoria_id)
 
 @review_bp.route('/send-review/<tutoria_id>', methods=['POST'])

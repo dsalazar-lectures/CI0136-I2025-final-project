@@ -37,6 +37,7 @@ def send_review(tutoria=None):
     rating = request.form.get('rating')
     comment = request.form.get('comment', '')
     review_id = request.form.get('review_id')
+    drive_link = request.form.get('drive_link', '').strip()
 
 
     # Validaciones
@@ -64,6 +65,7 @@ def send_review(tutoria=None):
         "rating": int(rating),
         "review_id": int(review_id),
         "comment": comment,
+        "drive_link": drive_link,
         "date": datetime.now().strftime('%d/%m/%Y'),
         "reply": None
     }
@@ -104,8 +106,13 @@ def delete_review(tutoria_id, review_id):
     flash("Reseña eliminada exitosamente.", "success")
     return redirect(f"/comments/{tutoria_id}")
 
+def add_reply(review_id):
+    session_id = None
 
-def add_reply(tutoria_id, review_id):
+    try:
+        tutor_id = request.form.get('tutor_id')
+        comment = request.form.get('comment', '').strip()
+        drive_link = request.form.get('drive_link', '').strip()
 
     review = get_review_by_id(review_id)
     if not review:
@@ -116,7 +123,7 @@ def add_reply(tutoria_id, review_id):
     if session.get('role') != 'Tutor' :
         flash("No puedes responder, no eres tutor.", "warning")
         return redirect(f"/comments/{tutoria_id}")
-
+      
     # Hay que comprobar que sea el mismo tutor
     if session.get('name') != review['tutor_id'] :
         flash("No puedes responder, no son tus criticas.", "warning")
@@ -158,10 +165,72 @@ def edit_review(tutoria_id, review_id):
         flash("Calificación inválida.", "warning")
         return redirect(request.referrer or f"/comments/{tutoria_id}")
 
-    if update_review(review_id, int(rating), comment):
-        flash("Reseña actualizada correctamente.", "success")
-    else:
-        flash("No se encontró la reseña a editar.", "warning")
+    review['comment'] = comment
+    review['rating'] = int(rating)
+    review['drive_link'] = drive_link
 
-    return redirect(f"/comments/{tutoria_id}")
+    update_review(review_id, review['rating'], review['comment'], drive_link)
 
+    flash("Reseña actualizada correctamente.", "success")
+    return redirect(f"/comments/{session_id}")
+
+def edit_reply(review_id, reply_index):
+    comment = request.form.get('comment', '').strip()
+    drive_link = request.form.get('drive_link', '').strip()
+
+    if not comment:
+        flash("El comentario no puede estar vacío.", "warning")
+        return redirect(request.referrer or "/comments")
+
+    review = get_review_by_id(review_id)
+    if not review:
+        flash("No se encontró la reseña original.", "danger")
+        return redirect("/comments")
+
+    session_id = review.get("session_id", "")
+
+    try:
+        replies = review.get("replies", [])
+        if 0 <= reply_index < len(replies):
+            replies[reply_index]['comment'] = comment
+            replies[reply_index]['drive_link'] = drive_link
+            replies[reply_index]['date'] = datetime.now().strftime('%d/%m/%Y')
+
+            save_reviews(get_all_reviews())
+            # Update Firestore
+            from app.models.review_model import save_review_to_firestore
+            save_review_to_firestore(review)
+
+            flash("Respuesta editada exitosamente.", "success")
+        else:
+            flash("Índice de respuesta no válido.", "danger")
+    except Exception as e:
+        logger.error(f"Error al editar respuesta: {e}")
+        flash("Error al editar la respuesta.", "danger")
+
+    return redirect(f"/comments/{session_id}")
+
+def delete_reply(review_id, reply_index):
+    review = get_review_by_id(review_id)
+    if not review:
+        flash("No se encontró la reseña.", "danger")
+        return redirect("/comments")
+
+    session_id = review.get("session_id", "")
+    try:
+        replies = review.get("replies", [])
+        if 0 <= reply_index < len(replies):
+            deleted = replies.pop(reply_index)
+
+            save_reviews(get_all_reviews())
+            from app.models.review_model import save_review_to_firestore
+            save_review_to_firestore(review)
+
+            flash("Respuesta eliminada exitosamente.", "success")
+        else:
+            flash("Índice de respuesta no válido.", "danger")
+    except Exception as e:
+        logger.error(f"Error al eliminar respuesta: {e}")
+        flash("Error al eliminar la respuesta.", "danger")
+
+    return redirect(f"/comments/{session_id}")

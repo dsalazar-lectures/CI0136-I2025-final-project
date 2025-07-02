@@ -1,10 +1,9 @@
 <!-- Este es el pop-up del review -->
-
 <div class="row justify-content-center">
     <div class="col-12 col-md-8 col-lg-6">
-        
-        <div id="modalOverlay" style=
-        "display:none; 
+        <!-- Fondo oscuro -->
+        <div id="modalOverlay" style="
+            display:none; 
             position: fixed; 
             top: 0; 
             left: 0; 
@@ -14,8 +13,9 @@
             z-index: 99998;">
         </div>
 
-        <div id="reviewModal" class="modal-custom" style=
-        "display:none; 
+        <!-- Modal principal -->
+        <div id="reviewModal" class="modal-custom" style="
+            display:none; 
             position: fixed; 
             top: 50%; 
             left: 50%; 
@@ -23,17 +23,14 @@
             z-index: 99999; 
             width: 90%; 
             max-width: 500px;">
-        
-        <div class="card shadow">
-            <div class="card-header text-center py-3">
-                <h4 id="popup_title" class="mb-0">Titulo del Pop-up</h4>
-            </div>
+            <div class="card shadow">
+                <div class="card-header text-center py-3">
+                    <h4 id="popup_title" class="mb-0">Titulo del Pop-up</h4>
+                </div>
                 <div class="card-body">
-
                     <form id="reviewForm" method="POST" action="{{ url_for('review_bp.create_review_with_session', tutoria_id=tutoria_id) }}">
 
                         <div class="mb-4 text-center">
-
                             <div class="rating-stars mb-2">
                                 <i class="far fa-star" data-rating="1"></i>
                                 <i class="far fa-star" data-rating="2"></i>
@@ -45,11 +42,27 @@
                             <p class="text-muted small">Haz clic en una estrella para calificar</p>
                         </div>
                         
+                        <!-- Comentario -->
                         <div class="mb-3">
                             <label for="comment" class="form-label">Deja un comentario</label>
                             <textarea class="form-control" id="comment" name="comment" rows="4" placeholder="Escribe tu opinión aquí..."></textarea>
                         </div>
-                        
+
+                        <!-- File Upload Component -->
+                        <div class="mb-3">
+                            <label class="form-label">Archivo adjunto (opcional)</label>
+                            <div class="border rounded p-3 bg-light">
+                                <!-- Upload file section -->
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">Subir archivo</h6>
+                                    <div id="reviewFileUploadContainer"></div>
+                                    <small class="text-muted">Sube un archivo y obtén el enlace automáticamente</small>
+                                </div>
+                                
+                                <!-- Hidden input to store the drive link -->
+                                <input type="hidden" class="form-control" id="drive_link" name="drive_link" />
+                            </div>
+                        </div>
                         <input type="hidden" name="student_id" value="EstudiantePorDefecto">
                         <input type="hidden" name="tutor_id" value="TutorPorDefecto">
                         <input type="hidden" name="session_id" value="Sesion por Defecto">
@@ -66,17 +79,12 @@
     </div>
 </div>
 
-
-
-
-{% block scripts %}
+<script src="/static/upload-widget-simple.js"></script>
 <script>
-
-
-    const stars = document.querySelectorAll('.rating-stars .fa-star');
     const ratingInput = document.getElementById('selected-rating');
 
     function updateStars(selectedRating) {
+        const stars = document.querySelectorAll('.rating-stars .fa-star');
         stars.forEach(star => {
             const rating = parseInt(star.getAttribute('data-rating'));
             if (rating <= selectedRating) {
@@ -90,20 +98,15 @@
         ratingInput.value = selectedRating;
     }
 
-
-    document.addEventListener('DOMContentLoaded', function() {
+    function attachStarListeners() {
         const stars = document.querySelectorAll('.rating-stars .fa-star');
-        const ratingInput = document.getElementById('selected-rating');
-        
-        
-        
         stars.forEach(star => {
-            star.addEventListener('click', function() {
+            star.addEventListener('click', function () {
                 const rating = parseInt(this.getAttribute('data-rating'));
                 updateStars(rating);
             });
 
-            star.addEventListener('mouseenter', function() {
+            star.addEventListener('mouseenter', function () {
                 const rating = parseInt(this.getAttribute('data-rating'));
                 stars.forEach(s => {
                     const r = parseInt(s.getAttribute('data-rating'));
@@ -113,51 +116,92 @@
                 });
             });
 
-            star.addEventListener('mouseleave', function() {
+            star.addEventListener('mouseleave', function () {
                 if (!ratingInput.value) {
-                    stars.forEach(s => {
-                        s.classList.remove('star-filled');
-                    });
+                    stars.forEach(s => s.classList.remove('star-filled'));
                 } else {
                     updateStars(parseInt(ratingInput.value));
                 }
             });
         });
-    });
+    }
 
-
-    document.querySelector('input[name="review_id"]').value = Math.floor(Math.random() * 99999) + 10000;
+    document.addEventListener('DOMContentLoaded', attachStarListeners);
 
     function closeReviewPopup() {
         document.getElementById('reviewModal').style.display = 'none';
         document.getElementById('modalOverlay').style.display = 'none';
-
         updateStars(0);
         document.getElementById('comment').value = '';
-        
+        document.getElementById('drive_link').value = '';
         document.getElementById('reviewForm').action = '';
-
     }
 
-    function openReviewPopup(titleText, stars = 0, comment = '', showStars = true) {
-        // Add console.log for debugging
-        console.log('Opening popup:', {titleText, stars, comment, showStars});
-        
+    function openReviewPopup(titleText, stars = 0, comment = '', showStars = true, driveLink = '', reviewId = null) {
+        console.log('Opening popup:', { titleText, stars, comment, showStars, reviewId });
+
         document.getElementById('reviewModal').style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
-        
-        // Fix: Update popup title
         document.getElementById('popup_title').textContent = titleText;
-        
-        // Fix: Rating stars section visibility
-        const ratingSection = document.querySelector('.rating-stars').parentElement;
+
+        const ratingSection = document.getElementById('ratingSection');
         ratingSection.style.display = showStars ? 'block' : 'none';
-        
-        // Fix: Update stars and comment
-        if (showStars && stars) {
-            updateStars(parseInt(stars));
-        }
+
+        updateStars(showStars && stars ? parseInt(stars) : 0);
+
         document.getElementById('comment').value = comment || '';
+        document.getElementById('drive_link').value = driveLink || '';
+
+        const reviewIdInput = document.querySelector('input[name="review_id"]');
+        reviewIdInput.value = reviewId ? reviewId : Math.floor(Math.random() * 99999) + 10000;
+
+        // Re-attach listeners each time (to be safe if DOM was changed)
+        attachStarListeners();
+        
+        // Initialize file uploader each time popup opens
+        if (window.FileUploadWidget) {
+            const uploadContainer = document.getElementById('reviewFileUploadContainer');
+            if (uploadContainer) {
+                uploadContainer.innerHTML = '';
+                
+                const uploader = FileUploadWidget.createAttachmentUploader({
+                    buttonText: '📎 Seleccionar archivo',
+                    buttonClass: 'btn btn-outline-primary btn-sm',
+                    onSuccess: (file) => {
+                        // Auto-fill the manual input with the uploaded file URL
+                        document.getElementById('drive_link').value = file.url;
+                        
+                        // Show success message
+                        const successDiv = document.createElement('div');
+                        successDiv.className = 'alert alert-success alert-dismissible fade show mt-2';
+                        successDiv.innerHTML = `
+                            ✅ Archivo subido: ${file.original_name}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        uploadContainer.appendChild(successDiv);
+                        
+                        // Auto-dismiss after 3 seconds
+                        setTimeout(() => {
+                            if (successDiv.parentNode) {
+                                successDiv.remove();
+                            }
+                        }, 3000);
+                    },
+                    onError: (error) => {
+                        // Show error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'alert alert-danger alert-dismissible fade show mt-2';
+                        errorDiv.innerHTML = `
+                            ❌ Error al subir archivo: ${error}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        uploadContainer.appendChild(errorDiv);
+                    }
+                });
+                
+                // Render the uploader
+                uploader.render('#reviewFileUploadContainer');
+            }
+        }
     }
 </script>
-{% endblock %}
