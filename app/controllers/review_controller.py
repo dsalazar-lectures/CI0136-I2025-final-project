@@ -4,13 +4,14 @@ from app.models.review_model import add_review, get_all_reviews, add_reply_to_re
 
 import logging
 from datetime import datetime
-from app.controllers.review_presenter_controller import ConsoleReviewPresenter ## Si queremos agregar en un futuro LogFileReviewPresenter, EmailReviewPresenter
+from app.controllers.review_presenter_controller import ConsoleReviewPresenter, EmailReviewPresenter ## Si queremos agregar en un futuro LogFileReviewPresenter
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DEFAULT_PRESENTER = ConsoleReviewPresenter()
+EMAIL_PRESENTER = EmailReviewPresenter()
 
 def send_review(tutoria=None):
     
@@ -71,7 +72,10 @@ def send_review(tutoria=None):
     }
 
     add_review(review)
+    
+    # Notify all presenters (console and email)
     DEFAULT_PRESENTER.present_review(review)
+    EMAIL_PRESENTER.present_review(review)
 
     flash("Reseña enviada correctamente", "success")
     return redirect(f"/comments/{tutoria_id}")
@@ -133,8 +137,22 @@ def add_reply(tutoria_id, review_id):
         flash("El comentario no puede estar vacío", "warning")
         return redirect(request.referrer or f"/comments/{tutoria_id}")
 
-    if add_reply_to_review(review_id, tutor_id, comment):
+    if add_reply_to_review(review_id, tutor_id, comment, drive_link):
         logger.info(f"Respuesta añadida a review {review_id}")
+        
+        # Create reply data for email notification
+        reply_data = {
+            'is_reply': True,
+            'student_id': review['student_id'],  # The original commenter (student)
+            'tutor_id': tutor_id,  # The tutor who replied
+            'comment': comment,  # The reply text
+            'session_id': review['session_id'],  # The tutorial name
+            'original_comment': review['comment']  # The original comment
+        }
+        
+        DEFAULT_PRESENTER.present_review(reply_data)
+        EMAIL_PRESENTER.present_review(reply_data)
+        
         flash("Respuesta publicada exitosamente", "success")
     else:
         logger.warning(f"Review no encontrada: {review_id}")

@@ -18,5 +18,9 @@ class EmailBuilderFactory(IBuilderFactory):
       return email_notification_builders.SuccessRegisterEmailBuilder()
     elif builder_type == "newTutorial":
       return email_notification_builders.NewTutorialEmailBuilder()
+    elif builder_type == "newComment":
+      return email_notification_builders.NewCommentEmailBuilder()
+    elif builder_type == "tutorReply":
+      return email_notification_builders.TutorReplyEmailBuilder()
     else:
       raise ValueError("Builder no soportado")
