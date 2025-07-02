@@ -3,6 +3,7 @@ from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 from ..models.builders.button_factory.button_factory import button_factory
 from ..utils.auth import login_or_role_required
+from app.services.tutorials.tutorial_utils import filter_and_sort_tutorials
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.utils.date_utils import get_current_datetime
@@ -118,25 +119,13 @@ def getListTutorials():
         print("Tutoring not found")
         return render_template('404.html'), 404
     else:
-        search = request.args.get('search', '').lower()
+        search = request.args.get('search', '')
         sort = request.args.get('sort')
         subject_filter = request.args.get('subject')
 
-        all_subjects = sorted(list(set(t.subject for t in tutorials if hasattr(t, 'subject'))))
-        if search:
-            tutorials = [
-                t for t in tutorials
-                if search in t.title.lower()
-                or search in t.subject.lower()
-                or search in t.description.lower()
-            ]
-        if subject_filter:
-            tutorials = [t for t in tutorials if t.subject == subject_filter]
+        tutorials = filter_and_sort_tutorials(tutorials, search, subject_filter, sort)
 
-        if sort == "asc":
-            tutorials.sort(key=lambda t: t.date)
-        elif sort == "desc":
-            tutorials.sort(key=lambda t: t.date, reverse=True)
+        all_subjects = sorted(list(set(t.subject for t in tutorials if hasattr(t, 'subject'))))
 
         return render_template(
             'list_tutorials.html',
@@ -158,7 +147,6 @@ def register_tutoria():
     print(f"ID del estudiante: {id_student}")
     print(name_student)
     tutoria = firebase_repo.get_tutorial_by_id(id_tutoria)
-    #tutoria = repo.get_tutorial_by_id(id_tutoria) 
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
             flash("No hay cupos disponibles para esta tutoría.", "warning")
@@ -186,23 +174,12 @@ def listTutorTutorials():
         flash("No se pudo obtener el ID del tutor.", "danger")
         return redirect(url_for('tutorial.getListTutorials'))
 
-    search = request.args.get('search', '').lower()
-    sort = request.args.get('sort')
-
     tutorias = firebase_repo.get_tutorials_by_tutor(tutor_id)
 
-    if search:
-        tutorias = [
-            t for t in tutorias
-            if search in t.title.lower()
-            or search in t.subject.lower()
-            or search in t.description.lower()
-        ]
-    
-    if sort == "asc":
-        tutorias.sort(key=lambda t:  t.date)
-    elif sort == "desc":
-        tutorias.sort(key=lambda t:  t.date, reverse=True)
+    search = request.args.get('search', '')
+    sort = request.args.get('sort')
+
+    tutorias = filter_and_sort_tutorials(tutorias, search, None, sort)
 
     return render_template('tutor_tutorials.html', tutorias=tutorias)
 
