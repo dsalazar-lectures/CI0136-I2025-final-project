@@ -114,68 +114,72 @@
                                     </div>
                                 {% endif %}
 
+                                <!-- Tutor Replies with Indentation -->
                                 {% if comment.replies %}
                                     {% for reply in comment.replies %}
-                                        <div class="d-flex justify-content-between align-items-start">
-                                        <div class="d-flex">
-                                            <div class="avatar avatar-sm me-2">
-                                                {% if reply.tutor_profile_picture %}
-                                                    <img src="{{ reply.tutor_profile_picture }}" 
-                                                         alt="Avatar de {{ reply.tutor_id }}" 
-                                                         class="rounded-circle profile-avatar" 
-                                                         style="width: 32px; height: 32px; object-fit: cover;"
-                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="avatar-fallback" style="display: none; width: 32px; height: 32px;">
-                                                        <i class="fas fa-user text-secondary"></i>
+                                        <div class="ms-4 ps-3 reply-indent mt-3" style="border-left: 2px solid #e9ecef;">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="d-flex">
+                                                    <div class="avatar avatar-sm me-2">
+                                                        {% if reply.tutor_profile_picture %}
+                                                            <img src="{{ reply.tutor_profile_picture }}" 
+                                                                 alt="Avatar de {{ reply.tutor_id }}" 
+                                                                 class="rounded-circle profile-avatar" 
+                                                                 style="width: 32px; height: 32px; object-fit: cover;"
+                                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                            <div class="avatar-fallback" style="display: none; width: 32px; height: 32px;">
+                                                                <i class="fas fa-user text-secondary"></i>
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="avatar-fallback" style="width: 32px; height: 32px;">
+                                                                <i class="fas fa-user text-secondary"></i>
+                                                            </div>
+                                                        {% endif %}
                                                     </div>
-                                                {% else %}
-                                                    <div class="avatar-fallback" style="width: 32px; height: 32px;">
-                                                        <i class="fas fa-user text-secondary"></i>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="flex-grow-1">
-                                            <h6 class="mb-1">{{ reply.tutor_id }}</h6>
-                                            <div class="mb-2">
-                                                <small class="text-muted">{{ reply.date }}</small>
-                                            </div>
-                                            <p class="small text-secondary mb-0">{{ reply.comment }}</p>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-1">{{ reply.tutor_id }}</h6>
+                                                        <div class="mb-2">
+                                                            <small class="text-muted">{{ reply.date }}</small>
+                                                        </div>
+                                                        <p class="small text-secondary mb-0">
+                                                            {{ reply.comment }}
+                                                        </p>
 
-                                            {% if reply.drive_link %}
-                                                <div class="mt-2 p-2 bg-light border rounded d-inline-block">
-                                                    <i class="fas fa-paperclip text-primary me-1"></i>
-                                                    <small>
-                                                        <strong>Archivo adjunto:</strong>
-                                                        <a href="{{ reply.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
-                                                            Ver archivo
-                                                        </a>
-                                                    </small>
+                                                        {% if reply.drive_link %}
+                                                            <div class="mt-2 p-2 bg-light border rounded d-inline-block">
+                                                                <i class="fas fa-paperclip text-primary me-1"></i>
+                                                                <small>
+                                                                    <strong>Archivo adjunto:</strong>
+                                                                    <a href="{{ reply.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                                        Ver archivo
+                                                                    </a>
+                                                                </small>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
-                                            {% endif %}
+
+                                                <!-- Dropdown para la respuesta -->
+                                                <div class="dropdown ms-2">
+                                                    <button class="btn btn-link text-muted p-0" type="button" id="dropdownReply{{ loop.index }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownReply{{ loop.index }}">
+                                                        <li>
+                                                            <button class="dropdown-item text-muted"
+                                                                onclick="showEditReplyPrompt('{{ comment.review_id }}', '{{ loop.index0 }}', '{{ reply.comment }}', '{{ reply.drive_link | default('') }}')">
+                                                                Editar respuesta
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <form action="/delete-reply/{{ tutoria_id }}/{{ comment.review_id }}/{{ loop.index0 }}" method="POST" class="m-0 p-0">
+                                                                <button type="submit" class="dropdown-item text-danger">Eliminar respuesta</button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <!-- Dropdown para la respuesta -->
-                                        <div class="dropdown ms-2">
-                                            <button class="btn btn-link text-muted p-0" type="button" id="dropdownReply{{ loop.index }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownReply{{ loop.index }}">
-                                            <li>
-                                                <button class="dropdown-item text-muted"
-                                                onclick="showEditReplyPrompt('{{ comment.review_id }}', '{{ loop.index0 }}', '{{ reply.comment }}', '{{ reply.drive_link | default('') }}')">
-                                                Editar respuesta
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <form action="/delete-reply/{{ tutoria_id }}/{{ comment.review_id }}/{{ loop.index0 }}" method="POST" class="m-0 p-0">
-                                                <button type="submit" class="dropdown-item text-danger">Eliminar respuesta</button>
-                                                </form>
-                                            </li>
-                                            </ul>
-                                        </div>
-                                        </div>
-
                                     {% endfor %}
                                 {% endif %}
                             </div>
