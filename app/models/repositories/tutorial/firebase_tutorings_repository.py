@@ -169,3 +169,30 @@ class FirebaseTutoringRepository:
             return False
 
         return safe_execute(operation, fallback=False, context="[cancel_tutorial]")
+
+    def unregister_from_tutoria(self, student_id, tutoria_id):
+        def operation():
+            # Buscar la tutoría por ID
+            query = db.collection(self.collection_name).where("id", "==", tutoria_id).limit(1)
+            docs = query.stream()
+            
+            for doc in docs:
+                tutoria = doc.to_dict()
+                doc_id = doc.id
+                
+                # Verificar si el estudiante está inscrito
+                if not any(s["id"] == student_id for s in tutoria.get("student_list", [])):
+                    return False
+                    
+                # Crear nueva lista sin el estudiante
+                new_student_list = [s for s in tutoria["student_list"] if s["id"] != student_id]
+                
+                # Actualizar en Firebase
+                db.collection(self.collection_name).document(doc_id).update({
+                    "student_list": new_student_list
+                })
+                return True
+            
+            return False  # Tutoría no encontrada
+
+        return safe_execute(operation, fallback=False, context="[unregister_from_tutoria]")
