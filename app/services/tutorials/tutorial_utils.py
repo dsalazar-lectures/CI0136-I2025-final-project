@@ -1,5 +1,6 @@
 from app.models.sorting_strategies.strategies.ascending_date import AscendingDateStrategy
 from app.models.sorting_strategies.strategies.descending_date import DescendingDateStrategy
+from app.models.sorting_strategies.strategies.availableSpots import AvailableSpotsStrategy
 
 def filter_and_sort_tutorials(tutorials, search=None, subject=None, sort=None):
     # Búsqueda por título, asignatura o descripción
@@ -22,6 +23,8 @@ def filter_and_sort_tutorials(tutorials, search=None, subject=None, sort=None):
         strategy = AscendingDateStrategy()
     elif sort == "desc":
         strategy = DescendingDateStrategy()
+    elif sort == "spots":
+        strategy = AvailableSpotsStrategy()
 
     if strategy:
         tutorials = strategy.sort(tutorials)
