@@ -25,7 +25,7 @@ def view_profile():
 
     if session.get('role') == 'Tutor':
         tutor_id = session.get('user_id')
-        tutorias = tutoring_repo.get_tutorias_by_tutor(tutor_id)
+        tutorias = tutoring_repo.get_tutorials_by_tutor(tutor_id)
 
     return render_template("profile.html", name=name, role=role, email=email, tutorias=tutorias, notification_enabled=notification_enabled)
 
