@@ -1,3 +1,4 @@
+{% include 'navbar.html' %}
 {% extends "layout.html" %}
 
 {% block title %}Comentarios{% endblock %}
@@ -45,6 +46,7 @@
                         {% endif %}
                     </div>
                     <h4 class="mb-0">{{ tutor_name }}</h4>
+                    <h5 class="mb-0">  {{ average }}<i class="fas fa-star star-filled"></i> ({{ quantity }})</h5> 
                 </div>
             </div>
 

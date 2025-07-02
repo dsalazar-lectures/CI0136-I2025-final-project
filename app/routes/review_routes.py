@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash
 from app.models.review_model import get_all_reviews
-from app.controllers.review_controller import send_review, delete_review, add_reply, edit_review, edit_reply, delete_reply
+from app.controllers.review_controller import send_review, delete_review, add_reply, edit_review, edit_reply, delete_reply, calculate_average_reviews
 from app.models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 from app.models.repositories.users.firebase_user_repository import FirebaseUserRepository
 
@@ -111,6 +111,13 @@ def comments_by_session(tutoria_id):
                     print(f"Error fetching tutor profile picture for {tutor_name}: {e}")
                     reply['tutor_profile_picture'] = ''
 
+    # Calculate average and quantity
+    average = calculate_average_reviews(filtered)
+    quantity = len(filtered)
+
+    if quantity < 10:
+        flash("Pocas calificaciones disponibles", "info")
+
     for c in filtered:
         print("REVIEW:", c)
 
@@ -119,7 +126,9 @@ def comments_by_session(tutoria_id):
                          comments=filtered, 
                          tutor_name=tutor_id, 
                          tutoria_id=tutoria_id,
-                         tutor_profile_picture=tutor_profile_picture)
+                         tutor_profile_picture=tutor_profile_picture,
+                         average=average, 
+                         quantity=quantity)
 
 @review_bp.route('/send-review/<tutoria_id>', methods=['POST'])
 def create_review_with_session(tutoria_id):
