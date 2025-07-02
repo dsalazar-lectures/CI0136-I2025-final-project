@@ -165,3 +165,21 @@ def edit_review(tutoria_id, review_id):
 
     return redirect(f"/comments/{tutoria_id}")
 
+
+def calculate_average_tutor(tutor_id):
+    all_reviews = get_all_reviews()
+    tutor_reviews = [r for r in all_reviews if r['tutor_id'] == tutor_id]
+    return calculate_average_reviews(tutor_reviews)
+
+def calculate_average_tutoring(tutor_id, tutoring_id):
+    all_reviews = get_all_reviews()
+    tutor_reviews = [r for r in all_reviews if r['tutor_id'] == tutor_id and r['session_id'] == tutoring_id]
+    return calculate_average_reviews(tutor_reviews)
+
+def calculate_average_reviews(reviews):
+    if not reviews:
+        return 0  # Evita división por cero
+
+    suma = sum(int(r['rating']) for r in reviews)
+    average = suma / len(reviews)
+    return round(average, 2)

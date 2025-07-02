@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash
 from app.models.review_model import get_all_reviews
-from app.controllers.review_controller import send_review, delete_review, add_reply, edit_review
+from app.controllers.review_controller import send_review, delete_review, add_reply, edit_review, calculate_average_reviews
 from app.models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 
 review_bp = Blueprint('review_bp', __name__)
@@ -36,7 +36,14 @@ def comments_by_session(tutoria_id):
     
     all_reviews = get_all_reviews()
     filtered = [r for r in all_reviews if r['session_id'] == session_id]
-    return render_template("index.html", session_id=session_id, comments=filtered, tutor_name=tutor_id, tutoria_id=tutoria_id)
+    average = calculate_average_reviews(filtered)
+    quantity = len(filtered)
+
+    if quantity < 10 :
+        flash("Pocas calificaciones disponibles", "info")
+
+    return render_template("index.html", session_id=session_id, comments=filtered,
+                           tutor_name=tutor_id, tutoria_id=tutoria_id, average=average, quantity=quantity)
 
 @review_bp.route('/send-review/<tutoria_id>', methods=['POST'])
 def create_review_with_session(tutoria_id):
