@@ -149,4 +149,22 @@ class FirebaseUserRepository(IUserRepository):
             doc_ref.update({"notification_enabled": notificationStatus})
             return True
 
-        return safe_execute(operation, fallback=False, context="[update_user_notification_status]")  
+        return safe_execute(operation, fallback=False, context="[update_user_notification_status]")
+
+    def get_user_by_name(self, name):
+        """Get user by their display name"""
+        def operation():
+            clean_name = name.strip()
+            
+            # Search for user by name field
+            query = db.collection(self.collection_name).where("name", "==", clean_name).get()
+            docs = list(query)
+            
+            if docs:
+                print(f"Usuario encontrado por nombre: {clean_name}, doc_id={docs[0].id}")
+                return docs[0].to_dict()
+
+            print(f"Usuario no encontrado para nombre: {clean_name}")
+            return None
+
+        return safe_execute(operation, fallback=None, context="[get_user_by_name]")

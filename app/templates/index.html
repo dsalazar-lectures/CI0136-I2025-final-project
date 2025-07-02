@@ -3,6 +3,25 @@
 {% block title %}Comentarios{% endblock %}
 
 {% block content %}
+<style>
+.profile-avatar {
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease;
+}
+
+.profile-avatar:hover {
+    border-color: #007bff;
+}
+
+.avatar-fallback {
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
 <div class="row justify-content-center">
     <div class="col-12 col-lg-8">
         <div class="card shadow-sm">
@@ -10,7 +29,20 @@
             <div class="card-header text-center border-bottom py-4">
                 <div class="d-flex flex-column align-items-center">
                     <div class="avatar avatar-lg mb-3">
-                        <i class="fas fa-user fa-2x text-secondary"></i>
+                        {% if tutor_profile_picture %}
+                            <img src="{{ tutor_profile_picture }}" 
+                                 alt="Avatar de {{ tutor_name }}" 
+                                 class="rounded-circle profile-avatar" 
+                                 style="width: 80px; height: 80px; object-fit: cover;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="avatar-fallback" style="display: none; width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x text-secondary"></i>
+                            </div>
+                        {% else %}
+                            <div class="avatar-fallback" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x text-secondary"></i>
+                            </div>
+                        {% endif %}
                     </div>
                     <h4 class="mb-0">{{ tutor_name }}</h4>
                 </div>
@@ -29,7 +61,20 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div class="d-flex">
                             <div class="avatar avatar-md me-3">
-                                <i class="fas fa-user text-secondary"></i>
+                                {% if comment.student_profile_picture %}
+                                    <img src="{{ comment.student_profile_picture }}" 
+                                         alt="Avatar de {{ comment.student_id }}" 
+                                         class="rounded-circle profile-avatar" 
+                                         style="width: 40px; height: 40px; object-fit: cover;"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-fallback" style="display: none; width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-secondary"></i>
+                                    </div>
+                                {% else %}
+                                    <div class="avatar-fallback" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-secondary"></i>
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="flex-grow-1">
                                 <!-- Nombre del estudiante -->
@@ -72,7 +117,20 @@
                                         <div class="d-flex justify-content-between align-items-start">
                                         <div class="d-flex">
                                             <div class="avatar avatar-sm me-2">
-                                            <i class="fas fa-user text-secondary"></i>
+                                                {% if reply.tutor_profile_picture %}
+                                                    <img src="{{ reply.tutor_profile_picture }}" 
+                                                         alt="Avatar de {{ reply.tutor_id }}" 
+                                                         class="rounded-circle profile-avatar" 
+                                                         style="width: 32px; height: 32px; object-fit: cover;"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="avatar-fallback" style="display: none; width: 32px; height: 32px;">
+                                                        <i class="fas fa-user text-secondary"></i>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="avatar-fallback" style="width: 32px; height: 32px;">
+                                                        <i class="fas fa-user text-secondary"></i>
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                             <div class="flex-grow-1">
                                             <h6 class="mb-1">{{ reply.tutor_id }}</h6>
