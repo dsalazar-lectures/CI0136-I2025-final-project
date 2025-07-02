@@ -252,3 +252,17 @@ def measure_time_to_tutorial(id):
     time_difference = future - present
     return time_difference.total_seconds()/60  # minutes
 
+@tutorial.route('/tutorial/<id>/unsubscribe', methods=['POST'])
+@login_or_role_required('Student')
+def unsubscribe_tutorial(id):
+    student_id = session.get('user_id')
+    if not student_id:
+        flash("Debe iniciar sesión para realizar esta acción", "danger")
+        return redirect(url_for('auth.login'))
+    
+    if firebase_repo.unregister_from_tutoria(student_id, id):
+        flash("Te has desinscrito exitosamente de la tutoría", "success")
+    else:
+        flash("No fue posible desinscribirte. Verifica que estés inscrito en esta tutoría", "danger")
+    
+    return redirect(url_for('subscriptions.get_subscriptions'))
