@@ -1,6 +1,10 @@
+from flask import redirect, url_for, flash, request
+from app.models.services.email_service import EmailService
+from app.models.builders.email_notification_builders import Builder
+from app.models.services import email_service
 from app.models.services import password_service
+from app.models.services import email_notifier
 from app.models.services.password_service import PasswordService
-
 
 
 def test_validate_password():
@@ -35,5 +39,4 @@ def test_validate_password():
     password_test_6 = "PASSTRASEÑA54121*++"
     is_valid = password_service_instance.validate_password(password_test_6)
     assert False == is_valid
-
-
+    
