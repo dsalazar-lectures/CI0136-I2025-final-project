@@ -12,41 +12,49 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_PRESENTER = ConsoleReviewPresenter()
 
-def send_review(tutor_id=None, session_id=None):
-    #Hay que comprobar rol
-    #Hay que comprobar que haya llevado la tutoria.
+def send_review(tutoria=None):
+    
+    # Hay que comprobar rol
+    tutor_id = tutoria.tutor
+    session_id = tutoria.title
+    tutoria_id = tutoria.id
+    
+    if session.get('role') != 'Student':
+        flash("Debes ser un estudiante para dejar una critica.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
+
+
+    # Hay que comprobar que haya llevado la tutoria.
+    student_id = session.get('name')
+    enrolled = tutoria.student_list
+    exists = next((s for s in enrolled if s['name'] == student_id), None)
+
+    if not exists:
+        flash("No estas inscrito en esta tutoría. No puedes enviar una critica.", "danger")
+        return redirect(f"/comments/{tutoria_id}")
+
+
     rating = request.form.get('rating')
     comment = request.form.get('comment', '')
-
-    #student_id = request.form.get('student_id')
-    student_id = session.get('name')
-
-    form_tutor_id = request.form.get('tutor_id')
-    
-    form_session_id = request.form.get('session_id')
-    
     review_id = request.form.get('review_id')
 
-    # Se usa el session_id del argumento si se pasa, si no se toma del form
-    session_id = session_id or form_session_id
-    tutor_id = tutor_id or form_tutor_id
 
     # Validaciones
     if not rating:
-        flash("La calificación no puede estar vacía.", "warning")
-        return redirect(request.referrer or f'/comments/{tutor_id}/{session_id}')
+        flash("La calificación no puede estar vacía.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
 
     if not rating.isdigit():
-        flash("La calificación debe ser un número válido.", "warning")
-        return redirect(request.referrer or f'/comments/{tutor_id}/{session_id}')
+        flash("La calificación debe ser un número válido.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
     
     if not (1 <= int(rating) <= 5):
-        flash("La calificación debe estar entre 1 y 5.", "warning")
-        return redirect(request.referrer or f'/comments/{tutor_id}/{session_id}')
+        flash("La calificación debe estar entre 1 y 5.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
 
     if not comment.strip():
         flash("El comentario no puede estar vacío.", "warning")
-        return redirect(request.referrer or f'/comments/{tutor_id}/{session_id}')
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
 
     # Crear el diccionario de la reseña
     review = {
@@ -64,88 +72,96 @@ def send_review(tutor_id=None, session_id=None):
     DEFAULT_PRESENTER.present_review(review)
 
     flash("Reseña enviada correctamente", "success")
-    return redirect(f"/comments/{tutor_id}/{session_id}")
+    return redirect(f"/comments/{tutoria_id}")
 
-def delete_review(review_id):
-    #Hay que comprobar rol
-    #Hay que comprobar que sea el mismo estudiante
+def delete_review(tutoria_id, review_id):
+    
     reviews = get_all_reviews()
     review = next((r for r in reviews if r['review_id'] == review_id), None)
 
     if not review:
         flash("No se encontró la reseña a eliminar.", "warning")
-        return redirect("/comments")
+        return redirect(f"/comments/{tutoria_id}")
+    
+    # Hay que comprobar rol
+    if session.get('role') == 'Student':
+        # Hay que comprobar que sea el mismo estudiante
+        if session.get('name') != review['student_id']:
+            flash("No puedes eliminar la critica de otro estudiante.", "warning")
+            return redirect(f"/comments/{tutoria_id}")
+        
+    if session.get('role') == 'Tutor':
+        # Hay que comprobar que sea el mismo tutor
+        if session.get('name') != review['tutor_id']:
+            flash("No puedes eliminar una critica de un perfil ajeno.", "warning")
+            return redirect(f"/comments/{tutoria_id}")
 
-    session_id = review['session_id']
-    tutor_id = review['tutor_id']
     updated_reviews = [r for r in reviews if r['review_id'] != review_id]
     delete_review_model(review_id)
     save_reviews(updated_reviews)
-
-    flash("Reseña eliminada exitosamente.", "success")
-    return redirect(f"/comments/{tutor_id}/{session_id}")
-
-
-def add_reply(review_id):
-    # Hay que comprobar rol
-    # Hay que comprobar que sea el mismo tutor
-    #try:
-        tutor_id = request.form.get('tutor_id')
-        comment = request.form.get('comment', '').strip()
-
-        if not comment:
-            flash("El comentario no puede estar vacío", "warning")
-            return redirect(request.referrer or '/comments')
-
-        if not tutor_id:
-            flash("Debes iniciar sesión como tutor para responder", "danger")
-            return redirect(request.referrer or '/comments')
-
-        review = get_review_by_id(review_id)
-        if not review:
-            flash("No se encontró la reseña", "danger")
-            return redirect("/comments")
-
-        session_id = review['session_id']
-        tutor_id = review['tutor_id']
-
-        if add_reply_to_review(review_id, tutor_id, comment):
-            logger.info(f"Respuesta añadida a review {review_id}")
-            flash("Respuesta publicada exitosamente", "success")
-        else:
-            logger.warning(f"Review no encontrada: {review_id}")
-            flash("No se encontró la reseña", "danger")
     
-        return redirect(f"/comments/{tutor_id}/{session_id}")
+    logger.info(f"La review {review_id} fue eliminada por el {session.get('role')}: {session.get('name')}")
+    flash("Reseña eliminada exitosamente.", "success")
+    return redirect(f"/comments/{tutoria_id}")
 
-    #except Exception as e:
-     #   logger.error(f"Error en add_reply: {str(e)}")
-      #  flash("Error al procesar tu respuesta", "danger")
-       # return redirect("/comments/{tutor_id}/{session_id}")
 
-def edit_review(review_id):
-    #Comprobar que sea estudiante
-    #Comprobar que sea el mismo
+def add_reply(tutoria_id, review_id):
+
+    review = get_review_by_id(review_id)
+    if not review:
+        flash("No se encontró la reseña", "danger")
+        return redirect(f"/comments/{tutoria_id}")
+
+    # Hay que comprobar rol
+    if session.get('role') != 'Tutor' :
+        flash("No puedes responder, no eres tutor.", "warning")
+        return redirect(f"/comments/{tutoria_id}")
+
+    # Hay que comprobar que sea el mismo tutor
+    if session.get('name') != review['tutor_id'] :
+        flash("No puedes responder, no son tus criticas.", "warning")
+        return redirect(f"/comments/{tutoria_id}")
+
+    tutor_id = session.get('name')
+    comment = request.form.get('comment', '').strip()
+
+    if not comment:
+        flash("El comentario no puede estar vacío", "warning")
+        return redirect(request.referrer or f"/comments/{tutoria_id}")
+
+    if add_reply_to_review(review_id, tutor_id, comment):
+        logger.info(f"Respuesta añadida a review {review_id}")
+        flash("Respuesta publicada exitosamente", "success")
+    else:
+        logger.warning(f"Review no encontrada: {review_id}")
+        flash("No se encontró la reseña", "danger")
+
+    return redirect(f"/comments/{tutoria_id}")
+
+
+def edit_review(tutoria_id, review_id):
+    
+    review = get_review_by_id(review_id)
+    if not review:
+        flash("No se encontró la reseña a editar.", "warning")
+        return redirect(f"/comments/{tutoria_id}")
+    
+    # Comprobar que sea estudiante y Comprobar que sea el mismo
+    if session.get('role') != 'Student' or session.get('name') != review['student_id'] :
+        flash("No puedes editar esta critica, no es tuya.", "warning")
+        return redirect(f"/comments/{tutoria_id}")
+
     comment = request.form.get('comment', '').strip()
     rating = request.form.get('rating')
 
     if not rating or not rating.isdigit() or not (1 <= int(rating) <= 5):
         flash("Calificación inválida.", "warning")
-        return redirect(request.referrer or '/comments')
-
-    review = get_review_by_id(review_id)
-    if not review:
-        flash("No se encontró la reseña a editar.", "warning")
-        return redirect("/comments")
-
-    tutor_id = review['tutor_id']
-    session_id = review['session_id']
+        return redirect(request.referrer or f"/comments/{tutoria_id}")
 
     if update_review(review_id, int(rating), comment):
         flash("Reseña actualizada correctamente.", "success")
     else:
         flash("No se encontró la reseña a editar.", "warning")
 
-
-    return redirect(f"/comments/{tutor_id}/{session_id}")
+    return redirect(f"/comments/{tutoria_id}")
 

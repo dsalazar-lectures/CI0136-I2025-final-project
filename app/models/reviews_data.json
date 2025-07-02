@@ -1,85 +1,38 @@
 [
   {
-    "drive_link": "https://docs.google.com/document/d/10cFJyXzSWrJXPCTQDliv5l6oMXoCbLk9Pj_e5Bs8vFI/edit?usp=drive_link",
-    "comment": "hhh",
-    "reply": null,
-    "tutor_id": "Tutor Tutor",
-    "session_id": "Derecho02",
-    "review_id": 10162,
-    "student_id": "EstudiantePrueba",
-    "date": "01/07/2025",
-    "replies": [
-      {
-        "date": "01/07/2025",
-        "comment": "poio",
-        "tutor_id": "Tutor Tutor",
-        "drive_link": "https://docs.google.com/document/d/10cFJyXzSWrJXPCTQDliv5l6oMXoCbLk9Pj_e5Bs8vFI/edit?usp=drive_link"
-      }
-    ],
-    "rating": 4
-  },
-  {
-    "comment": "Buena explicación, pero falta ser más claro.",
-    "session_id": "Tuto de JJ",
-    "tutor_id": "Tutor Tutor",
-    "reply": null,
-    "date": "01/07/2025",
-    "student_id": "Kevin Ramirez",
-    "review_id": 107879,
-    "rating": 4
-  },
-  {
-    "comment": "Malo",
-    "session_id": "Sesion de Python",
-    "tutor_id": "Tutor Tutor",
-    "reply": null,
-    "date": "01/07/2025",
-    "student_id": "EstudiantePrueba",
-    "review_id": 21460,
-    "rating": 2
-  },
-  {
-    "comment": "Holaa",
+    "comment": "Malisimo",
     "session_id": "Tuto de JJ",
     "tutor_id": "Juan Jose Viquez Rios",
     "reply": null,
     "date": "01/07/2025",
     "student_id": "Kevin Ramirez",
-    "review_id": 63456,
-    "replies": [
-      {
-        "comment": "Hola",
-        "tutor_id": "Juan Jose Viquez Rios",
-        "date": "01/07/2025"
-      }
-    ],
-    "rating": 3
+    "review_id": 12496,
+    "rating": 1
   },
   {
-    "drive_link": "https://docs.google.com/document/d/10cFJyXzSWrJXPCTQDliv5l6oMXoCbLk9Pj_e5Bs8vFI/edit?usp=drive_link",
-    "comment": "1",
-    "reply": null,
-    "tutor_id": "Tutor Tutor",
+    "comment": "Bueno",
     "session_id": "Derecho02",
-    "student_id": "EstudiantePrueba",
+    "tutor_id": "Juan Jose Viquez Rios",
+    "reply": null,
     "date": "01/07/2025",
-    "review_id": 80878,
-    "rating": 5
+    "student_id": "Kevin Ramirez",
+    "review_id": 17196,
+    "rating": 4
   },
   {
     "student_id": "Kevin Ramirez",
-    "tutor_id": "Juan Jose Viquez Rios",
-    "session_id": "Derecho02",
-    "rating": 2,
-    "review_id": 99622,
-    "comment": "Meh",
+    "tutor_id": "Cristiano Ronaldo",
+    "session_id": "Como ser el GOAT",
+    "rating": 5,
+    "review_id": 107827,
+    "comment": "El mejor jugador del mundo",
     "date": "01/07/2025",
     "reply": null,
     "replies": [
       {
-        "tutor_id": "Juan Jose Viquez Rios",
+        "tutor_id": "Cristiano Ronaldo",
         "date": "01/07/2025",
-        "comment": "\"Meh\" que?"
+        "comment": "Siiiuuuuuuu"
       }
     ]
   }
