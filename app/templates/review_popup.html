@@ -48,10 +48,20 @@
                             <textarea class="form-control" id="comment" name="comment" rows="4" placeholder="Escribe tu opinión aquí..."></textarea>
                         </div>
 
-                        <!-- Enlace de Google Drive -->
+                        <!-- File Upload Component -->
                         <div class="mb-3">
-                            <label for="drive_link" class="form-label">Enlace de Google Drive (opcional)</label>
-                            <input type="url" class="form-control" id="drive_link" name="drive_link" placeholder="https://drive.google.com/..." />
+                            <label class="form-label">Archivo adjunto (opcional)</label>
+                            <div class="border rounded p-3 bg-light">
+                                <!-- Upload file section -->
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">Subir archivo</h6>
+                                    <div id="reviewFileUploadContainer"></div>
+                                    <small class="text-muted">Sube un archivo y obtén el enlace automáticamente</small>
+                                </div>
+                                
+                                <!-- Hidden input to store the drive link -->
+                                <input type="hidden" class="form-control" id="drive_link" name="drive_link" />
+                            </div>
                         </div>
                         
                         <!-- Campos ocultos -->
@@ -71,6 +81,7 @@
     </div>
 </div>
 
+<script src="/static/upload-widget-simple.js"></script>
 <script>
     const ratingInput = document.getElementById('selected-rating');
 
@@ -148,5 +159,51 @@
 
         // Re-attach listeners each time (to be safe if DOM was changed)
         attachStarListeners();
+        
+        // Initialize file uploader each time popup opens
+        if (window.FileUploadWidget) {
+            const uploadContainer = document.getElementById('reviewFileUploadContainer');
+            if (uploadContainer) {
+                uploadContainer.innerHTML = '';
+                
+                const uploader = FileUploadWidget.createAttachmentUploader({
+                    buttonText: '📎 Seleccionar archivo',
+                    buttonClass: 'btn btn-outline-primary btn-sm',
+                    onSuccess: (file) => {
+                        // Auto-fill the manual input with the uploaded file URL
+                        document.getElementById('drive_link').value = file.url;
+                        
+                        // Show success message
+                        const successDiv = document.createElement('div');
+                        successDiv.className = 'alert alert-success alert-dismissible fade show mt-2';
+                        successDiv.innerHTML = `
+                            ✅ Archivo subido: ${file.original_name}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        uploadContainer.appendChild(successDiv);
+                        
+                        // Auto-dismiss after 3 seconds
+                        setTimeout(() => {
+                            if (successDiv.parentNode) {
+                                successDiv.remove();
+                            }
+                        }, 3000);
+                    },
+                    onError: (error) => {
+                        // Show error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'alert alert-danger alert-dismissible fade show mt-2';
+                        errorDiv.innerHTML = `
+                            ❌ Error al subir archivo: ${error}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        uploadContainer.appendChild(errorDiv);
+                    }
+                });
+                
+                // Render the uploader
+                uploader.render('#reviewFileUploadContainer');
+            }
+        }
     }
 </script>

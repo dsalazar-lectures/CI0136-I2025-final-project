@@ -85,7 +85,7 @@ class FirebaseUserRepository(IUserRepository):
         return safe_execute(operation, fallback=False, context="[user_exists]")
 
     def update_user_fields(self, email, updates):
-        allowed_fields = {"name", "role"}
+        allowed_fields = {"name", "role", "profile_picture_url"}
         filtered_updates = {k: v for k, v in updates.items() if k in allowed_fields}
 
         def operation():

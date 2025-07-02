@@ -40,9 +40,13 @@
   <!-- Profile section -->
   <div class="d-flex align-items-center justify-content-between p-4 profile-container">
     <div class="d-flex align-items-center">
-      <div class="me-3">
-        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-             class="rounded-circle" alt="User Avatar" width="80" height="80">
+      <div class="me-3 position-relative">
+        <img id="profileImage" 
+             src="{{ session.get('profile_picture_url', 'https://cdn-icons-png.flaticon.com/512/149/149071.png') }}"
+             class="rounded-circle" alt="User Avatar" width="80" height="80" 
+             style="object-fit: cover; border: 3px solid #f8f9fa;"
+             onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'; console.log('Profile image failed to load:', this.getAttribute('src'));"
+             onload="console.log('Profile image loaded successfully:', this.src);">
       </div>
       <div>
         <h5 class="mb-1">{{ name }}</h5>
@@ -181,6 +185,21 @@
             {% endif %}
           {% endwith %}
 
+          <!-- Hidden field for profile picture URL -->
+          <input type="hidden" id="profile_picture_url" name="profile_picture_url" value="">
+
+          <div class="mb-3">
+            <label class="form-label">Profile Picture</label>
+            <div class="d-flex align-items-center gap-3">
+              <img id="modalProfileImage" 
+                   src="{{ session.get('profile_picture_url', 'https://cdn-icons-png.flaticon.com/512/149/149071.png') }}"
+                   class="rounded-circle" alt="Foto de Perfil actual" width="60" height="60"
+                   style="object-fit: cover; border: 2px solid #e9ecef;"
+                   onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png';">
+              <div id="profilePictureUpload"></div>
+            </div>
+          </div>
+
           <div class="mb-3">
             <label for="name" class="form-label">Full Name</label>
             <input type="text" class="form-control" id="name" name="name" value="{{ name }}">
@@ -203,7 +222,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn profile-btn-primary text-white">Save Changes</button>
+          <button type="submit" class="btn profile-btn-primary text-white" onclick="handleFormSubmit()">Save Changes</button>
         </div>
       </form>
     </div>
@@ -220,7 +239,37 @@
 </script>
 
 <!-- Call function to update notification status-->
+<script src="/static/upload-widget-simple.js"></script>
 <script>
+  // Load profile picture from sessionStorage if available
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, checking profile picture settings...');
+    console.log('Session profile picture URL:', "{{ session.get('profile_picture_url', 'NONE') }}");
+    
+    // Clear any old sessionStorage data after page load (successful save)
+    // This prevents conflicts with the saved profile picture URL
+    if (window.location.search.includes('success') || 
+        document.querySelector('.alert-success')) {
+      console.log('Success detected, clearing temp profile picture from sessionStorage');
+      sessionStorage.removeItem('temp_profile_picture_url');
+    }
+    
+    const tempProfilePic = sessionStorage.getItem('temp_profile_picture_url');
+    console.log('Temp profile picture from sessionStorage:', tempProfilePic);
+    
+    if (tempProfilePic) {
+      const profileImg = document.getElementById('profileImage');
+      const modalImg = document.getElementById('modalProfileImage');
+      if (profileImg && tempProfilePic !== profileImg.src) {
+        console.log('Updating profile image with temp URL:', tempProfilePic);
+        profileImg.src = tempProfilePic;
+      }
+      if (modalImg && tempProfilePic !== modalImg.src) {
+        modalImg.src = tempProfilePic;
+      }
+    }
+  });
+
   // Get the email_notification_status (toggle) value if a change is detected
   document.getElementById("email_notification_status").addEventListener("change", function () {
     // Invertimos para que coincida el toggle activado con false
@@ -231,6 +280,83 @@
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `status=${status}`
     });
+  });
+
+  // Initialize profile picture uploader when modal opens
+  document.getElementById('editProfileModal').addEventListener('shown.bs.modal', function () {
+    // Clear any existing uploader button first
+    const uploadContainer = document.getElementById('profilePictureUpload');
+    uploadContainer.innerHTML = '';
+    
+    // Create profile picture uploader
+    const profileUploader = FileUploadWidget.createProfileUploader({
+      buttonText: 'Cambiar Foto',
+      buttonClass: 'btn btn-outline-primary btn-sm',
+      onSuccess: (file) => {
+        console.log('Profile picture upload success:', file);
+        console.log('File URL:', file.url);
+        
+        // Update both profile images for preview
+        document.getElementById('profileImage').src = file.url;
+        document.getElementById('modalProfileImage').src = file.url;
+        
+        // Store temporarily until "Save Changes" is clicked
+        sessionStorage.setItem('temp_profile_picture_url', file.url);
+        
+        // Show success message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-info alert-dismissible fade show mt-2';
+        alertDiv.innerHTML = `
+          Foto subida.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.modal-body').insertBefore(alertDiv, document.querySelector('.modal-body').firstChild);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.remove();
+          }
+        }, 5000);
+      },
+      onError: (error) => {
+        // Show error message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-2';
+        alertDiv.innerHTML = `
+          Error al actualizar la foto de perfil: ${error}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.modal-body').insertBefore(alertDiv, document.querySelector('.modal-body').firstChild);
+      }
+    });
+    
+    // Render the uploader button
+    profileUploader.render('#profilePictureUpload');
+  });
+
+  // Handle form submission - transfer temp URL to hidden field
+  function handleFormSubmit() {
+    const tempProfilePic = sessionStorage.getItem('temp_profile_picture_url');
+    if (tempProfilePic) {
+      document.getElementById('profile_picture_url').value = tempProfilePic;
+    }
+    // Don't clear sessionStorage here - let the page reload handle it
+    return true; // Allow form submission to continue
+  }
+
+  // Handle modal close - revert to original image if changes weren't saved
+  document.getElementById('editProfileModal').addEventListener('hidden.bs.modal', function () {
+    const tempProfilePic = sessionStorage.getItem('temp_profile_picture_url');
+    if (tempProfilePic) {
+      // User closed modal without saving - revert images
+      const originalSrc = "{{ session.get('profile_picture_url', 'https://cdn-icons-png.flaticon.com/512/149/149071.png') }}";
+      document.getElementById('profileImage').src = originalSrc;
+      document.getElementById('modalProfileImage').src = originalSrc;
+      
+      // Clear the temporary URL
+      sessionStorage.removeItem('temp_profile_picture_url');
+    }
   });
 </script>
 {% endblock %}

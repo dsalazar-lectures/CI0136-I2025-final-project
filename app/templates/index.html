@@ -54,14 +54,17 @@
                                     {{ comment.comment }}
                                 </p>
 
-                                <!-- Enlace de Drive -->
+                                <!-- Archivo adjunto -->
                                 {% if comment.drive_link %}
-                                    <p class="small">
-                                        <strong>Enlace de Google Drive:</strong>
-                                        <a href="{{ comment.drive_link }}" target="_blank" rel="noopener noreferrer">
-                                            {{ comment.drive_link }}
-                                        </a>
-                                    </p>
+                                    <div class="mt-2 p-2 bg-light border rounded d-inline-block">
+                                        <i class="fas fa-paperclip text-primary me-1"></i>
+                                        <small>
+                                            <strong>Archivo adjunto:</strong>
+                                            <a href="{{ comment.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                Ver archivo
+                                            </a>
+                                        </small>
+                                    </div>
                                 {% endif %}
 
                                 {% if comment.replies %}
@@ -79,12 +82,15 @@
                                             <p class="small text-secondary mb-0">{{ reply.comment }}</p>
 
                                             {% if reply.drive_link %}
-                                                <p class="small mt-1">
-                                                <strong>Enlace de Google Drive:</strong>
-                                                <a href="{{ reply.drive_link }}" target="_blank" rel="noopener noreferrer">
-                                                    {{ reply.drive_link }}
-                                                </a>
-                                                </p>
+                                                <div class="mt-2 p-2 bg-light border rounded d-inline-block">
+                                                    <i class="fas fa-paperclip text-primary me-1"></i>
+                                                    <small>
+                                                        <strong>Archivo adjunto:</strong>
+                                                        <a href="{{ reply.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                            Ver archivo
+                                                        </a>
+                                                    </small>
+                                                </div>
                                             {% endif %}
                                             </div>
                                         </div>
