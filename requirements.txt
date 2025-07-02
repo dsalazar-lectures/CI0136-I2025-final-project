@@ -32,3 +32,4 @@ bcrypt==4.3.0
 flake8==7.0.0
 pep8-naming==0.14.0
 #pre-commit==3.6.2
+better-profanity==0.7.0

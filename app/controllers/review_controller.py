@@ -5,6 +5,9 @@ from app.models.review_model import add_review, get_all_reviews, add_reply_to_re
 import logging
 from datetime import datetime
 from app.controllers.review_presenter_controller import ConsoleReviewPresenter ## Si queremos agregar en un futuro LogFileReviewPresenter, EmailReviewPresenter
+from better_profanity import profanity
+import os
+import re
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
@@ -54,6 +57,14 @@ def send_review(tutoria=None):
 
     if not comment.strip():
         flash("El comentario no puede estar vacío.", "warning")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
+    
+    if is_injection(comment):
+        flash("El comentario contiene patrones de inyección de código y fue bloqueado.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
+    
+    if is_offensive(comment):
+        flash("El comentario contiene lenguaje ofensivo y no puede ser enviado.", "danger")
         return redirect(request.referrer or f'/comments/{tutoria_id}')
 
     # Crear el diccionario de la reseña
@@ -128,6 +139,14 @@ def add_reply(tutoria_id, review_id):
     if not comment:
         flash("El comentario no puede estar vacío", "warning")
         return redirect(request.referrer or f"/comments/{tutoria_id}")
+    
+    if is_injection(comment):
+        flash("El comentario contiene patrones de inyección de código y fue bloqueado.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
+    
+    if is_offensive(comment):
+        flash("El comentario contiene lenguaje ofensivo y no puede ser enviado.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
 
     if add_reply_to_review(review_id, tutor_id, comment):
         logger.info(f"Respuesta añadida a review {review_id}")
@@ -157,14 +176,21 @@ def edit_review(tutoria_id, review_id):
     if not rating or not rating.isdigit() or not (1 <= int(rating) <= 5):
         flash("Calificación inválida.", "warning")
         return redirect(request.referrer or f"/comments/{tutoria_id}")
+    
+    if is_injection(comment):
+        flash("El comentario contiene patrones de inyección de código y fue bloqueado.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
 
+    if is_offensive(comment):
+        flash("El comentario contiene lenguaje ofensivo y no puede ser enviado.", "danger")
+        return redirect(request.referrer or f'/comments/{tutoria_id}')
+    
     if update_review(review_id, int(rating), comment):
         flash("Reseña actualizada correctamente.", "success")
     else:
         flash("No se encontró la reseña a editar.", "warning")
 
     return redirect(f"/comments/{tutoria_id}")
-
 
 def calculate_average_tutor(tutor_id):
     all_reviews = get_all_reviews()
@@ -183,3 +209,36 @@ def calculate_average_reviews(reviews):
     suma = sum(int(r['rating']) for r in reviews)
     average = suma / len(reviews)
     return round(average, 2)
+
+def init_word_filter():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.normpath(os.path.join(base_dir, '..', 'utils', 'offensive_words_es.txt'))
+
+    with open(file_path, encoding="utf-8") as f:
+        words_es = [str(line.strip()) for line in f if line.strip()]
+
+    words_en = [str(word) for word in profanity.CENSOR_WORDSET]
+    profanity.load_censor_words(words_es + words_en)
+
+def is_offensive(comment):
+    init_word_filter()
+    comment = comment.lower()
+    return profanity.contains_profanity(comment)
+
+def is_injection(comment):
+    comment = comment.lower()
+
+    suspicious_patterns = [
+        r"('|--|;)",                     # SQL básico
+        r"(drop\s+table|insert\s+into|select\s+.+\s+from)",  # SQL avanzado
+        r"<script.*?>.*?</script>",     # XSS básico
+        r"(onerror\s*=|onload\s*=)",    # JS embebido
+        r"(alert\s*\(|confirm\s*\()",   # JS funciones comunes
+        r"`.*?`",                        # command injection
+        r"\$\{.*?\}",                   # template injection
+    ]
+
+    for pattern in suspicious_patterns:
+        if re.search(pattern, comment):
+            return True
+    return False
