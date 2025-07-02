@@ -43,9 +43,11 @@ def home():
     
     return render_template("index.html", comments=comments) 
 
-@review_bp.route('/send-review/', methods=['POST'])
-def create_review():
-     return send_review()
+@review_bp.route('/send-review/<tutoria_id>', methods=['POST'])
+def create_review(tutoria_id):
+    firebase_repo = FirebaseTutoringRepository()
+    tutoria = firebase_repo.get_tutoria_by_id(tutoria_id)
+    return send_review(tutoria)
 
 @review_bp.route("/delete-review/<tutoria_id>/<int:review_id>", methods=["POST"])
 def remove_review(tutoria_id, review_id):
