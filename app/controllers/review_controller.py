@@ -218,9 +218,14 @@ def edit_review(tutoria_id, review_id):
     return redirect(f"/comments/{tutoria_id}")
 
 def edit_reply(tutoria_id, review_id, reply_index):
+    review = get_review_by_id(review_id)
     comment = request.form.get('comment', '').strip()
     drive_link = request.form.get('drive_link', '').strip()
 
+    if session.get('role') != 'Tutor' or session.get('name') != review['tutor_id'] :
+        flash("No puedes editar esta critica, no es tuya.", "warning")
+        return redirect(f"/comments/{tutoria_id}")
+    
     if not comment:
         flash("El comentario no puede estar vacío.", "warning")
         return redirect(request.referrer or "/comments")
@@ -258,8 +263,13 @@ def delete_reply(tutoria_id, review_id, reply_index):
     if not review:
         flash("No se encontró la reseña.", "danger")
         return redirect("/comments")
-
+    
     session_id = review.get("session_id", "")
+
+    if session.get('name') != review['tutor_id']:
+            flash("No puedes eliminar la critica de un tutor.", "warning")
+            return redirect(f"/comments/{tutoria_id}")
+    
     try:
         replies = review.get("replies", [])
         if 0 <= reply_index < len(replies):
