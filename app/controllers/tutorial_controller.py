@@ -7,12 +7,12 @@ from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.utils.date_utils import get_current_datetime
 from datetime import datetime
-
+from app.services.meetings.zoom_meeting_service import zoom_meeting_service
 tutorial = Blueprint('tutorial', __name__)
 
 repo = Tutorial_mock_repo()
 firebase_repo = FirebaseTutoringRepository()
-
+zoom_service = zoom_meeting_service()
 @tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
@@ -263,6 +263,29 @@ def get_meeting_data_from_firebase(id):
             "meeting_link": tutoring.meeting_link
         }
     return None
+@tutorial.route('/tutorial/<id>/create_zoom_meeting', methods=['POST'])
+@login_or_role_required('Tutor')
+def create_zoom_meeting(id):
+    access_token = session.get('zoom_access_token')
+    if not access_token:
+        flash("Debes conectar tu cuenta de Zoom primero.", "warning")
+        return redirect(url_for('zoom.zoom_connect'))
+    tutoring = firebase_repo.get_tutoria_by_id(id)
+    if not tutoring:
+        flash("Tutoría no encontrada.", "danger")
+        return redirect(url_for('tutorial.listTutorTutorials'))
+    meeting_data = {
+        "topic": tutoring.title,
+        "start_time": f"{tutoring.date}T{tutoring.start_time}:00Z",  # Formato ISO 8601
+        "duration": 60,  # Duración en minutos, puedes ajustarlo según sea necesario 
+    }
 
-
-
+    try:
+        zoom_response = zoom_service.create_meeting(access_token, meeting_data)
+        meeting_link = zoom_response.get("join_url")
+        firebase_repo.update_tutorial(id, {"meeting_link": meeting_link})
+        flash("Reunión de Zoom creada exitosamente.", "success")
+    except Exception as e:
+        flash(f"Error al crear la reunión de Zoom: {str(e)}", "danger")
+    
+    return redirect(url_for('tutorial.getTutoriaById', id=id, user_role='tutor'))

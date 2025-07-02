@@ -37,8 +37,12 @@
 
     <a href="{% if user_role == 'tutor' %}{{ url_for('tutorial.listTutorTutorials') }}{% else %}{{ url_for('tutorial.getListTutorials') }}{% endif %}" class="button-back">
         Volver a la lista de tutorías
-      </a>
-      
+    </a>
+    {% if user_role == 'tutor' %}
+        <form action="{{ url_for('tutorial.create_zoom_meeting', id=tutoring.id if tutoring else '') }}" method="post">
+        <button type="submit" class="btn btn-primary">Crear reunión Zoom</button>
+    </form>
+{% endif %}
     
     <div class="students">
     <h2>Estudiantes Inscritos</h2>
