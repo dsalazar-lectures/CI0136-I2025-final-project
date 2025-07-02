@@ -1,4 +1,4 @@
-## **Software Engineering Best Practices Followed by the Code**
+# **Software Engineering Best Practices Followed by the Code**
 
 During the development of the system, several best practices were applied that promote quality, scalability, and maintainability. The most relevant include:
 
@@ -151,3 +151,59 @@ Several areas for improvement were identified during the development of the syst
 
 * **Limited Continuous Integration:**
   No CI process was established to automatically verify changes merged into the `main` branch. As a result, some issues were detected late during manual integrations, complicating a smooth and safe integration process.
+
+---
+
+## **Testing Approach and Achievements**
+
+The project implemented a comprehensive testing strategy to ensure functionality, quality, and robustness of the code base. This approach helped identify issues early in the development process and provided confidence in the implemented features.
+
+### **Testing Framework and Structure**
+
+* **Framework Used:**
+  The testing was implemented using pytest, a powerful Python testing framework that facilitates both simple unit tests and complex functional tests.
+
+* **Test Organization:**
+  Tests were organized by functionality, with dedicated test files for each major component of the system (authentication, profile editing, password management, etc.).
+
+* **Mocking and Fixtures:**
+  Extensive use of fixtures and mocking facilitated isolated testing without external dependencies. For example, database connections were mocked to prevent test execution from affecting production data.
+
+### **Test Coverage Areas**
+
+1. **Authentication Testing:**
+   * Validation of login credentials
+   * Testing of authentication strategies (local and Google)
+   * Role-based access control verification
+   * Session management testing
+
+2. **User Management Testing:**
+   * Registration validation and error handling
+   * Profile editing functionality
+   * Password strength validation and security
+   * Role assignment and permissions
+
+3. **Functionality Testing:**
+   * Tutoring session creation and management
+   * Reviews and ratings system
+   * Comment functionality
+   * Subscription management
+
+4. **Integration Testing:**
+   * End-to-end flows for critical user journeys
+   * State transitions throughout the application
+
+### **Key Testing Achievements**
+
+* **Robust Error Handling:**
+  Tests verified that the system properly validates inputs and provides clear error messages when invalid data is provided.
+
+* **Session Management:**
+  Special attention was given to testing session persistence and security, ensuring user state is properly maintained between requests.
+
+* **Cross-Component Integration:**
+  Tests verified that components interact correctly, particularly between the authentication system, user profiles, and feature access.
+
+* **Design Pattern Verification:**
+  The implemented tests validated that design patterns (Strategy, Factory, State) function as intended and maintain expected behavior.
+  
