@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from app.models.review_model import get_all_reviews
-from app.controllers.review_controller import (send_review, delete_review, add_reply, edit_review, edit_reply, delete_reply)
+from app.controllers.review_controller import send_review, delete_review, add_reply, edit_review, edit_reply, delete_reply
+from app.models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 
 review_bp = Blueprint('review_bp', __name__)
 
@@ -13,36 +14,44 @@ def home():
 def create_review():
      return send_review()
 
-@review_bp.route("/delete-review/<int:review_id>", methods=["POST"])
-def remove_review(review_id):
-    return delete_review(review_id)
+@review_bp.route("/delete-review/<tutoria_id>/<int:review_id>", methods=["POST"])
+def remove_review(tutoria_id, review_id):
+    return delete_review(tutoria_id, review_id)
 
-@review_bp.route("/reply-review/<int:review_id>", methods=["POST"])
-def reply_review(review_id):
-    return add_reply(review_id)
+@review_bp.route("/reply-review/<tutoria_id>/<int:review_id>", methods=["POST"])
+def reply_review(tutoria_id, review_id):
+    return add_reply(tutoria_id, review_id)
 
-@review_bp.route("/edit-review/<int:review_id>", methods=["POST"])
-def edit_review_route(review_id):
-    return edit_review(review_id)
+@review_bp.route("/edit-review/<tutoria_id>/<int:review_id>", methods=["POST"])
+def edit_review_route(tutoria_id, review_id):
+    return edit_review(tutoria_id, review_id)
 
-@review_bp.route('/comments/<session_id>')
-def comments_by_session(session_id):
+@review_bp.route('/comments/<tutoria_id>')
+def comments_by_session(tutoria_id):
+    firebase_repo = FirebaseTutoringRepository()
+    tutoria = firebase_repo.get_tutoria_by_id(tutoria_id)
+
+    tutor_id = tutoria.tutor
+    session_id = tutoria.title
+    
     all_reviews = get_all_reviews()
     filtered = [r for r in all_reviews if r['session_id'] == session_id]
 
     for c in filtered:
         print("REVIEW:", c)
 
-    return render_template("index.html", comments=filtered, session_id=session_id)
+    return render_template("index.html", session_id=session_id, comments=filtered, tutor_name=tutor_id, tutoria_id=tutoria_id)
 
-@review_bp.route('/send-review/<session_id>', methods=['POST'])
-def create_review_with_session(session_id):
-    return send_review(session_id=session_id)
+@review_bp.route('/send-review/<tutoria_id>', methods=['POST'])
+def create_review_with_session(tutoria_id):
+    firebase_repo = FirebaseTutoringRepository()
+    tutoria = firebase_repo.get_tutoria_by_id(tutoria_id)
+    return send_review(tutoria=tutoria)
 
-@review_bp.route("/edit-reply/<int:review_id>/<int:reply_index>", methods=["POST"])
-def edit_reply_route(review_id, reply_index):
-    return edit_reply(review_id, reply_index)
+@review_bp.route("/edit-reply/<tutoria_id>/<int:review_id>/<int:reply_index>", methods=["POST"])
+def edit_reply_route(tutoria_id, review_id, reply_index):
+    return edit_reply(tutoria_id, review_id, reply_index)
 
-@review_bp.route("/delete-reply/<int:review_id>/<int:reply_index>", methods=["POST"])
-def delete_reply_route(review_id, reply_index):
-    return delete_reply(review_id, reply_index)
+@review_bp.route("/delete-reply/<tutoria_id>/<int:review_id>/<int:reply_index>", methods=["POST"])
+def delete_reply_route(tutoria_id, review_id, reply_index):
+    return delete_reply(tutoria_id, review_id, reply_index)
