@@ -169,7 +169,6 @@ def add_reply(tutoria_id, review_id):
             'original_comment': review['comment']  # The original comment
         }
         
-        DEFAULT_PRESENTER.present_review(reply_data)
         EMAIL_PRESENTER.present_review(reply_data)
         
         flash("Respuesta publicada exitosamente", "success")
