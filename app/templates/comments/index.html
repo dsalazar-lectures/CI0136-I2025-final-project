@@ -20,54 +20,140 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0">Comentarios{% if session_id %} - {{ session_id }}{% endif %}</h5>
-                    <a href="{{ url_for('ratings.review') }}" class="btn btn-primary btn-sm">Calificar tutor</a>
+                    <!-- Botón para crear reseña usando JS -->
+                    <button class="btn btn-primary btn-sm" onclick="showCreatePrompt('{{ session_id }}')">Calificar tutor</button>
                 </div>
-                
+
                 {% for comment in comments %}
                 <div class="{% if not loop.first %}mt-4 pt-4 border-top{% endif %}">
-                    <div class="d-flex">
-                        <div class="avatar avatar-md me-3">
-                            <i class="fas fa-user text-secondary"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <!-- Nombre, luego estrellas y fecha debajo -->
-                            <h6 class="mb-1">{{ comment.name }}</h6>
-                            <div class="d-flex flex-wrap align-items-center mb-2">
-                                <div class="me-3">
-                                    {% for i in range(5) %}
-                                        {% if i < comment.rating %}
-                                            <i class="fas fa-star star-filled"></i>
-                                        {% else %}
-                                            <i class="fas fa-star star-empty"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <small class="text-muted">{{ comment.date }}</small>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex">
+                            <div class="avatar avatar-md me-3">
+                                <i class="fas fa-user text-secondary"></i>
                             </div>
-                            <p class="small text-secondary mb-3">
-                                {{ comment.content }}
-                            </p>
-                            
-                            <!-- Tutor Reply -->
-                            {% if comment.reply %}
-                            <div class="ms-4 ps-3 reply-indent mt-3">
-                                <div class="d-flex">
-                                    <div class="avatar avatar-sm me-2">
-                                        <i class="fas fa-user text-secondary"></i>
+                            <div class="flex-grow-1">
+                                <!-- Nombre del estudiante -->
+                                <h6 class="mb-1">{{ comment.student_id }}</h6>
+
+                                <!-- Estrellas y fecha -->
+                                <div class="d-flex flex-wrap align-items-center mb-2">
+                                    <div class="me-3">
+                                        {% for i in range(5) %}
+                                            {% if i < comment.rating %}
+                                                <i class="fas fa-star star-filled"></i>
+                                            {% else %}
+                                                <i class="fas fa-star star-empty"></i>
+                                            {% endif %}
+                                        {% endfor %}
                                     </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">{{ comment.reply.name }}</h6>
-                                        <div class="mb-2">
-                                            <small class="text-muted">{{ comment.reply.date }}</small>
+                                    <small class="text-muted">{{ comment.date }}</small>
+                                </div>
+
+                                <!-- Comentario -->
+                                <p class="small text-secondary mb-2">
+                                    {{ comment.comment }}
+                                </p>
+
+                                <!-- Archivo adjunto -->
+                                {% if comment.drive_link %}
+                                    <div class="mt-2 p-2 bg-light border rounded d-inline-block">
+                                        <i class="fas fa-paperclip text-primary me-1"></i>
+                                        <small>
+                                            <strong>Archivo adjunto:</strong>
+                                            <a href="{{ comment.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                📎 Ver archivo
+                                            </a>
+                                        </small>
+                                    </div>
+                                {% endif %}
+
+                                {% if comment.replies %}
+                                    {% for reply in comment.replies %}
+                                        <div class="d-flex justify-content-between align-items-start">
+                                        <div class="d-flex">
+                                            <div class="avatar avatar-sm me-2">
+                                            <i class="fas fa-user text-secondary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ reply.tutor_id }}</h6>
+                                            <div class="mb-2">
+                                                <small class="text-muted">{{ reply.date }}</small>
+                                            </div>
+                                            <p class="small text-secondary mb-0">{{ reply.comment }}</p>
+
+                                            {% if reply.drive_link %}
+                                                <div class="mt-2 p-2 bg-light border rounded d-inline-block">
+                                                    <i class="fas fa-paperclip text-primary me-1"></i>
+                                                    <small>
+                                                        <strong>Archivo adjunto:</strong>
+                                                        <a href="{{ reply.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                            📎 Ver archivo
+                                                        </a>
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                            </div>
                                         </div>
-                                        <p class="small text-secondary mb-0">
-                                            {{ comment.reply.content }}
-                                        </p>
-                                    </div>
-                                </div>
+
+                                        <!-- Dropdown para la respuesta -->
+                                        <div class="dropdown ms-2">
+                                            <button class="btn btn-link text-muted p-0" type="button" id="dropdownReply{{ loop.index }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownReply{{ loop.index }}">
+                                            <li>
+                                                <button class="dropdown-item text-muted"
+                                                onclick="showEditReplyPrompt('{{ comment.review_id }}', '{{ loop.index0 }}', '{{ reply.comment }}', '{{ reply.drive_link | default('') }}')">
+                                                Editar respuesta
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <form action="/delete-reply/{{ comment.review_id }}/{{ loop.index0 }}" method="POST" class="m-0 p-0">
+                                                <button type="submit" class="dropdown-item text-danger">Eliminar respuesta</button>
+                                                </form>
+                                            </li>
+                                            </ul>
+                                        </div>
+                                        </div>
+
+                                    {% endfor %}
+                                {% endif %}
                             </div>
-                            {% endif %}
                         </div>
+
+                        <!-- Dropdown menu -->
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuBtn{{ comment.review_id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuBtn{{ comment.review_id }}">
+                                <!-- Opción Eliminar -->
+                                <li>
+                                    <form action="{{ url_for('review_bp.remove_review', review_id=comment.review_id) }}" method="POST" class="m-0 p-0">
+                                        <button type="submit" class="dropdown-item text-danger">Eliminar</button>
+                                    </form>
+                                </li>
+
+                                <!-- Opción Editar -->
+                                <li>
+                                    <button class="dropdown-item text-muted"
+                                        onclick="showEditPrompt('{{ comment.review_id }}', '{{ comment.comment }}', '{{ comment.rating }}', '{{ comment.drive_link | default('') }}')">
+                                        Editar
+                                    </button>
+                                </li>
+
+                                <!-- Opción Responder -->
+                                <li>
+                                    <button
+                                        type="button"
+                                        class="dropdown-item text-muted"
+                                        onclick="showReplyPrompt('{{ comment.review_id }}', '{{ comment.tutor_id }}')">
+                                        Responder
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- Fin dropdown -->
                     </div>
                 </div>
                 {% endfor %}
@@ -75,4 +161,40 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+<!-- Incluir el popup -->
+{% include 'review_popup.html' %}
+
+{% block scripts %}
+<script>
+  // Función para responder
+  function showReplyPrompt(reviewId, tutorId, driveLink = '') {
+      const form = document.getElementById('reviewForm');
+      form.action = `/reply-review/${reviewId}`;
+      openReviewPopup('Responde al comentario', 0, '', false, driveLink, reviewId);
+  }
+
+  // Función para editar
+  function showEditPrompt(reviewId, currentComment, currentRating, currentDriveLink = '') {
+      console.log("Edit clicked:", reviewId);
+      const form = document.getElementById('reviewForm');
+      form.action = `/edit-review/${reviewId}`;
+      openReviewPopup('Edita tu reseña', currentRating, currentComment, true, currentDriveLink, reviewId);
+  }
+
+  // Función para crear una reseña nueva
+  function showCreatePrompt(sessionId = '') {
+      const form = document.getElementById('reviewForm');
+      form.action = `/send-review/${sessionId}`;
+      openReviewPopup('Escribe una reseña', 0, '', true, '', null);
+  }
+
+  function showEditReplyPrompt(reviewId, replyIndex, commentText, driveLink = '') {
+      const form = document.getElementById('reviewForm');
+      form.action = `/edit-reply/${reviewId}/${replyIndex}`;
+      openReviewPopup('Edita tu respuesta', 0, commentText, false, driveLink, reviewId);
+  }
+
+</script>
 {% endblock %}
