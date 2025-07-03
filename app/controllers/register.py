@@ -78,6 +78,13 @@ def register():
         
         # Flash success message and redirect
         flash(result['message'], result['category'])
+
+        log_audit(
+                user=name,
+                action_type=AuditActionType.USER_REGISTER,
+                details=f"User registered successfully"
+            )
+
         return redirect(result['redirect_url'])
 
     # Handle GET request - display registration form
