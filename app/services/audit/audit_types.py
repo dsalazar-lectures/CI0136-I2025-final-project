@@ -39,5 +39,8 @@ class AuditActionType(Enum):
     TRANSACTION_COMPLETE = "TRANSACTION_COMPLETE"
     TRANSACTION_CANCEL = "TRANSACTION_CANCEL"
 
+    # Tutorys
+    TUTORY_ADQUIRED = "TUTORY_ADQUIRED"
+
     # Miscellaneous/Other Actions:
     # ...
