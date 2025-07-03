@@ -5,11 +5,9 @@ This module defines routes and handlers for authentication-related functionality
 """
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for, make_response
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
-# from app.models.repositories.users.mock_user_repository import MockUserRepository
-from ..models.services.registration_service import validate_registration_data, validate_login_data
 from app.services.notification import send_email_notification
-from firebase_admin import auth as firebase_auth
 import traceback
+from ..auth_states.auth_state_context import AuthStateContext
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -23,7 +21,7 @@ def login():
     Handle user login requests.
 
     For POST requests:
-    - Validates login data
+    - Validates login data using the local authentication strategy
     - Sets session variables for user id and role on success
     - Redirects to home page on success
     - Redirects back to login page with error message on failure
@@ -45,32 +43,25 @@ def login():
             'email': email,
             'password': password,
         }
-        user, error = validate_login_data(email, password, user_repo)
+        
+        # Get the appropriate auth state based on environment configuration
+        auth_state = AuthStateContext.get_state()
+        credentials = {
+            'email': email,
+            'password': password
+        }
+        
+        # Authenticate the user
+        user, error = auth_state.login(credentials, user_repo)
+        
         # If any error occurs during validation, flash the error message and redirect to login page
         if error:
             flash(error, "danger")
             return redirect(url_for("auth.login"))
-        # Otherwise, set session variables and redirect to home page
+            
+        # Set up the session with user data
         session.pop('form_data', None)
-        session.clear()
-        session["user_id"] = user["id"]
-        session["name"] = user.get("name", email)
-        session["role"] = user["role"]
-        session["status"] = user.get("status", email)
-        session["email"] = email
-        session["notification_enabled"] = user["notification_enabled"]
-
-        # Send a login notification email
-        # Prepare email data for notification
-        email_data = {
-            "username": session["name"],
-            "emailTo": session["email"],
-        }
-        
-        # Attempt to send the email notification
-        if not send_email_notification("login", email_data):
-            # (TODO) If email sending fails, log the error
-            pass
+        auth_state.setup_session(user, session)
 
         return redirect(url_for("home.home"))
 
@@ -82,53 +73,25 @@ def login():
     response.headers["Pragma"] = "no-cache"
     return response
 
-
-@auth_bp.route("/logout", methods=["POST"])
-def logout():
-    """Clear the current session, including the stored user id."""
-    session.clear()
-    return redirect(url_for("auth.login"))
-    
 @auth_bp.route("/google-login", methods=["POST"])
 def google_login():
     try:
         data = request.get_json()
         id_token = data.get("token")
-        print("📨 ID Token recibido:", id_token)
-
-        decoded_token = firebase_auth.verify_id_token(id_token)
-        email = decoded_token.get("email")
-        name = decoded_token.get("name", email)
-
-        user_repo = FirebaseUserRepository()
-        existing_user = user_repo.get_user_by_email(email)
-
-        if not existing_user:
-            print(f"Creando nuevo usuario para {email}")
-            new_user = user_repo.add_user(
-                name=name,
-                email=email,
-                password=None,
-                role="Student"
-            )
+        
+        # Get the appropriate auth state based on environment configuration
+        auth_state = AuthStateContext.get_state()
+        
+        # Authenticate the user with Google
+        user, error = auth_state.google_login(id_token, user_repo)
+        
+        # If any error occurs during authentication
+        if error:
+            print(f"Error en autenticación con Google: {error}")
+            return {"error": error}, 400
             
-            if not new_user:
-                print(f"Error creando usuario, intentando recuperar de nuevo: {email}")
-                existing_user = user_repo.get_user_by_email(email)
-                if not existing_user:
-                    return {"error": "Error al crear/recuperar usuario"}, 400
-            else:
-                existing_user = new_user
-        else:
-            print(f"Usuario existente encontrado para {email}")
-
-        session.clear()
-        session["user_id"] = existing_user["id"]
-        session["email"] = email
-        session["name"] = existing_user.get("name", name)
-        session["role"] = existing_user["role"]
-        session["status"] = existing_user["status"]
-        session["notification_enabled"] = existing_user["notification_enabled"]
+        # Set up the session with user data
+        auth_state.setup_session(user, session)
 
         print("Usuario autenticado con Google:", session["email"])
         return {"message": "Login con Google exitoso"}, 200
@@ -137,3 +100,11 @@ def google_login():
         print("Error en login con Google:")
         traceback.print_exc()
         return {"error": str(e)}, 500
+
+
+@auth_bp.route("/logout", methods=["POST"])
+def logout():
+    """Clear the current session, including the stored user id."""
+    session.clear()
+    return redirect(url_for("auth.login"))
+    

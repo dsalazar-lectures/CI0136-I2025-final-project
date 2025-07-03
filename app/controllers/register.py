@@ -12,6 +12,8 @@ from ..models.services.registration_service import validate_registration_data
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 import bcrypt
+from firebase_admin import auth as firebase_auth
+from ..auth_strategies.registration_strategy_factory import RegistrationStrategyFactory
 
 # Create a Blueprint for registration-related routes
 register_bp = Blueprint('register', __name__, url_prefix='/register')
@@ -24,7 +26,7 @@ def register():
     Handle user registration requests.
     
     For POST requests:
-    - Validates registration data
+    - Validates registration data using the local registration strategy
     - Creates a new user if validation passes
     - Redirects to login page on success
     - Redirects back to registration form with error message on failure
@@ -44,52 +46,46 @@ def register():
         password = request.form.get('password')
         role = request.form.get('role')
         
-        # Validate that all required fields are present
-        existing_user = user_repo.get_user_by_email(email)
-        if existing_user and existing_user.get('auth_provider') == 'google':
-            flash("Este email ya está registrado mediante Google. Por favor inicia sesión con Google.", "danger")
-            return redirect(url_for('register.register'))
-        
         # Store form data in session for form repopulation in case of errors
         session['form_data'] = {
             'name': name,
             'email': email,
             'password': password,
             'role': role,
-            'notification_enabled' : True
+            'notification_enabled': True
         }
-        error_message, error_category = validate_registration_data(name, email, password, role, user_repo)
-
-        if error_message:
-            flash(error_message, error_category)
-            return redirect(url_for('register.register'))
-        # Hash the password before storing
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         
-        # Create the new user in the repository
-        new_user = user_repo.add_user(name, email, hashed_password, role)
+        # Get the local registration strategy
+        registration_strategy = RegistrationStrategyFactory.create_strategy("local")
+        user_data = {
+            'name': name,
+            'email': email,
+            'password': password,
+            'role': role,
+            'notification_enabled': True
+        }
         
-        # If user creation fails, flash an error message and redirect back to registration
-        if not new_user:
-            flash("No se pudo crear el usuario. Es posible que ya exista con este email.", "danger")
+        # Register the user
+        new_user, error = registration_strategy.authenticate(user_data, user_repo)
+        
+        # If any error occurs during registration
+        if error:
+            flash(error, "danger")
             return redirect(url_for('register.register'))
             
-        # Send a registration notification email
-        email_data = {
-            "username": name,
-            "emailTo": email,
-        }
-        if not send_email_notification("successRegister", email_data):
-            log_audit(
+        # Process the successful registration
+        result = registration_strategy.process_registration_result(new_user, session)
+        
+        # Flash success message and redirect
+        flash(result['message'], result['category'])
+
+        log_audit(
                 user=name,
                 action_type=AuditActionType.USER_REGISTER,
-                details=f"Failed to send registration email to {email}"
+                details=f"User registered successfully"
             )
-        session.pop('form_data', None)
-        session.clear()
-        # Notify user of successful registration and redirect to login
-        flash('Registration successful. You can now log in.', 'success')
-        return redirect(url_for("auth.login"))
+
+        return redirect(result['redirect_url'])
 
     # Handle GET request - display registration form
     form_data = session.pop('form_data', {})
@@ -98,3 +94,53 @@ def register():
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0"
     response.headers["Pragma"] = "no-cache"
     return response
+
+@register_bp.route('/google', methods=['POST'])
+def google_register():
+    """
+    Handle registration with Google.
+    
+    For POST requests:
+    - Processes Google OAuth data
+    - Creates a new user or links with existing account
+    - Returns a JSON response with result
+    
+    Returns:
+        JSON response with success/error message
+    """
+    try:
+        data = request.get_json()
+        token = data.get('token')
+        
+        if not token:
+            return {'error': 'No token provided'}, 400
+            
+        # Decode token to get user info
+        decoded_token = firebase_auth.verify_id_token(token)
+        email = decoded_token.get('email')
+        name = decoded_token.get('name', email)
+        
+        # Get the Google registration strategy
+        registration_strategy = RegistrationStrategyFactory.create_strategy("google")
+        user_data = {
+            'name': name,
+            'email': email,
+            'role': 'Student'  # Default role for Google registrations
+        }
+        
+        # Register/login the user
+        user, error = registration_strategy.authenticate(user_data, user_repo)
+        
+        # If any error occurs during registration
+        if error:
+            return {'error': error}, 400
+            
+        # Process the successful registration
+        result = registration_strategy.process_registration_result(user, session)
+        
+        return {'message': result['message'], 'redirect_url': result['redirect_url']}, 200
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {'error': str(e)}, 500
