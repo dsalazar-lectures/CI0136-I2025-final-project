@@ -24,6 +24,7 @@ class FirebaseTutoringRepository(ITutorialRepository):
             method=data["method"],
             capacity=data["capacity"],
             student_list=data.get("student_list", []),
+            meeting_link=data.get("meeting_link"),
         )
 
     def get_tutorial_by_id(self, id):
