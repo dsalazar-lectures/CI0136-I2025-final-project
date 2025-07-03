@@ -1,3 +1,14 @@
+<head>
+    <script>
+        function confirmUnsubscribe(tutoriaId) {
+            if (confirm("¿Estás seguro de que quieres desuscribirte de esta tutoría?")) {
+                document.getElementById(`unsubscribe-form-${tutoriaId}`).submit();
+            }
+            return false;
+        }
+    </script>
+</head>
+
 {% include 'navbar.html' %}
 {% extends 'base.html' %}
 
@@ -22,10 +33,23 @@
                             class="btn btn-outline-primary">
                             Ver Detalles
                         </a>
-                        <a href="{{ url_for('review_bp.comments_by_session', session_id=tutoria.title) }}"
+                        <a href="{{ url_for('review_bp.comments_by_session', tutoria_id=tutoria.id) }}"
                             class="btn btn-outline-secondary">
                             Retroalimentación
                         </a>
+                            
+                        <form id="unsubscribe-form-{{ tutoria.id }}" 
+                            action="{{ url_for('tutorial.unsubscribe_tutorial', id=tutoria.id) }}" 
+                            method="POST"
+                            style="display: inline;">
+                            
+                            <button type="button" 
+                                    class="btn btn-danger"
+                                    style="width: 100%;"
+                                    onclick="return confirmUnsubscribe('{{ tutoria.id }}')">
+                                Desuscribirse
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

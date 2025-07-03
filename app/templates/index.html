@@ -1,84 +1,223 @@
+{% include 'navbar.html' %}
 {% extends "layout.html" %}
 
 {% block title %}Comentarios{% endblock %}
 
 {% block content %}
-{% set tutor_id = session.get('tutor_id', '') %}
+<style>
+.profile-avatar {
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease;
+}
+
+.profile-avatar:hover {
+    border-color: #007bff;
+}
+
+.avatar-fallback {
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
 <div class="row justify-content-center">
     <div class="col-12 col-lg-8">
         <div class="card shadow-sm">
-            <!-- Header -->
+            <!-- Header - Picture and name -->
             <div class="card-header text-center border-bottom py-4">
                 <div class="d-flex flex-column align-items-center">
                     <div class="avatar avatar-lg mb-3">
-                        <i class="fas fa-user fa-2x text-secondary"></i>
+                        {% if tutor_profile_picture %}
+                            <img src="{{ tutor_profile_picture }}" 
+                                 alt="Avatar de {{ tutor_name }}" 
+                                 class="rounded-circle profile-avatar" 
+                                 style="width: 80px; height: 80px; object-fit: cover;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="avatar-fallback" style="display: none; width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x text-secondary"></i>
+                            </div>
+                        {% else %}
+                            <div class="avatar-fallback" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x text-secondary"></i>
+                            </div>
+                        {% endif %}
                     </div>
-                    <h4 class="mb-0">Tutor Tutor</h4>
+                    <h4 class="mb-0">{{ tutor_name }}</h4>
+                    <h5 class="mb-0">  {{ average }}<i class="fas fa-star star-filled"></i> ({{ quantity }})</h5> 
                 </div>
             </div>
 
             <!-- Comments Section -->
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0">Comentarios</h5>
-                    <button class="btn btn-primary" onclick="openReviewPopup()">Calificar Tutor</button>
+                    <h5 class="mb-0">Comentarios{% if session_id %} - {{ session_id }}{% endif %}</h5>
+                    <!-- Botón para crear reseña usando JS -->
+                    <button class="btn btn-primary btn-sm" onclick="showCreatePrompt('{{ tutoria_id }}')">Calificar tutor</button>
                 </div>
 
                 {% for comment in comments %}
                 <div class="{% if not loop.first %}mt-4 pt-4 border-top{% endif %}">
-                    <div class="d-flex">
-                        <div class="avatar avatar-md me-3">
-                            <i class="fas fa-user text-secondary"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <!-- Nombre y menú -->
-                            <div class="d-flex align-items-center">
-                                <h6 class="mb-1 flex-grow-1">{{ comment.student_id }}</h6>
-                                {% set comment_id = comment.review_id %}
-                                {% include "dropdown_menu.html" %}
-                            </div>
-
-                            <!-- Estrellas y fecha -->
-                            <div class="d-flex flex-wrap align-items-center mb-2">
-                                <div class="me-3">
-                                    {% for i in range(5) %}
-                                        {% if i < comment.rating %}
-                                            <i class="fas fa-star star-filled"></i>
-                                        {% else %}
-                                            <i class="fas fa-star star-empty"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <small class="text-muted">{{ comment.date }}</small>
-                            </div>
-
-                            <!-- Comentario -->
-                            <p class="small text-secondary mb-3">
-                                {{ comment.comment }}
-                            </p>
-
-                            <!-- Respuestas -->
-                            {% if comment.replies %}
-                                {% for reply in comment.replies %}
-                                <div class="ms-4 ps-3 reply-indent mt-3">
-                                    <div class="d-flex">
-                                        <div class="avatar avatar-sm me-2">
-                                            <i class="fas fa-user text-secondary"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">{{ reply.tutor_id }}</h6>
-                                            <div class="mb-2">
-                                                <small class="text-muted">{{ reply.date }}</small>
-                                            </div>
-                                            <p class="small text-secondary mb-0">
-                                                {{ reply.comment }}
-                                            </p>
-                                        </div>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex">
+                            <div class="avatar avatar-md me-3">
+                                {% if comment.student_profile_picture %}
+                                    <img src="{{ comment.student_profile_picture }}" 
+                                         alt="Avatar de {{ comment.student_id }}" 
+                                         class="rounded-circle profile-avatar" 
+                                         style="width: 40px; height: 40px; object-fit: cover;"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="avatar-fallback" style="display: none; width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-secondary"></i>
                                     </div>
+                                {% else %}
+                                    <div class="avatar-fallback" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-secondary"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <!-- Nombre del estudiante -->
+                                <h6 class="mb-1">{{ comment.student_id }}</h6>
+
+                                <!-- Estrellas y fecha -->
+                                <div class="d-flex flex-wrap align-items-center mb-2">
+                                    <div class="me-3">
+                                        {% for i in range(5) %}
+                                            {% if i < comment.rating %}
+                                                <i class="fas fa-star star-filled"></i>
+                                            {% else %}
+                                                <i class="fas fa-star star-empty"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">{{ comment.date }}</small>
                                 </div>
-                                {% endfor %}
-                            {% endif %}
+
+                                <!-- Comentario -->
+                                <p class="small text-secondary mb-2">
+                                    {{ comment.comment }}
+                                </p>
+
+                                <!-- Archivo adjunto -->
+                                {% if comment.drive_link %}
+                                    <div class="mt-2 p-2 bg-light border rounded d-inline-block">
+                                        <i class="fas fa-paperclip text-primary me-1"></i>
+                                        <small>
+                                            <strong>Archivo adjunto:</strong>
+                                            <a href="{{ comment.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                Ver archivo
+                                            </a>
+                                        </small>
+                                    </div>
+                                {% endif %}
+
+                                <!-- Tutor Replies with Indentation -->
+                                {% if comment.replies %}
+                                    {% for reply in comment.replies %}
+                                        <div class="ms-4 ps-3 reply-indent mt-3" style="border-left: 2px solid #e9ecef;">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="d-flex">
+                                                    <div class="avatar avatar-sm me-2">
+                                                        {% if reply.tutor_profile_picture %}
+                                                            <img src="{{ reply.tutor_profile_picture }}" 
+                                                                 alt="Avatar de {{ reply.tutor_id }}" 
+                                                                 class="rounded-circle profile-avatar" 
+                                                                 style="width: 32px; height: 32px; object-fit: cover;"
+                                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                            <div class="avatar-fallback" style="display: none; width: 32px; height: 32px;">
+                                                                <i class="fas fa-user text-secondary"></i>
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="avatar-fallback" style="width: 32px; height: 32px;">
+                                                                <i class="fas fa-user text-secondary"></i>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-1">{{ reply.tutor_id }}</h6>
+                                                        <div class="mb-2">
+                                                            <small class="text-muted">{{ reply.date }}</small>
+                                                        </div>
+                                                        <p class="small text-secondary mb-0">
+                                                            {{ reply.comment }}
+                                                        </p>
+
+                                                        {% if reply.drive_link %}
+                                                            <div class="mt-2 p-2 bg-light border rounded d-inline-block">
+                                                                <i class="fas fa-paperclip text-primary me-1"></i>
+                                                                <small>
+                                                                    <strong>Archivo adjunto:</strong>
+                                                                    <a href="{{ reply.drive_link }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                                                        Ver archivo
+                                                                    </a>
+                                                                </small>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                <!-- Dropdown para la respuesta -->
+                                                <div class="dropdown ms-2">
+                                                    <button class="btn btn-link text-muted p-0" type="button" id="dropdownReply{{ loop.index }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownReply{{ loop.index }}">
+                                                        <li>
+                                                            <button class="dropdown-item text-muted"
+                                                                onclick="showEditReplyPrompt('{{ comment.review_id }}', '{{ loop.index0 }}', '{{ reply.comment }}', '{{ reply.drive_link | default('') }}')">
+                                                                Editar respuesta
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <form action="/delete-reply/{{ tutoria_id }}/{{ comment.review_id }}/{{ loop.index0 }}" method="POST" class="m-0 p-0">
+                                                                <button type="submit" class="dropdown-item text-danger">Eliminar respuesta</button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
                         </div>
+
+                        <!-- Dropdown menu -->
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-link text-muted p-0" type="button" id="dropdownMenuBtn{{ comment.review_id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuBtn{{ comment.review_id }}">
+                                <!-- Opción Eliminar -->
+                                <li>
+                                    <form action="{{ url_for('review_bp.remove_review', tutoria_id=tutoria_id, review_id=comment.review_id) }}" method="POST" class="m-0 p-0">
+                                        <button type="submit" class="dropdown-item text-danger">Eliminar</button>
+                                    </form>
+                                </li>
+
+                                <!-- Opción Editar -->
+                                <li>
+                                    <button class="dropdown-item text-muted"
+                                        onclick="showEditPrompt('{{ comment.review_id }}', '{{ comment.comment }}', '{{ comment.rating }}', '{{ comment.drive_link | default('') }}')">
+                                        Editar
+                                    </button>
+                                </li>
+
+                                <!-- Opción Responder -->
+                                <li>
+                                    <button
+                                        type="button"
+                                        class="dropdown-item text-muted"
+                                        onclick="showReplyPrompt('{{ comment.review_id }}', '{{ comment.tutor_id }}')">
+                                        Responder
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- Fin dropdown -->
                     </div>
                 </div>
                 {% endfor %}
@@ -87,4 +226,39 @@
     </div>
 </div>
 {% endblock %}
-{% include "review_popup.html" %}
+
+<!-- Incluir el popup -->
+{% include 'review_popup.html' %}
+
+{% block scripts %}
+<script>
+  // Función para responder
+  function showReplyPrompt(reviewId, tutorId, driveLink = '') {
+      const form = document.getElementById('reviewForm');
+      form.action = `/reply-review/{{ tutoria_id }}/${reviewId}`;
+      openReviewPopup('Responde al comentario', 0, '', false, driveLink, reviewId);
+  }
+
+  // Función para editar
+  function showEditPrompt(reviewId, currentComment, currentRating, currentDriveLink = '') {
+      console.log("Edit clicked:", reviewId);
+      const form = document.getElementById('reviewForm');
+      form.action = `/edit-review/{{ tutoria_id }}/${reviewId}`;
+      openReviewPopup('Edita tu reseña', currentRating, currentComment, true, currentDriveLink, reviewId);
+  }
+
+  // Función para crear una reseña nueva
+  function showCreatePrompt(tutoriaId = '') {
+      const form = document.getElementById('reviewForm');
+      form.action = `/send-review/${tutoriaId}`;
+      openReviewPopup('Escribe una reseña', 0, '', true, '', null);
+  }
+
+  function showEditReplyPrompt(reviewId, replyIndex, commentText, driveLink = '') {
+      const form = document.getElementById('reviewForm');
+      form.action = `/edit-reply/{{ tutoria_id }}/${reviewId}/${replyIndex}`;
+      openReviewPopup('Edita tu respuesta', 0, commentText, false, driveLink, reviewId);
+  }
+
+</script>
+{% endblock %}

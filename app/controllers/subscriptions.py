@@ -12,7 +12,5 @@ def get_subscriptions():
         return redirect(url_for('home.home'))
     
     student_id = session.get('user_id')
-    print(f"Student ID: {student_id}")
-    tutorias = repo.get_tutorias_by_student(student_id)
-    print(f"Student Tutorias: {tutorias}")
+    tutorias = repo.get_tutorials_by_student(student_id)
     return render_template('subscriptions.html', tutorias=tutorias)
