@@ -42,6 +42,7 @@
             <option value="">Ordenar por fecha</option>
             <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Más cercanas</option>
             <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Más lejanas</option>
+            <option value="spots" {% if current_sort == 'spots' %}selected{% endif %}>Más cupos disponibles</option>
           </select>
         </form>
         
@@ -78,6 +79,7 @@
               <div class="actions">
                 <a href="{{ url_for('tutorial.getTutoriaById', id=tutoria.id, user_role= ('tutor')) }}" class="button-edit">Ver detalles</a>
                 <a href="{{ url_for('tutorial.edit_tutorial', id=tutoria.id) }}" class="button-edit">Editar</a>
+                <a href="{{ url_for('review_bp.comments_by_session', tutoria_id=tutoria.id) }}" class="button-edit">Retroalimentaciones</a>
                 <form action="{{ url_for('tutorial.cancel_tutorial', id=tutoria.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('¿Está seguro que desea cancelar esta tutoría?');">
                   <input type="hidden" name="confirm" value="true">
                   <button type="submit" class="button-delete">Cancelar Tutoría</button>

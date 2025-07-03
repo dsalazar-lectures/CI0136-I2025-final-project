@@ -38,8 +38,12 @@ from .controllers.admin_controller import admin_bp as admin_blueprint
 from .controllers.change_password_controller import c_password_bp as change_pass
 from .controllers.recovery_password_controller import rec_password_bp as recovery_pass
 from.controllers.user_preferences_controller import userPreferencesSetting as preferencesSettings
+<<<<<<< HEAD
 from .controllers.zoom_controller import zoom_bp
 
+=======
+from .routes.simple_media_routes import simple_media_bp
+>>>>>>> origin/dev
 
 # redirect / to /home
 @app.route('/')
@@ -61,4 +65,9 @@ app.register_blueprint(subscriptions_bp, url_prefix='/subscriptions')  # Student
 app.register_blueprint(change_pass)
 app.register_blueprint(recovery_pass)
 app.register_blueprint(preferencesSettings)
+<<<<<<< HEAD
 app.register_blueprint(zoom_bp)
+=======
+app.register_blueprint(simple_media_bp)
+
+>>>>>>> origin/dev

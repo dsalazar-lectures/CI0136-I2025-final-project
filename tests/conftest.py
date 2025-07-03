@@ -29,10 +29,12 @@ def auth(client):
     class AuthActions:
         # Logs in a user with the given email and password
         def login(self, email, password):
-            return client.post("/login", data={
+            response = client.post("/auth/login", data={
                 "email": email,
                 "password": password
             }, follow_redirects=True)
+            # Verificar que la sesión fue configurada correctamente
+            return response
 
         # Registers a user with the provided name, email, password, and role
         def register(self, email, password, name, role):
@@ -44,3 +46,11 @@ def auth(client):
             }, follow_redirects=True)
 
     return AuthActions()
+
+@pytest.fixture
+def debug_session(client):
+    """Helper fixture to debug session data during tests"""
+    def _get_session_data():
+        with client.session_transaction() as sess:
+            return dict(sess)
+    return _get_session_data

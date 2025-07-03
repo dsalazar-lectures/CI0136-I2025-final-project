@@ -323,3 +323,122 @@ class TutorialCancelledEmailBuilder(IBuilder):
   
   def get_bypass_priority(self):
       return self.always_notify
+
+class NewCommentEmailBuilder(IBuilder):
+  always_notify = True
+  """
+  Clase NewCommentEmailBuilder
+  Se encarga de construir el cuerpo del correo cuando se recibe un comentario/reseña nueva
+  """
+  def build_body(self, data: dict) -> dict:
+    """
+    Construye el cuerpo del correo de nuevo comentario.
+
+    Args:
+      data (dict): Diccionario con la información necesaria para el correo.
+        - username (str): Nombre de usuario del destinatario (tutor).
+        - emailTo (str): Correo electrónico del destinatario.
+        - student_name (str): Nombre del estudiante que comentó.
+        - comment (str): Texto del comentario.
+        - rating (int): Calificación de estrellas.
+        - tutorial (str): Nombre de la tutoría.
+
+    Returns:
+      dict: Diccionario con la información del correo a enviar.
+        - to (str): Correo electrónico del destinatario.
+        - subject (str): Asunto del correo electrónico.
+        - body (str): Cuerpo del mensaje del correo.
+
+    Raises:
+      ValueError: Si los datos requeridos son nulos.
+    """
+    username = data.get("username")
+    if username is None:
+      raise ValueError("El nombre de usuario no puede ser nulo")
+    
+    email_to = data.get("emailTo")
+    if email_to is None:
+      raise ValueError("El correo electrónico no puede ser nulo")
+    
+    student_name = data.get("student_name")
+    if student_name is None:
+      raise ValueError("El nombre del estudiante no puede ser nulo")
+    
+    comment = data.get("comment", "")
+    rating = data.get("rating", 0)
+    tutorial = data.get("tutorial", "")
+
+    stars = "⭐" * int(rating) if rating > 0 else ""
+
+    return {
+      "to": email_to,
+      "subject": f"Nuevo comentario en tu tutoría: {tutorial}",
+      "body": f"Hola {username},\n\n"
+          + f"Has recibido un nuevo comentario en tu tutoría '{tutorial}'.\n\n"
+          + f"Comentario de: {student_name}\n"
+          + f"Calificación: {stars} ({rating}/5)\n"
+          + f"Mensaje: {comment}\n\n"
+          + "Puedes responder al comentario desde la plataforma.\n\n"
+    }
+  
+  def get_bypass_priority(self):
+    return self.always_notify
+
+class TutorReplyEmailBuilder(IBuilder):
+  always_notify = True
+  """
+  Clase TutorReplyEmailBuilder
+  Se encarga de construir el cuerpo del correo cuando un tutor responde a un comentario
+  """
+  def build_body(self, data: dict) -> dict:
+    """
+    Construye el cuerpo del correo de respuesta de tutor.
+
+    Args:
+      data (dict): Diccionario con la información necesaria para el correo.
+        - username (str): Nombre de usuario del destinatario (estudiante).
+        - emailTo (str): Correo electrónico del destinatario.
+        - tutor_name (str): Nombre del tutor que respondió.
+        - reply (str): Texto de la respuesta.
+        - tutorial (str): Nombre de la tutoría.
+        - original_comment (str): Comentario original del estudiante.
+
+    Returns:
+      dict: Diccionario con la información del correo a enviar.
+        - to (str): Correo electrónico del destinatario.
+        - subject (str): Asunto del correo electrónico.
+        - body (str): Cuerpo del mensaje del correo.
+
+    Raises:
+      ValueError: Si los datos requeridos son nulos.
+    """
+    username = data.get("username")
+    if username is None:
+      raise ValueError("El nombre de usuario no puede ser nulo")
+    
+    email_to = data.get("emailTo")
+    if email_to is None:
+      raise ValueError("El correo electrónico no puede ser nulo")
+    
+    tutor_name = data.get("tutor_name")
+    if tutor_name is None:
+      raise ValueError("El nombre del tutor no puede ser nulo")
+    
+    reply = data.get("reply", "")
+    tutorial = data.get("tutorial", "")
+    original_comment = data.get("original_comment", "")
+
+    return {
+      "to": email_to,
+      "subject": f"Respuesta del tutor en: {tutorial}",
+      "body": f"Hola {username},\n\n"
+          + f"El tutor {tutor_name} ha respondido a tu comentario en la tutoría '{tutorial}'.\n\n"
+          + f"Tu comentario original:\n"
+          + f"'{original_comment}'\n\n"
+          + f"Respuesta del tutor:\n"
+          + f"'{reply}'\n\n"
+          + "Puedes ver la conversación completa en la plataforma.\n\n"
+    }
+  
+  def get_bypass_priority(self):
+    return self.always_notify

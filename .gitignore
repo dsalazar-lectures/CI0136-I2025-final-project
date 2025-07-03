@@ -185,4 +185,5 @@ cython_debug/
 
 # secrets
 firebaseAccountKey.json
+googleDriveServiceKey.json
 env.txt

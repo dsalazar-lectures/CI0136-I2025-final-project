@@ -3,6 +3,7 @@ from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
 from ..models.builders.button_factory.button_factory import button_factory
 from ..utils.auth import login_or_role_required
+from app.services.tutorials.tutorial_utils import filter_and_sort_tutorials
 from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.utils.date_utils import get_current_datetime
@@ -18,7 +19,7 @@ zoom_service = zoom_meeting_service()
 def getTutoriaById(id):
 
     # tutoring = repo.get_tutorial_by_id(id)
-    tutoring = firebase_repo.get_tutoria_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
+    tutoring = firebase_repo.get_tutorial_by_id(id)  # Cambié el repositorio mock por el repositorio de Firebase
     
     user_role = request.args.get('user_role', 'student')
     current_user = session.get("name", "usuario anonimo") 
@@ -85,7 +86,7 @@ def create_tutorial():
 @tutorial.route('/tutorial/<id>/edit', methods=['GET', 'POST'])
 @login_or_role_required('Tutor')
 def edit_tutorial(id):
-    tutoring = firebase_repo.get_tutoria_by_id(id)
+    tutoring = firebase_repo.get_tutorial_by_id(id)
 
     if tutoring is None:
         return render_template('404.html'), 404
@@ -119,25 +120,13 @@ def getListTutorials():
         print("Tutoring not found")
         return render_template('404.html'), 404
     else:
-        search = request.args.get('search', '').lower()
+        search = request.args.get('search', '')
         sort = request.args.get('sort')
         subject_filter = request.args.get('subject')
 
-        all_subjects = sorted(list(set(t.subject for t in tutorials if hasattr(t, 'subject'))))
-        if search:
-            tutorials = [
-                t for t in tutorials
-                if search in t.title.lower()
-                or search in t.subject.lower()
-                or search in t.description.lower()
-            ]
-        if subject_filter:
-            tutorials = [t for t in tutorials if t.subject == subject_filter]
+        tutorials = filter_and_sort_tutorials(tutorials, search, subject_filter, sort)
 
-        if sort == "asc":
-            tutorials.sort(key=lambda t: t.date)
-        elif sort == "desc":
-            tutorials.sort(key=lambda t: t.date, reverse=True)
+        all_subjects = sorted(list(set(t.subject for t in tutorials if hasattr(t, 'subject'))))
 
         return render_template(
             'list_tutorials.html',
@@ -158,8 +147,7 @@ def register_tutoria():
     name_student = session.get("name", "usuario anonimo") 
     print(f"ID del estudiante: {id_student}")
     print(name_student)
-    tutoria = firebase_repo.get_tutoria_by_id(id_tutoria)
-    #tutoria = repo.get_tutorial_by_id(id_tutoria) 
+    tutoria = firebase_repo.get_tutorial_by_id(id_tutoria)
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
             flash("No hay cupos disponibles para esta tutoría.", "warning")
@@ -187,30 +175,19 @@ def listTutorTutorials():
         flash("No se pudo obtener el ID del tutor.", "danger")
         return redirect(url_for('tutorial.getListTutorials'))
 
-    search = request.args.get('search', '').lower()
+    tutorias = firebase_repo.get_tutorials_by_tutor(tutor_id)
+
+    search = request.args.get('search', '')
     sort = request.args.get('sort')
 
-    tutorias = firebase_repo.get_tutorias_by_tutor(tutor_id)
-
-    if search:
-        tutorias = [
-            t for t in tutorias
-            if search in t.title.lower()
-            or search in t.subject.lower()
-            or search in t.description.lower()
-        ]
-    
-    if sort == "asc":
-        tutorias.sort(key=lambda t:  t.date)
-    elif sort == "desc":
-        tutorias.sort(key=lambda t:  t.date, reverse=True)
+    tutorias = filter_and_sort_tutorials(tutorias, search, None, sort)
 
     return render_template('tutor_tutorials.html', tutorias=tutorias)
 
 @tutorial.route('/tutorial/<id>/cancel', methods=['POST'])
 @login_or_role_required('Tutor')
 def cancel_tutorial(id):
-    tutorial = firebase_repo.get_tutoria_by_id(id)  # Get tutorial from Firebase
+    tutorial = firebase_repo.get_tutorial_by_id(id)  # Get tutorial from Firebase
     if not tutorial:
         flash("Tutoría no encontrada.", "danger")
         return redirect(url_for('tutorial.listTutorTutorials'))
@@ -243,7 +220,7 @@ def cancel_tutorial(id):
     return redirect(url_for('tutorial.listTutorTutorials'))
 
 def measure_time_to_tutorial(id):
-    tutorial = firebase_repo.get_tutoria_by_id(id)
+    tutorial = firebase_repo.get_tutorial_by_id(id)
     present = get_current_datetime()
 
     date_str = tutorial.date.strip()
@@ -288,4 +265,17 @@ def create_zoom_meeting(id):
     except Exception as e:
         flash(f"Error al crear la reunión de Zoom: {str(e)}", "danger")
     
-    return redirect(url_for('tutorial.getTutoriaById', id=id, user_role='tutor'))
+    return redirect(url_for('tutorial.getTutoriaById', id=id, user_role='tutor'))@tutorial.route('/tutorial/<id>/unsubscribe', methods=['POST'])
+@login_or_role_required('Student')
+def unsubscribe_tutorial(id):
+    student_id = session.get('user_id')
+    if not student_id:
+        flash("Debe iniciar sesión para realizar esta acción", "danger")
+        return redirect(url_for('auth.login'))
+    
+    if firebase_repo.unregister_from_tutoria(student_id, id):
+        flash("Te has desinscrito exitosamente de la tutoría", "success")
+    else:
+        flash("No fue posible desinscribirte. Verifica que estés inscrito en esta tutoría", "danger")
+    
+    return redirect(url_for('subscriptions.get_subscriptions'))
