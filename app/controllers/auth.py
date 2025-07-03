@@ -128,6 +128,7 @@ def google_login():
         session["name"] = existing_user.get("name", name)
         session["role"] = existing_user["role"]
         session["status"] = existing_user["status"]
+        session["notification_enabled"] = existing_user["notification_enabled"]
 
         print("Usuario autenticado con Google:", session["email"])
         return {"message": "Login con Google exitoso"}, 200

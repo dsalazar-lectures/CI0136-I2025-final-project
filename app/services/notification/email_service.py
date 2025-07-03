@@ -24,7 +24,7 @@ class EmailService():
         """
         
         # Necesario retornar False en caso de que no exista session, exclusivo del caso de recuperar pass. 
-        notification_enabled = session.get("notification_enabled", False)
+        notification_enabled = True #session.get("notification_enabled", False) revisar, session no deberia estar aqui
 
         # Crea un builder utilizando un factory
         try:
