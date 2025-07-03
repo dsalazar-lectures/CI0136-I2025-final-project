@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock
     (10, False), # 10 o más -> no muestra aviso
 ])
 @patch('app.routes.review_routes.get_all_reviews')
-@patch('app.routes.review_routes.FirebaseTutoringRepository.get_tutoria_by_id')
+@patch('app.routes.review_routes.FirebaseTutoringRepository.get_tutorial_by_id')
 @patch('app.routes.review_routes.FirebaseUserRepository.get_user_by_name')
 def test_comments_render_average_and_flash(mock_get_user, mock_get_tutoria, mock_get_all_reviews, client, num_reviews, should_flash):
     # Preparar mocks
