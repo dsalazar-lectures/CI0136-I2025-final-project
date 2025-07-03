@@ -1,15 +1,11 @@
 * {
     font-family: 'Poppins', sans-serif;
 }
-.navbar{
-    width: 100vw;
-    margin: -1.30% 0px 0px -0.95%;
-}
+
 body {
     background-color: linear-gradient(to bottom, #eef2f7, #ffffff);
     color: #34495e;
     margin: 0;
-    padding: 20px;
 }
 
 .container {
@@ -77,6 +73,7 @@ h1 {
     font-weight: bold;
     border-radius: 12px;
     transition: ease 0.3s;
+    border: none;
 }
 
 .button-back:hover {
@@ -200,6 +197,9 @@ input[type="text"], select {
     padding: 0 16px;
     font-size: 0.9em;
     border: none;
+}
+.actions .button-edit {
+    height: 35px;
 }
 .button-delete{
     background-color: #e41515;
