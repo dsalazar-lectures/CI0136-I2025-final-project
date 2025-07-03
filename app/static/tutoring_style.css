@@ -1,15 +1,11 @@
 * {
     font-family: 'Poppins', sans-serif;
 }
-.navbar{
-    width: 100vw;
-    margin: -1.30% 0px 0px -0.95%;
-}
+
 body {
     background-color: linear-gradient(to bottom, #eef2f7, #ffffff);
     color: #34495e;
     margin: 0;
-    padding: 20px;
 }
 
 .container {
@@ -31,6 +27,16 @@ body {
     text-align: center;
     font-weight: bold;
 }
+
+.flash-message {
+    background-color: #dff0d8;
+    color: #3c763d;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    transition: opacity 0.5s ease;
+  }
+  
 
 h1 {
     text-align: center;
@@ -77,6 +83,7 @@ h1 {
     font-weight: bold;
     border-radius: 12px;
     transition: ease 0.3s;
+    border: none;
 }
 
 .button-back:hover {
@@ -123,6 +130,21 @@ h1 {
     font-size: 1.5;
     color: #34495e;
 }
+
+.create-zoom{
+    background-color: #1565c0;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    border:none;
+}
+.create-zoom:hover {
+    background-color: #0d47a1;
+}
+
 .tutory-tab {
     border: 1px solid #ccc;
     padding: 20px;
@@ -200,6 +222,9 @@ input[type="text"], select {
     padding: 0 16px;
     font-size: 0.9em;
     border: none;
+}
+.actions .button-edit {
+    height: 35px;
 }
 .button-delete{
     background-color: #e41515;

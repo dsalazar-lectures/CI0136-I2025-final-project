@@ -5,7 +5,7 @@ from app.models.review_model import add_review, get_all_reviews, add_reply_to_re
 import logging
 from datetime import datetime
 from app.controllers.review_presenter_controller import ConsoleReviewPresenter, EmailReviewPresenter ## Si queremos agregar en un futuro LogFileReviewPresenter
-from better_profanity import profanity
+#from better_profanity import profanity
 import os
 import re
 
