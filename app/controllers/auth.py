@@ -6,8 +6,9 @@ This module defines routes and handlers for authentication-related functionality
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for, make_response
 from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
 from app.services.notification import send_email_notification
-import traceback
+from app.services.audit import log_audit, AuditActionType
 from ..auth_states.auth_state_context import AuthStateContext
+import traceback
 
 # Create a Blueprint for home-related routes
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -62,7 +63,21 @@ def login():
         # Set up the session with user data
         session.pop('form_data', None)
         auth_state.setup_session(user, session)
-
+        
+        # Send a login notification email
+        email_data = {
+            "username": session["name"],
+            "emailTo": session["email"],
+        }
+        
+        # Attempt to send the email notification
+        if not send_email_notification("login", email_data):
+            log_audit(
+            user=session.get("name"),
+            action_type=AuditActionType.USER_UPDATE,
+            details=f"Failure to send login email notification to {session['email']}"
+            )
+        
         return redirect(url_for("home.home"))
 
     # Handle GET request - display registration form
