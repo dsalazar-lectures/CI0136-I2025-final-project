@@ -49,7 +49,7 @@
         <span><strong>Cupos disponibles:</strong> {{ tutoring.capacity - tutoring.student_list|length }}</span>
       </div>
 
-      {% if user_role == 'tutor' %}
+      {% if user_role == 'tutor' and tutoring.method == 'Virtual' %}
       <div class="detail-item" style="display: flex; align-items: center; gap: 10px;">
         <i class="fa-solid fa-user-group"></i>
         <span><strong>Plataforma:</strong></span>
