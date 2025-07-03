@@ -219,27 +219,7 @@ def cancel_tutorial(id):
     
     return redirect(url_for('tutorial.listTutorTutorials'))
 
-def measure_time_to_tutorial(id):
-    tutorial = firebase_repo.get_tutorial_by_id(id)
-    present = get_current_datetime()
 
-    date_str = tutorial.date.strip()
-    time_str = tutorial.start_time.strip()[:5] 
-    
-    future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
-    time_difference = future - present
-    return time_difference.total_seconds()/60  # minutes
-
-def get_meeting_data_from_firebase(id):
-    tutoring = firebase_repo.get_tutoria_by_id(id)
-    if tutoring and tutoring.meeting_link:
-        return {
-            "topic": tutoring.title,
-            "start_time": f"{tutoring.date}T{tutoring.start_time}:00Z",  # Formato ISO 8601
-            "duration": 60,  # Duración en minutos, puedes ajustarlo según sea necesario
-            "meeting_link": tutoring.meeting_link
-        }
-    return None
 @tutorial.route('/tutorial/<id>/create_zoom_meeting', methods=['POST'])
 @login_or_role_required('Tutor')
 def create_zoom_meeting(id):
@@ -247,7 +227,7 @@ def create_zoom_meeting(id):
     if not access_token:
         flash("Debes conectar tu cuenta de Zoom primero.", "warning")
         return redirect(url_for('zoom.zoom_connect'))
-    tutoring = firebase_repo.get_tutoria_by_id(id)
+    tutoring = firebase_repo.get_tutorial_by_id(id)
     if not tutoring:
         flash("Tutoría no encontrada.", "danger")
         return redirect(url_for('tutorial.listTutorTutorials'))
@@ -265,7 +245,9 @@ def create_zoom_meeting(id):
     except Exception as e:
         flash(f"Error al crear la reunión de Zoom: {str(e)}", "danger")
     
-    return redirect(url_for('tutorial.getTutoriaById', id=id, user_role='tutor'))@tutorial.route('/tutorial/<id>/unsubscribe', methods=['POST'])
+    return redirect(url_for('tutorial.getTutoriaById', id=id, user_role='tutor'))
+
+@tutorial.route('/tutorial/<id>/unsubscribe', methods=['POST'])
 @login_or_role_required('Student')
 def unsubscribe_tutorial(id):
     student_id = session.get('user_id')
@@ -279,3 +261,25 @@ def unsubscribe_tutorial(id):
         flash("No fue posible desinscribirte. Verifica que estés inscrito en esta tutoría", "danger")
     
     return redirect(url_for('subscriptions.get_subscriptions'))
+
+def measure_time_to_tutorial(id):
+    tutorial = firebase_repo.get_tutorial_by_id(id)
+    present = get_current_datetime()
+
+    date_str = tutorial.date.strip()
+    time_str = tutorial.start_time.strip()[:5] 
+    
+    future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+    time_difference = future - present
+    return time_difference.total_seconds()/60  # minutes
+
+def get_meeting_data_from_firebase(id):
+    tutoring = firebase_repo.get_tutorial_by_id(id)
+    if tutoring and tutoring.meeting_link:
+        return {
+            "topic": tutoring.title,
+            "start_time": f"{tutoring.date}T{tutoring.start_time}:00Z",  # Formato ISO 8601
+            "duration": 60,  # Duración en minutos, puedes ajustarlo según sea necesario
+            "meeting_link": tutoring.meeting_link
+        }
+    return None
