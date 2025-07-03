@@ -8,6 +8,7 @@ from app.services.notification import send_email_notification
 from app.services.audit import log_audit, AuditActionType
 from app.utils.date_utils import get_current_datetime
 from datetime import datetime
+import pytz
 from app.services.meetings.zoom_meeting_service import zoom_meeting_service
 tutorial = Blueprint('tutorial', __name__)
 
@@ -229,10 +230,19 @@ def create_zoom_meeting(id):
     if not tutoring:
         flash("Tutoría no encontrada.", "danger")
         return redirect(url_for('tutorial.listTutorTutorials'))
+
+    # Convertir la hora a la zona horaria de Costa Rica
+    date_str = tutoring.date.strip()
+    time_str = tutoring.start_time.strip()[:5]
+    naive_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+    cr_tz = pytz.timezone("America/Costa_Rica")
+    localized_dt = cr_tz.localize(naive_dt)
+    start_time = localized_dt.strftime("%Y-%m-%dT%H:%M:%S")
+
     meeting_data = {
         "topic": tutoring.title,
-        "start_time": f"{tutoring.date}T{tutoring.start_time}:00Z",  # Formato ISO 8601
-        "duration": 60,  # Duración en minutos, puedes ajustarlo según sea necesario 
+        "start_time": start_time,
+        "duration": 60,
     }
 
     try:
