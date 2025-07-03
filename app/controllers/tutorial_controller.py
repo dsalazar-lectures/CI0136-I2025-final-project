@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from ..models.repositories.tutorial.repoTutorials import Tutorial_mock_repo
 from ..models.repositories.tutorial.firebase_tutorings_repository import FirebaseTutoringRepository
+from ..models.repositories.users.firebase_user_repository import FirebaseUserRepository
 from ..models.builders.button_factory.button_factory import button_factory
 from ..utils.auth import login_or_role_required
 from app.services.tutorials.tutorial_utils import filter_and_sort_tutorials
@@ -13,6 +14,7 @@ tutorial = Blueprint('tutorial', __name__)
 
 repo = Tutorial_mock_repo()
 firebase_repo = FirebaseTutoringRepository()
+user_repo = FirebaseUserRepository()
 
 @tutorial.route('/tutorial/<id>')
 
@@ -143,10 +145,13 @@ def register_tutoria():
     print(session)
     id_tutoria = request.form["id_tutoria"]
     id_student = session.get('user_id')
-    name_student = session.get("name", "usuario anonimo") 
+    name_student = session.get("name", "usuario anonimo")
+
     print(f"ID del estudiante: {id_student}")
     print(name_student)
+
     tutoria = firebase_repo.get_tutorial_by_id(id_tutoria)
+    
     if tutoria:
         if tutoria.capacity == len(tutoria.student_list):
             flash("No hay cupos disponibles para esta tutoría.", "warning")
@@ -157,6 +162,47 @@ def register_tutoria():
             #exito = repo.register_in_tutoria(id_student, name_student, id_tutoria)  
             if exito:
                 flash("Te has registrado exitosamente.", "success")
+                # Send a notification email
+                email_data = {
+                    "username": name_student,
+                    "emailTo": session.get("email"),
+                    "tutorial": tutoria.title
+                }
+
+                if not send_email_notification("inscriptionStudent", email_data):
+                    log_audit(
+                        user=name_student,
+                        action_type=AuditActionType.CONTENT_CREATE,
+                        details=f"Failed to send email notification for new subscription to tutorial: {tutoria.title}, to the student: {name_student}",
+                    )
+                else:
+                    log_audit(
+                        user=name_student,
+                        action_type=AuditActionType.CONTENT_CREATE,
+                        details=f"Successfully email notification registered in tutorial: {tutoria.title}, to the student: {name_student}",
+                    )
+
+                tutor = user_repo.get_user_by_id(tutoria.tutor_id)
+                email_data_tutor = {
+                    "tutorname": tutoria.tutor,
+                    "studentname": name_student,
+                    "emailTo": tutor.get("email"),
+                    "tutorial": tutoria.title
+                }
+
+                if not send_email_notification("inscriptionTutor", email_data_tutor):
+                    log_audit(
+                        user=tutor.get("name", "Tutor Anónimo"),
+                        action_type=AuditActionType.CONTENT_CREATE,
+                        details=f"Failed to send email notification for new student subscription to tutorial: {tutoria.title}, to the tutor: {tutor.get('name', 'Tutor Anónimo')}",
+                    )
+                else:
+                    log_audit(
+                        user=tutor.get("name", "Tutor Anónimo"),
+                        action_type=AuditActionType.CONTENT_CREATE,
+                        details=f"Successfully email notification registered student in tutorial: {tutoria.title}, to the tutor: {tutor.get('name', 'Tutor Anónimo')}",
+                    )
+
             else:
                 flash("No fue posible registrarte.", "danger")
     else:
