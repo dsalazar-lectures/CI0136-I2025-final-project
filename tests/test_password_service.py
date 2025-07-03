@@ -39,5 +39,4 @@ def test_validate_password():
     password_test_6 = "PASSTRASEÑA54121*++"
     is_valid = password_service_instance.validate_password(password_test_6)
     assert False == is_valid
-
-
+    
