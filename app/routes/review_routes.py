@@ -46,7 +46,7 @@ def home():
 @review_bp.route('/send-review/<tutoria_id>', methods=['POST'])
 def create_review(tutoria_id):
     firebase_repo = FirebaseTutoringRepository()
-    tutoria = firebase_repo.get_tutoria_by_id(tutoria_id)
+    tutoria = firebase_repo.get_tutorial_by_id(tutoria_id)
     return send_review(tutoria)
 
 @review_bp.route("/delete-review/<tutoria_id>/<int:review_id>", methods=["POST"])
@@ -65,7 +65,7 @@ def edit_review_route(tutoria_id, review_id):
 def comments_by_session(tutoria_id):
     firebase_repo = FirebaseTutoringRepository()
     user_repo = FirebaseUserRepository()
-    tutoria = firebase_repo.get_tutoria_by_id(tutoria_id)
+    tutoria = firebase_repo.get_tutorial_by_id(tutoria_id)
 
     tutor_id = tutoria.tutor
     session_id = tutoria.title
@@ -135,7 +135,7 @@ def comments_by_session(tutoria_id):
 @review_bp.route('/send-review/<tutoria_id>', methods=['POST'])
 def create_review_with_session(tutoria_id):
     firebase_repo = FirebaseTutoringRepository()
-    tutoria = firebase_repo.get_tutoria_by_id(tutoria_id)
+    tutoria = firebase_repo.get_tutorial_by_id(tutoria_id)
     return send_review(tutoria=tutoria)
 
 @review_bp.route("/edit-reply/<tutoria_id>/<int:review_id>/<int:reply_index>", methods=["POST"])
