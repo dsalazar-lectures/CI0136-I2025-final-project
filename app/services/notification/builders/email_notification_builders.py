@@ -59,7 +59,9 @@ class ReminderEmailBuilder(IBuilder):
       data (dict): Diccionario con la información necesaria para el correo.
         - username (str): Nombre de usuario del destinatario.
         - emailTo (str): Correo electrónico del destinatario.
-        - tutorial (str): Tutoría de la que se está haciendo un recordatorio.
+        - tutoringTitle (str): Título de la tutoría.
+        - tutoringDateTime (datetime): Fecha de la tutoría.
+
 
     Returns:
       dict: Diccionario con la información del correo a enviar.
@@ -76,14 +78,21 @@ class ReminderEmailBuilder(IBuilder):
     email_to = data.get("emailTo")
     if email_to is None:
       raise ValueError("El correo electrónico no puede ser nulo")
-    tutorial = data.get("tutoria")
+    tutorial = data.get("tutoringTitle")
     if tutorial is None:
       raise ValueError("La tutoría no puede ser nula")
+    tutoring_date_time = data.get("tutoringDateTime")
+    if tutoring_date_time is None:
+      raise ValueError("La fecha de la tutoría no puede ser nula")
+    if not isinstance(tutoring_date_time, datetime.datetime):
+      raise ValueError("La fecha de la tutoría debe ser un objeto datetime")
 
     return {
       "to": email_to,
-      "subject": "Recordatorio de tutoría",
-      "body": "¡" + username + "!, recuerde que su tutoría de " + tutorial + ", inicia en 1 hora"
+      "subject": f"Recordatorio de tutoría: {tutorial}",
+      "body": f"¡" + username + "!, recuerde su tutoría de " + tutorial + "!\n"
+          + "Fecha y hora: " + tutoring_date_time.strftime("%Y-%m-%d %H:%M:%S") + "\n"
+          + "Gracias por usar nuestro servicio.\n"
     }
   
   def get_bypass_priority(self):

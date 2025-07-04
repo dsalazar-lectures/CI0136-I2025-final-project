@@ -22,5 +22,9 @@ class EmailBuilderFactory(IBuilderFactory):
       return email_notification_builders.NewCommentEmailBuilder()
     elif builder_type == "tutorReply":
       return email_notification_builders.TutorReplyEmailBuilder()
+    elif builder_type == "inscriptionStudent":
+      return inscription_email_builder.InscriptionStudenteEmailBuilder()
+    elif builder_type == "inscriptionTutor":
+      return inscription_email_builder.InscriptionTutorEmailBuilder()
     else:
       raise ValueError("Builder no soportado")

@@ -2,6 +2,8 @@ import pytest
 from app.services.notification.builders import LoginEmailBuilder
 from app.services.notification.builders import ReminderEmailBuilder
 from app.services.notification.builders import IBuilder
+from app.services.notification.builders import inscription_email_builder
+
 import datetime
 from unittest.mock import patch
 
@@ -56,7 +58,6 @@ def test_login_email_builder_missing_data():
         builder.build_body(data)
     assert str(excinfo.value) == "El nombre de usuario no puede ser nulo"
 
-
 def test_reminder_email_builder():
     builder = ReminderEmailBuilder()
     assert builder is not None
@@ -87,6 +88,7 @@ def test_reminder_email_builder_missing_username():
     with pytest.raises(ValueError) as excinfo:
         builder.build_body(data)
     assert str(excinfo.value) == "El usuario no puede ser nulo"
+
 def test_reminder_email_builder_missing_email():
     builder = ReminderEmailBuilder()
     data = {
@@ -96,6 +98,7 @@ def test_reminder_email_builder_missing_email():
     with pytest.raises(ValueError) as excinfo:
         builder.build_body(data)
     assert str(excinfo.value) == "El correo electrónico no puede ser nulo"
+
 def test_reminder_email_builder_missing_tutoria():
     builder = ReminderEmailBuilder()
     data = {
@@ -113,10 +116,13 @@ def test_reminder_email_builder_missing_data():
         builder.build_body(data)
     assert str(excinfo.value) == "El usuario no puede ser nulo"
 
+def test_student_inscriptions_email_builders():
+    builder = inscription_email_builder.InscriptionStudenteEmailBuilder()
+    assert builder is not None
+    assert isinstance(builder, IBuilder)
 
-
-
-
-
-
+def test_tutor_inscriptions_email_builders():
+    builder = inscription_email_builder.InscriptionTutorEmailBuilder()
+    assert builder is not None
+    assert isinstance(builder, IBuilder)
 
