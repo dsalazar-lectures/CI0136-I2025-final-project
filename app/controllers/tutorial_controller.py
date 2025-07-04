@@ -29,7 +29,7 @@ def getTutoriaById(id):
     current_user = session.get("name", "usuario anonimo") 
 
     if (
-         user_role == "student" and
+        user_role == "student" and
         tutoring.student_list and
         any(student.get("name") == current_user for student in tutoring.student_list) and
         -20 < measure_time_to_tutorial(id) <= 30
@@ -290,7 +290,7 @@ def create_zoom_meeting(id):
     cr_tz = pytz.timezone("America/Costa_Rica")
     localized_dt = cr_tz.localize(naive_dt)
     start_time = localized_dt.strftime("%Y-%m-%dT%H:%M:%S")
-
+    print("DEBUGGING START TIME:", start_time)
     meeting_data = {
         "topic": tutoring.title,
         "start_time": start_time,
@@ -323,23 +323,15 @@ def unsubscribe_tutorial(id):
     return redirect(url_for('subscriptions.get_subscriptions'))
 
 def measure_time_to_tutorial(id):
+    cr_timezone = pytz.timezone("America/Costa_Rica")
     tutorial = firebase_repo.get_tutorial_by_id(id)
     present = get_current_datetime()
-
+    
     date_str = tutorial.date.strip()
     time_str = tutorial.start_time.strip()[:5] 
     
-    future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
-    time_difference = future - present
-    return time_difference.total_seconds()/60  # minutes
-
-def get_meeting_data_from_firebase(id):
-    tutoring = firebase_repo.get_tutorial_by_id(id)
-    if tutoring and tutoring.meeting_link:
-        return {
-            "topic": tutoring.title,
-            "start_time": f"{tutoring.date}T{tutoring.start_time}:00Z",  # Formato ISO 8601
-            "duration": 60,  # Duración en minutos, puedes ajustarlo según sea necesario
-            "meeting_link": tutoring.meeting_link
-        }
-    return None
+    naive_future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+    future = cr_timezone.localize(naive_future)
+    
+    return (future - present).total_seconds() / 60
+  # minutes
