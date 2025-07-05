@@ -137,13 +137,13 @@
           type="checkbox"
           id="email_notification_status"
           name="email_notification_status"
-          {% if not notification_enabled %}checked{% endif %}>
-        <label class="form-check-label me-3" for="email_notification_status">Notificaciones desactivadas</label>
+          {% if notification_enabled %}checked{% endif %}>
+        <label class="form-check-label me-3" for="email_notification_status">Notificaciones activadas</label>
         <!-- Icon helper -->
         <i class="bi bi-info-circle text-primary" 
           data-bs-toggle="tooltip" 
           data-bs-placement="right" 
-          title="Al activar esta opción, dejarás de recibir notificaciones por correo electrónico, exceptuando las relacionadas a cambios de contraseña."
+          title="Al desactivar esta opción, dejarás de recibir notificaciones por correo electrónico, exceptuando las relacionadas a cambios de contraseña."
           style="cursor: pointer;">
         </i>
       </div>
@@ -273,7 +273,7 @@
   // Get the email_notification_status (toggle) value if a change is detected
   document.getElementById("email_notification_status").addEventListener("change", function () {
     // Invertimos para que coincida el toggle activado con false
-    const status = !this.checked;
+    const status = this.checked;
     // Petición a la función
     fetch("/update_notification_status", {
       method: "POST",
