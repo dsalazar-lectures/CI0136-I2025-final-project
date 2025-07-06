@@ -53,10 +53,15 @@
       <div class="detail-item" style="display: flex; align-items: center; gap: 10px;">
         <i class="fa-solid fa-user-group"></i>
         <span><strong>Plataforma:</strong></span>
-    
-        <form action="{{ url_for('tutorial.create_zoom_meeting', id=tutoring.id if tutoring else '') }}" method="post" style="margin: 0;">
-          <button type="submit" class="create-zoom">Crear reunión Zoom</button>
-        </form>
+        {% if should_show_zoom_button %}
+          {% if tutoring.meeting_link is none %}
+            <form action="{{ url_for('tutorial.create_zoom_meeting', id=tutoring.id) }}" method="post" style="margin: 0;">
+              <button type="submit" class="create-zoom">Crear reunión Zoom</button>
+            </form>
+          {% else %}
+            <a href="{{ tutoring.meeting_link }}" target="_blank" class="create-zoom">Ver reunión Zoom</a>
+          {% endif %}
+        {% endif %}
       </div>
     {% endif %}
     

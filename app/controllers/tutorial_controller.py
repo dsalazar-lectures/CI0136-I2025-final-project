@@ -15,9 +15,9 @@ tutorial = Blueprint('tutorial', __name__)
 
 repo = Tutorial_mock_repo()
 firebase_repo = FirebaseTutoringRepository()
+zoom_service = zoom_meeting_service()
 user_repo = FirebaseUserRepository()
 
-zoom_service = zoom_meeting_service()
 @tutorial.route('/tutorial/<id>')
 
 def getTutoriaById(id):
@@ -38,12 +38,20 @@ def getTutoriaById(id):
         button = factory.create_button(tutoring.meeting_link)
     else:
         button = None
-    
+
+    if (
+        user_role == "tutor" and
+        -20 < measure_time_to_tutorial(id) 
+    ):
+        should_show_zoom_button = True
+    else:
+        should_show_zoom_button = False
+
     if tutoring is None:
         print("Tutorial not found")
         return render_template('404.html'), 404
     else:
-        return render_template('tutorial.html',tutoring=tutoring, user_role=user_role, button=button)
+        return render_template('tutorial.html',tutoring=tutoring, user_role=user_role, button=button, should_show_zoom_button=should_show_zoom_button)
     
 @tutorial.route('/tutorial/create', methods=['GET', 'POST'])
 @login_or_role_required('Tutor')
@@ -204,11 +212,6 @@ def register_tutoria():
                         details=f"Successfully email notification registered student in tutorial: {tutoria.title}, to the tutor: {tutor.get('name', 'Tutor Anónimo')}",
                     )
 
-                log_audit(
-                    user=name_student,
-                    action_type=AuditActionType.TUTORY_ADQUIRED,
-                    details=f"Tutory {tutoria.title} adquired from tutor {tutoria.tutor}"
-                )
             else:
                 flash("No fue posible registrarte.", "danger")
     else:
@@ -327,11 +330,17 @@ def measure_time_to_tutorial(id):
     present = get_current_datetime()
 
     date_str = tutorial.date.strip()
-    time_str = tutorial.start_time.strip()[:5] 
+    time_str = tutorial.start_time.strip()[:5]
     
-    future = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+    # Parsear el datetime como naive
+    future_naive = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+
+    # Convertirlo a timezone-aware (mismo que present)
+    cr_timezone = pytz.timezone("America/Costa_Rica")
+    future = cr_timezone.localize(future_naive)
+
     time_difference = future - present
-    return time_difference.total_seconds()/60  # minutes
+    return time_difference.total_seconds() / 60  # minutos
 
 def get_meeting_data_from_firebase(id):
     tutoring = firebase_repo.get_tutorial_by_id(id)
